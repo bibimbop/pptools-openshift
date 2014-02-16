@@ -1,0 +1,59 @@
+{#
+ # -*- coding: utf-8 -*-
+
+ # Copyright (C) 2014-2013 bibimbop at pgdp
+
+ # This program is free software; you can redistribute it and/or
+ # modify it under the terms of the GNU General Public License
+ # as published by the Free Software Foundation; either version 2
+ # of the License, or (at your option) any later version.
+ #
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+#}
+
+{% extends "htmlheader.tmpl" %}
+{% block title %}PPTools{% endblock %}
+{% block body %}
+
+   <h1>Project {{ project_id }} — <a href="">semi permanent URL</a></h1>
+
+   <h2>Control</h2>
+   <ul>
+	 <li>Upload a file</li>
+
+	 <form action="" method="post" enctype="multipart/form-data">
+       <input type="file" name="file" />
+       <input type=submit value=Upload />
+	   (Allowed extensions: {{ allowed_ext }} )
+     </form>
+
+	 <li>Read-only URL: xxxxxxx</li>
+   </ul>
+
+   <h2>Files</h2>
+   <table>
+	 <tr>
+	   <th>Filename</th>
+	   <th>File size</th>
+	 </tr>
+	 {% for file in files %}
+	   <tr>
+		 <td>{{ file[0] }}</td>
+		 <td>{{ file[1] }}</td>
+	   </tr>
+	 {% endfor %}
+   </table>
+
+   <h2>Diffs</h2>
+   <ul>
+	 {% for combo in combos %}
+	   <li><a href="diffs?f1={{ combo[0] }}&f2={{ combo[1] }}">
+		   {{ combo[0] }} and {{ combo[1] }}</a>
+	   </li>
+	 {% endfor %}
+   </ul>
+
+{% endblock %}

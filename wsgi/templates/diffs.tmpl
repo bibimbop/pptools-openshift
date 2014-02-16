@@ -1,0 +1,47 @@
+{#
+ # -*- coding: utf-8 -*-
+
+ # Copyright (C) 2014-2013 bibimbop at pgdp
+
+ # This program is free software; you can redistribute it and/or
+ # modify it under the terms of the GNU General Public License
+ # as published by the Free Software Foundation; either version 2
+ # of the License, or (at your option) any later version.
+ #
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+#}
+
+{% extends "htmlheader.tmpl" %}
+{% from "formhelpers.tmpl" import render_field %}
+
+
+{% block head %}
+{{ super() }}
+ <style type="text/css">
+{{ css }}
+</style>
+{% endblock %}
+
+{% block title %}PPTools{% endblock %}
+
+{% block body %}
+   <h1>Diff between {{ f1 }} and {{ f2 }}</h1>
+
+   <p><a href="/project/{{ project_id }}">Back to project page</a></p>
+
+   <form method=post action="">
+	 <ul>
+       {{ render_field(form.extract_footnotes) }}
+       {{ render_field(form.suppress_proofers_notes) }}
+       {{ render_field(form.css_smcap) }}
+	   {{ render_field(form.css, cols="50", rows="10") }}
+	 </ul>
+	 <input type="submit" value="Go">
+   </form>
+
+   {{ diff }}
+
+{% endblock %}

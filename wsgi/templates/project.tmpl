@@ -24,27 +24,22 @@
 
    <p>You can bookmark the URL in your browser or this <a href="">semi permanent URL to this project</a></p>
 
-   <h2 class="sep2 underline">Control</h2>
-   <hr />
-   <ul class="listnone">
-
-	 <li>Upload a file — Only files with the following extension will
-	 be accepted: {{ allowed_ext }}. The file can be a version of the
-	 document in HTML, text (either latin1 or UTF-8) and from the DP
-	 rounds. If a new file has the same name as a previoulsy uploaded
-	 file, it will replace it.</li>
-
-	 <form action="" method="post" enctype="multipart/form-data" class="i4 sep2">
-       <input type="file" name="file" />
-       <input type=submit value=Upload />
-     </form>
-
-   </ul>
-
    <h2 class="sep2">Files</h2>
    <hr />
 
-   <p>The following files have been uploaded:</p>
+   <p>Upload a file — Only files with the following extension will
+	 be accepted: {{ allowed_ext }}. The file can be a version of the
+	 document in HTML, text (either latin1 or UTF-8) and from the DP
+	 rounds. If a new file has the same name as a previoulsy uploaded
+	 file, it will replace it.
+   </p>
+
+   <form action="" method="post" enctype="multipart/form-data" class="i4 sep2">
+     <input type="file" name="file" />
+     <input type=submit value=Upload />
+   </form>
+
+   <p class="sep2">The following files have been uploaded:</p>
    <table class="i4">
 	 <tr>
 	   <th>Filename</th>
@@ -61,6 +56,7 @@
 	   </tr>
 	 {% endfor %}
    </table>
+
 
    <h2 class="sep2">Diffs</h2>
    <hr />

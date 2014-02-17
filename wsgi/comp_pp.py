@@ -354,9 +354,6 @@ class pgdp_file_html(pgdp_file):
                 i:before, cite:before, em:before, abbr:before, dfn:before,
                 i:after, cite:after, em:after, abbr:after, dfn:after      { content: "_"; }
 
-                /* Small caps */
-                .smcap { text-transform:uppercase; }
-
                 /* line breaks with <br /> will be ignored by
                  *  normalize-space(). Add a space in all of them to work
                  *  around. */

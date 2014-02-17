@@ -144,7 +144,7 @@ class DiffForm(Form):
                                      ('U', "uppercase"),
                                      ('L', "lowercase"),
                                      ('T', "title")],
-                            default='n')
+                            default='U')
     css_greek_title_plus = BooleanField("HTML: use greek transliteration in title attribute", [])
     css_add_illustration = BooleanField("HTML: add [Illustration ] tag", [])
     css_no_default = BooleanField("HTML: do not use default transformation CSS", [])

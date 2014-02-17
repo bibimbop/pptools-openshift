@@ -49,12 +49,14 @@
 	 <tr>
 	   <th>Filename</th>
 	   <th>File size</th>
-	   <th>Action</th>
+	   <th>Date</th>
+	   <th>(Action)</th>
 	 </tr>
 	 {% for file in files %}
 	   <tr>
 		 <td>{{ file[0] }}</td>
 		 <td>{{ file[1] }}</td>
+		 <td>{{ file[2] }}</td>
 		 <td>(delete)</td>
 	   </tr>
 	 {% endfor %}

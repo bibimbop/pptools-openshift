@@ -16,6 +16,7 @@
 # GNU General Public License for more details.
 
 import os
+import time
 from flask import Flask, abort, request, redirect, url_for, render_template, send_from_directory
 from werkzeug.utils import secure_filename
 from itertools import combinations
@@ -86,7 +87,7 @@ def project(project_id):
         for filename in os.listdir(files_dir):
 
             st = os.stat(os.path.join(files_dir, filename))
-            files.append([filename, st.st_size])
+            files.append([filename, st.st_size, time.ctime(st.st_mtime)])
 
         # Create all the possible diffs combinations
         filenames = [ x[0] for x in files ]

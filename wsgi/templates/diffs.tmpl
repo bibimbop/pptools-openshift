@@ -33,21 +33,31 @@
    <p>Warning: in this current version, all options and transformational CSS will be lost if you leave the page.</p>
    <p><a href="/project/{{ project_id }}">Back to project page</a></p>
 
-   <div class="acenterdiv">
-   <form method=post action="" class="centerdiv">
+   <p><a href="/static/comp_pp_doc.html" target="_blank">Documentation</a> (will open in a new tab/window)</p>
+
+   <form method=post action="" class="centerdiv diffs">
 	 <table>
 	   <tr>
 		 <td class="border-right">
 		   <ul class="listnone">
 			 {{ render_field(form.extract_footnotes) }}
 			 {{ render_field(form.css_smcap) }}
-			 {{ render_field(form.ignore_format) }}
-			 {{ render_field(form.suppress_footnote_tags) }}
-			 {{ render_field(form.suppress_illustration_tags) }}
 			 {{ render_field(form.with_sidenote_tags) }}
 			 {{ render_field(form.ignore_case) }}
 			 {{ render_field(form.ignore_0_space) }}
 			 {{ render_field(form.suppress_nbsp_num) }}
+			 {{ render_field(form.css_greek_title_plus) }}
+			 {{ render_field(form.css_add_illustration) }}
+			 {{ render_field(form.css_no_default) }}
+
+			 <li class="sep15">Transforming a text file:
+			   <ul>
+				 {{ render_field(form.ignore_format) }}
+				 {{ render_field(form.suppress_footnote_tags) }}
+				 {{ render_field(form.suppress_illustration_tags) }}
+			   </ul>
+			 </li>
+
 			 <li class="sep15">If comparing with a file from the rounds:
 			   <ul>
 				 {{ render_field(form.suppress_proofers_notes) }}
@@ -67,7 +77,6 @@
 	   <input type="submit" value="Update" class="sep2">
 	 </div>
    </form>
-   </div>
 
    <div class="sep2">
 

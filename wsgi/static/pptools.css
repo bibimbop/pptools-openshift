@@ -15,12 +15,11 @@ ul.listnone {list-style-type: none;}
 
 hr.c50 { width: 50%; }
 
-table { border-collapse: collapse; }
-td { padding: 1em; vertical-align:top; }
-.border-right { border-right:thick double gray; }
 
-
-.centerdiv { margin-left: auto;
-			 margin-right: auto;
-			 width: 90%;
-		   }
+.diffs table { border-collapse: collapse; }
+.diffs td { padding: 1em; vertical-align:top; }
+.diffs .border-right { border-right:thick double gray; }
+.diffs .centerdiv { margin-left: auto;
+					margin-right: auto;
+					width: 90%;
+				  }

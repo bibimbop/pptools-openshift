@@ -18,42 +18,73 @@
 {% block title %}PPTools{% endblock %}
 {% block body %}
 
-   <h1>Project {{ project_id }} — <a href="">semi permanent URL</a></h1>
+   <h1 class="center sep2">Project {{ project_id }}</h1>
 
-   <h2>Control</h2>
-   <ul>
-	 <li>Upload a file</li>
+   <p>This is the project's main page. You can upload the various files (html, latin1, utf-8 and from the round here). This page is not permanent. The project will be deleted XX hours after the last upload.</p>
 
-	 <form action="" method="post" enctype="multipart/form-data">
+   <p>You can bookmark the URL in your browser or this <a href="">semi permanent URL to this project</a></p>
+
+   <h2 class="sep2 underline">Control</h2>
+   <hr />
+   <ul class="listnone">
+
+	 <li>Upload a file — Only files with the following extension will
+	 be accepted: {{ allowed_ext }}. The file can be a version of the
+	 document in HTML, text (either latin1 or UTF-8) and from the DP
+	 rounds. If a new file has the same name as a previoulsy uploaded
+	 file, it will replace it.</li>
+
+	 <form action="" method="post" enctype="multipart/form-data" class="i4 sep2">
        <input type="file" name="file" />
        <input type=submit value=Upload />
-	   (Allowed extensions: {{ allowed_ext }} )
      </form>
 
-	 <li>Read-only URL: xxxxxxx</li>
    </ul>
 
-   <h2>Files</h2>
-   <table>
+   <h2 class="sep2">Files</h2>
+   <hr />
+
+   <p>The following files have been uploaded:</p>
+   <table class="i4">
 	 <tr>
 	   <th>Filename</th>
 	   <th>File size</th>
+	   <th>Action</th>
 	 </tr>
 	 {% for file in files %}
 	   <tr>
 		 <td>{{ file[0] }}</td>
 		 <td>{{ file[1] }}</td>
+		 <td>(delete)</td>
 	   </tr>
 	 {% endfor %}
    </table>
 
-   <h2>Diffs</h2>
-   <ul>
+   <h2 class="sep2">Diffs</h2>
+   <hr />
+
+   <p>Once files have been uploaded, a list of combination will
+   appear. Select one. Fix the potential issues, come back and upload
+   the updated versions.</p>
+
+   <ul class="listnone">
 	 {% for combo in combos %}
 	   <li><a href="diffs?f1={{ combo[0] }}&f2={{ combo[1] }}">
 		   {{ combo[0] }} and {{ combo[1] }}</a>
 	   </li>
 	 {% endfor %}
    </ul>
+
+   <h2 class="sep2">Checks</h2>
+   <hr />
+
+   <p>Once files have been uploaded, they can be run through a set of checks. TODO.</p>
+
+
+   <h2 class="sep2">Epubmaker</h2>
+   <hr />
+
+   <p>Run epubmaker on the uploaded fiels. TODO (maybe).</p>
+
 
 {% endblock %}

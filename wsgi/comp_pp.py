@@ -813,20 +813,22 @@ class CompPP(object):
         html_content = "<div>"
 
         if nb_diffs_text == 0:
-            html_content += "<p>There is no diff sections in the main text</p>"
+            html_content += "<p>There is no diff section in the main text.</p>"
         elif nb_diffs_text == 1:
-            html_content += "<p>There is " + str(nb_diffs_text) + " diff sections in the main text</p>"
+            html_content += "<p>There is " + str(nb_diffs_text) + " diff section in the main text.</p>"
         else:
-            html_content += "<p>There are " + str(nb_diffs_text) + " diff sections in the main text</p>"
+            html_content += "<p>There are " + str(nb_diffs_text) + " diff sections in the main text.</p>"
 
         if footnotes:
             html_content += "<p>Footnotes are diff'ed separately <a href='#footnotes'>here</a></p>"
             if nb_diffs_footnotes == 0:
-                html_content += "<p>There is no diff sections in the footnotes</p>"
+                html_content += "<p>There is no diff section in the footnotes.</p>"
             elif nb_diffs_footnotes == 1:
-                html_content += "<p>There is " + str(nb_diffs_footnotes) + " diff sections in the footnotes</p>"
+                html_content += "<p>There is " + str(nb_diffs_footnotes) + " diff section in the footnotes.</p>"
             else:
-                html_content += "<p>There are " + str(nb_diffs_footnotes) + " diff sections in the footnotes</p>"
+                html_content += "<p>There are " + str(nb_diffs_footnotes) + " diff sections in the footnotes.</p>"
+        else:
+            html_content += "<p>There is no footnote.</p>"
 
         if footnotes_errors:
             html_content += "<p>Error with footnotes numbering:</p>"
@@ -835,8 +837,9 @@ class CompPP(object):
                 html_content += "<li>" + err + "</li>"
             html_content += "</ul>"
 
-        html_content += "<h2 class='sep4'>Main text</h2>"
-        html_content += text
+        if nb_diffs_text:
+            html_content += "<h2 class='sep4'>Main text</h2>"
+            html_content += text
 
         if footnotes:
             html_content += "<h2 id='footnotes' class='sep4'>Footnotes</h2>"

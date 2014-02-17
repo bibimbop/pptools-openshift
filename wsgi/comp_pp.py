@@ -812,11 +812,21 @@ class CompPP(object):
 
         html_content = "<div>"
 
-        html_content += "<p>There is " + str(nb_diffs_text) + " diff sections in the main text</p>"
+        if nb_diffs_text == 0:
+            html_content += "<p>There is no diff sections in the main text</p>"
+        elif nb_diffs_text == 1:
+            html_content += "<p>There is " + str(nb_diffs_text) + " diff sections in the main text</p>"
+        else:
+            html_content += "<p>There are " + str(nb_diffs_text) + " diff sections in the main text</p>"
 
         if footnotes:
             html_content += "<p>Footnotes are diff'ed separately <a href='#footnotes'>here</a></p>"
-            html_content += "<p>There is " + str(nb_diffs_footnotes) + " diff sections in the footnotes</p>"
+            if nb_diffs_footnotes == 0:
+                html_content += "<p>There is no diff sections in the footnotes</p>"
+            elif nb_diffs_footnotes == 1:
+                html_content += "<p>There is " + str(nb_diffs_footnotes) + " diff sections in the footnotes</p>"
+            else:
+                html_content += "<p>There are " + str(nb_diffs_footnotes) + " diff sections in the footnotes</p>"
 
         if footnotes_errors:
             html_content += "<p>Error with footnotes numbering:</p>"

@@ -4,6 +4,7 @@ body {
 
 .center { text-align: center; }
 
+.sep15 {margin-top: 1.5em;}
 .sep2 {margin-top: 2em;}
 .sep3 {margin-top: 3em;}
 .sep4 {margin-top: 4em;}
@@ -14,3 +15,12 @@ ul.listnone {list-style-type: none;}
 
 hr.c50 { width: 50%; }
 
+table { border-collapse: collapse; }
+td { padding: 1em; vertical-align:top; }
+.border-right { border-right:thick double gray; }
+
+
+.centerdiv { margin-left: auto;
+			 margin-right: auto;
+			 width: 90%;
+		   }

@@ -30,17 +30,50 @@
 {% block body %}
    <h1>Diff between {{ f1 }} and {{ f2 }}</h1>
 
+   <p>Warning: in this current version, all options and transformational CSS will be lost if you leave the page.</p>
    <p><a href="/project/{{ project_id }}">Back to project page</a></p>
 
-   <form method=post action="">
-	 <ul>
-       {{ render_field(form.extract_footnotes) }}
-       {{ render_field(form.suppress_proofers_notes) }}
-       {{ render_field(form.css_smcap) }}
-	   {{ render_field(form.css, cols="50", rows="10") }}
-	 </ul>
-	 <input type="submit" value="Go">
+   <div class="acenterdiv">
+   <form method=post action="" class="centerdiv">
+	 <table>
+	   <tr>
+		 <td class="border-right">
+		   <ul class="listnone">
+			 {{ render_field(form.extract_footnotes) }}
+			 {{ render_field(form.css_smcap) }}
+			 {{ render_field(form.ignore_format) }}
+			 {{ render_field(form.suppress_footnote_tags) }}
+			 {{ render_field(form.suppress_illustration_tags) }}
+			 {{ render_field(form.with_sidenote_tags) }}
+			 {{ render_field(form.ignore_case) }}
+			 {{ render_field(form.ignore_0_space) }}
+			 {{ render_field(form.suppress_nbsp_num) }}
+			 <li class="sep15">If comparing with a file from the rounds:
+			   <ul>
+				 {{ render_field(form.suppress_proofers_notes) }}
+				 {{ render_field(form.regroup_split_words) }}
+			   </ul>
+			 </li>
+		   </ul>
+		 </td>
+		 <td>
+		   <p>HTML: Transformation CSS</p>
+		   {{ form.css(cols="60", rows="12")|safe }}
+
+		 </td>
+	   </tr>
+	 </table>
+	 <div class="center">
+	   <input type="submit" value="Update" class="sep2">
+	 </div>
    </form>
+   </div>
+
+   <div class="sep2">
+
+   {{ usage }}
+
+   <div class="sep2">
 
    {{ diff }}
 

@@ -24,7 +24,7 @@ from wtforms import Form, BooleanField, TextField, validators, StringField, Text
 
 import sys
 sys.path.append("../pptools")
-from comp_pp import diff_css, CompPP
+from comp_pp import diff_css, CompPP, html_usage
 
 app = Flask(__name__)
 app.debug = True
@@ -118,6 +118,16 @@ def project(project_id):
 class DiffForm(Form):
     extract_footnotes = BooleanField('Extract and process footnotes separately', [])
     suppress_proofers_notes = BooleanField('In Px/Fx versions, remove [**proofreaders notes]', [])
+    ignore_format = BooleanField('Silence formating differences', [])
+    suppress_footnote_tags = BooleanField('Suppress [Footnote: tags, but keep number and text', [])
+    suppress_illustration_tags = BooleanField('Suppress [Illustration: tags', [])
+    with_sidenote_tags = BooleanField("HTML: add [Sidenote: ...]", [])
+    ignore_case = BooleanField('Ignore case when comparing', [])
+    extract_footnotes = BooleanField('Extract and process footnotes separately', [])
+    ignore_0_space = BooleanField('HTML: suppress zero width space (U+200b, [])', [])
+    suppress_nbsp_num = BooleanField("Suppress non-breakable spaces between numbers", [])
+    regroup_split_words = BooleanField("In Px/Fx versions, regroup split wo-* *rds", [])
+
     css = TextAreaField('HTML: Transformation CSS',
                         default="""
 /* Add brackets around footnote anchor */
@@ -135,6 +145,18 @@ class DiffForm(Form):
                                      ('L', "lowercase"),
                                      ('T', "title")],
                             default='n')
+    css_greek_title_plus = BooleanField("HTML: use greek transliteration in title attribute", [])
+    css_add_illustration = BooleanField("HTML: add [Illustration ] tag", [])
+    css_no_default = BooleanField("HTML: do not use default transformation CSS", [])
+
+#    css-bold', type=str, default=None,"HTML: Surround bold strings with this string", [])
+
+
+
+
+
+
+
 
 
 @app.route('/project/<project_id>/diffs', methods=['GET', 'POST'])
@@ -169,37 +191,36 @@ def diffs(project_id):
     args.extract_footnotes = form.extract_footnotes.data
     args.css_smcap = form.css_smcap.data
     args.css = form.css.data
+    args.extract_footnotes = form.extract_footnotes.data
+    args.suppress_proofers_notes = form.suppress_proofers_notes.data
+    args.ignore_format = form.ignore_format.data
+    args.suppress_footnote_tags = form.suppress_footnote_tags.data
+    args.suppress_illustration_tags = form.suppress_illustration_tags.data
+    args.with_sidenote_tags = form.with_sidenote_tags.data
+    args.ignore_case = form.ignore_case.data
+    args.ignore_0_space = form.ignore_0_space.data
+    args.suppress_nbsp_num = form.suppress_nbsp_num.data
+    args.regroup_split_words = form.regroup_split_words.data
+    args.css_greek_title_plus = form.css_greek_title_plus.data
+    args.css_add_illustration = form.css_add_illustration.data
+    args.css_no_default = form.css_no_default.data
 
     # Default value - not in form yet
-    args.ignore_format = False
-    args.suppress_footnote_tags = False
-    args.suppress_illustration_tags = False
-    args.with_sidenote_tags = False
-    args.ignore_case = False
-    args.extract_footnotes = False
-    args.ignore_0_space = False
-    args.suppress_nbsp_num = False
     args.css_bold = None
-    args.suppress_proofers_notes = False
-    args.regroup_split_words = False
-    args.css_greek_title_plus = False
-    args.css_add_illustration = False
-    args.css_no_default = False
-    args.without_html_header = False
-
-
-
-
 
     # Do diff
     x = CompPP(args)
     html_content, fn1, fn2 = x.do_process()
 
+    f1=os.path.basename(f1)
+    f2=os.path.basename(f2)
+
     return render_template('diffs.tmpl',
                            project_id=project_id,
-                           f1=os.path.basename(f1),
-                           f2=os.path.basename(f2),
+                           f1=f1,
+                           f2=f2,
                            diff=html_content,
+                           usage=html_usage(f1, f2),
                            css=diff_css(),
                            form=form)
 

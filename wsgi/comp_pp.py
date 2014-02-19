@@ -59,7 +59,7 @@ def clear_element(element):
 
     We can't properly remove an XML element while traversing the
     tree. But we can clean it. Remove its text and children. However
-    the tail must be preserved because it belong to the next element,
+    the tail must be preserved because it belongs to the next element,
     so re-attach."""
     tail = element.tail
     element.clear()
@@ -291,17 +291,15 @@ class pgdp_file_text(pgdp_file):
 
             if line.endswith((".]", "]]", "»]", " ]", ")]", "_]", "-]", "—]")) and in_fnote:
                 cur_fnote[1] += "\n" + line
+                text.append("")
                 self.footnotes.append(cur_fnote)
-
                 in_fnote = False
                 continue
 
             # Check for new footnote
             m = re.match("(\s*)\[([\w-]+)\](.*)", line)
-            # m = re.match("(\s*)\[Footnote (\d+): (.*)", line)
             if not m:
                 m = re.match("(\s*)\[Note (\d+): (.*)", line)
-            #m = re.match("(\s*)\[(\d+): (.*)", line)
 
             if m and (m.group(2) == 'Illustration' or m.group(2) == "Décoration"):
                 # An illustration, possibly inside a footnote. Treat
@@ -314,6 +312,7 @@ class pgdp_file_text(pgdp_file):
                 if in_fnote:
                     # New footnote - Append current one to footnotes
                     self.footnotes.append(cur_fnote)
+                    text.append("")
 
                 in_fnote = True
                 cur_fnote = [ m.group(2), m.group(3) ]
@@ -322,8 +321,6 @@ class pgdp_file_text(pgdp_file):
                 if line.endswith((".]", "]]", "»]", " ]", ")]", "_]", "-]", "—]")) and in_fnote:
                     self.footnotes.append(cur_fnote)
                     in_fnote = False
-                    continue
-
 
                 continue
 
@@ -338,12 +335,16 @@ class pgdp_file_text(pgdp_file):
                     #  -> end of footnote
                     in_fnote = False
 
+                    if blanc_prev:
+                        text.append("")
+
                     # Append to footnotes
                     self.footnotes.append(cur_fnote)
 
                 else:
                     # still in footnote
                     cur_fnote[1] += "\n" + line
+                    text.append("")
                     continue
 
 

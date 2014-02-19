@@ -128,9 +128,18 @@ class pgdp_file_text(pgdp_file):
     def convert(self):
         """Remove markers from the text."""
 
+        if self.args.txt_cleanup_type == "n":
+            return
+
         if self.from_pgdp_rounds:
+
             # Px or Fx From PGDP
             self.text = re.sub(r"-----File: \w+.png.*", '', self.text)
+
+            if self.args.txt_cleanup_type == "p":
+                # Proofers only. Done.
+                return
+
             self.text = self.text.replace("\n/*\n", '\n\n')
             self.text = self.text.replace("\n*/\n", '\n\n')
             self.text = self.text.replace("\n/#\n", '\n\n')
@@ -142,6 +151,7 @@ class pgdp_file_text(pgdp_file):
                 tmp = ''
             else:
                 tmp = '_'
+
             self.text = self.text.replace("<i>", tmp)
             self.text = self.text.replace("</i>", tmp)
 
@@ -164,6 +174,10 @@ class pgdp_file_text(pgdp_file):
                 self.text = re.sub(r"(\w+)-\*(\n+)\*", r'\2\1', self.text)
 
         else:
+            if self.args.txt_cleanup_type == "p":
+                # Proofers only. None here. Bail.
+                return
+
             # Horizontal separation
             self.text = self.text.replace("*       *       *       *       *", "")
             self.text = self.text.replace("*     *     *     *     *", "")
@@ -1149,7 +1163,8 @@ def main():
                         help="HTML: do not use default transformation CSS")
     parser.add_argument('--without-html-header', action='store_true', default=False,
                         help="HTML: do not output html header and footer")
-
+    parser.add_argument('--txt-cleanup-type', type=str, default='b',
+                        help="TXT: Type of text cleaning -- (b)est effort, (n)one, (p)roofers")
 
     args = parser.parse_args()
 

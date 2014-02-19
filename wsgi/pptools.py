@@ -157,6 +157,12 @@ class DiffForm(Form):
     css_add_illustration = BooleanField("HTML: add [Illustration ] tag", [])
     css_no_default = BooleanField("HTML: do not use default transformation CSS", [])
 
+    txt_cleanup_type = SelectField('Type of text cleaning',
+                                   choices=[('n', "none"),
+                                            ('p', "proofers only"),
+                                            ('b', "best effort")],
+                                   default='b')
+
 #    css-bold', type=str, default=None,"HTML: Surround bold strings with this string", [])
 
 
@@ -212,6 +218,7 @@ def diffs(project_id):
     args.css_greek_title_plus = form.css_greek_title_plus.data
     args.css_add_illustration = form.css_add_illustration.data
     args.css_no_default = form.css_no_default.data
+    args.txt_cleanup_type = form.txt_cleanup_type.data
 
     # Default value - not in form yet
     args.css_bold = None

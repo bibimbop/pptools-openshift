@@ -33,6 +33,27 @@ import cssselect
 
 from helpers import sourcefile
 
+DEFAULT_TRANSFORM_CSS =  '''
+                i:before, cite:before, em:before, abbr:before, dfn:before,
+                i:after, cite:after, em:after, abbr:after, dfn:after      { content: "_"; }
+
+                /* line breaks with <br /> will be ignored by
+                 *  normalize-space(). Add a space in all of them to work
+                 *  around. */
+                br:before { content: " "; }
+
+                /* Add spaces around td tags. */
+                td:after, td:after { content: " "; }
+
+                /* Remove page numbers. It seems every PP has a different way. */
+                span[class^="pagenum"] { display: none }
+                p[class^="pagenum"] { display: none }
+                p[class^="page"] { display: none }
+                span[class^="pgnum"] { display: none }
+                div[id^="Page_"] { display: none }
+                div[class^="pagenum"] { display: none }
+            '''
+
 def clear_element(element):
     """In an XHTML tree, remove all sub-elements of a given element.
 
@@ -363,6 +384,7 @@ class pgdp_file_html(pgdp_file):
         self.mycss = ""
         self.char_text = None
 
+
     def load(self, filename):
         """Load the file"""
         self.myfile.load_xhtml(filename)
@@ -370,31 +392,8 @@ class pgdp_file_html(pgdp_file):
 
     def process_args(self, args):
         # Load default CSS for transformations
-        if args.css_no_default == False:
-            self.mycss = '''
-                i:before, cite:before, em:before, abbr:before, dfn:before,
-                i:after, cite:after, em:after, abbr:after, dfn:after      { content: "_"; }
-
-                /* line breaks with <br /> will be ignored by
-                 *  normalize-space(). Add a space in all of them to work
-                 *  around. */
-                br:before { content: " "; }
-
-                /* Remove nbsp within numbers. eg 20&nbsp000 becomes 20000.
-                body * { _replace_regex: "(\\d)\\u00A0(\\d)" "\\1\\2" }*/
-
-                /* Add spaces around td tags. */
-                td:after, td:after { content: " "; }
-
-                /* Remove page numbers. It seems every PP has a different way. */
-                span[class^="pagenum"] { display: none }
-                p[class^="pagenum"] { display: none }
-                p[class^="page"] { display: none }
-                span[class^="pgnum"] { display: none }
-                div[id^="Page_"] { display: none }
-                div[class^="pagenum"] { display: none }
-
-            '''
+        if args.css_no_default is False:
+            self.mycss = DEFAULT_TRANSFORM_CSS
 
         # Process command line arguments
         if self.args.css_smcap == 'U':

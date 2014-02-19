@@ -25,7 +25,7 @@ from wtforms import Form, BooleanField, TextField, validators, StringField, Text
 
 import sys
 sys.path.append("../pptools")
-from comp_pp import diff_css, CompPP, html_usage
+from comp_pp import diff_css, CompPP, html_usage, DEFAULT_TRANSFORM_CSS
 
 app = Flask(__name__)
 app.debug = True
@@ -61,6 +61,12 @@ def check_project_id(project_id):
         return False
 
     return True
+
+
+@app.route('/comp_pp/diff-default-css.txt')
+def send_diff_default_css():
+    # Kind of a hack. */
+    return "<html><pre>" + DEFAULT_TRANSFORM_CSS.replace("<br />", "&ltbr /&gt") + "</pre></html>"
 
 
 @app.route('/static/<filename>')
@@ -122,7 +128,6 @@ def project(project_id):
         return redirect(url_for('project', project_id=project_id))
 
 
-
 class DiffForm(Form):
     extract_footnotes = BooleanField('Extract and process footnotes separately', [])
     suppress_proofers_notes = BooleanField('In Px/Fx versions, remove [**proofreaders notes]', [])
@@ -164,13 +169,6 @@ class DiffForm(Form):
                                    default='b')
 
 #    css-bold', type=str, default=None,"HTML: Surround bold strings with this string", [])
-
-
-
-
-
-
-
 
 
 @app.route('/project/<project_id>/diffs', methods=['GET', 'POST'])

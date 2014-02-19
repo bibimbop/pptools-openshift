@@ -89,6 +89,13 @@ def project(project_id):
             st = os.stat(os.path.join(files_dir, filename))
             files.append([filename, st.st_size, time.ctime(st.st_mtime)])
 
+        # Sort by names first, then by reversed extension to put txt
+        # befor html. Note that since sorting is stable since python
+        # 2.2, the sorting by names is not lost during the second
+        # sort.
+        files.sort(key=lambda x: os.path.splitext(x[0])[0])
+        files.sort(key=lambda x: os.path.splitext(x[0])[1], reverse=True)
+
         # Create all the possible diffs combinations
         filenames = [ x[0] for x in files ]
         combos = combinations(filenames, 2)

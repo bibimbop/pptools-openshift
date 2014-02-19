@@ -148,24 +148,26 @@ class pgdp_file_text(pgdp_file):
             self.text = self.text.replace("\nP/\n", '\n\n')
 
             if self.args.ignore_format:
-                tmp = ''
+                self.text = self.text.replace("<i>", "")
+                self.text = self.text.replace("</i>", "")
             else:
-                tmp = '_'
-
-            self.text = self.text.replace("<i>", tmp)
-            self.text = self.text.replace("</i>", tmp)
+                self.text = self.text.replace("<i>", "_")
+                self.text = self.text.replace("</i>", "_")
 
             self.text = re.sub("<.*?>", '', self.text)
             self.text = re.sub("</.*?>", '', self.text)
             self.text = re.sub("\[Blank Page\]", '', self.text)
 
-            if self.args.suppress_footnote_tags:
+            if self.args.ignore_format or self.args.suppress_footnote_tags:
                 self.text = re.sub(r"\[Footnote (\d+): ", r'\1 ', self.text)
                 self.text = re.sub(r"\*\[Footnote: ", '', self.text)
 
-            if self.args.suppress_illustration_tags:
+            if self.args.ignore_format or self.args.suppress_illustration_tags:
                 self.text = re.sub(r"\[Illustrations?:([^]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
                 self.text = re.sub(r"\[Illustration\]", '', self.text)
+
+            if self.args.ignore_format: #or self.args.suppress_sidenote_tags:
+                self.text = re.sub(r"\[Sidenote:([^]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
 
             if self.args.suppress_proofers_notes:
                 self.text = re.sub(r"\[\*\*[^]]*?\]", '', self.text)
@@ -1132,9 +1134,9 @@ def main():
     parser.add_argument('--ignore-format', action='store_true', default=False,
                         help='Silence formating differences')
     parser.add_argument('--suppress-footnote-tags', action='store_true', default=False,
-                        help='Suppress [Footnote ?: tags, but keep number and text')
+                        help='Suppress "[Footnote ?:" marks')
     parser.add_argument('--suppress-illustration-tags', action='store_true', default=False,
-                        help='Suppress [Illustration: tags')
+                        help='Suppress "[Illustration:" marks')
     parser.add_argument('--with-sidenote-tags', action='store_true', default=False,
                         help="HTML: add [Sidenote: ...]")
     parser.add_argument('--ignore-case', action='store_true', default=False,

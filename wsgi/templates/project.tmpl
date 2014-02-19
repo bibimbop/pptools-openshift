@@ -65,13 +65,23 @@
    appear. Select one. Fix the potential issues, come back and upload
    the updated versions.</p>
 
-   <ul class="listnone">
+   <table class="i4">
+	 <tr>
+	   <th>File 1</th>
+	   <th>File 2</th>
+	   <th></th>
+	   <th></th>
+	 </tr>
 	 {% for combo in combos %}
-	   <li><a href="diffs?f1={{ combo[0] }}&f2={{ combo[1] }}">
-		   {{ combo[0] }} and {{ combo[1] }}</a>
-	   </li>
+	   <tr>
+		 <td>{{ combo[0] }}</td>
+		 <td>{{ combo[1] }}</td>
+		 <td><a href="diffs?f1={{ combo[0] }}&f2={{ combo[1] }}">compare 1 & 2</td>
+		 <td><a href="diffs?f1={{ combo[1] }}&f2={{ combo[0] }}">compare 2 & 1</td>
+	   </tr>
 	 {% endfor %}
-   </ul>
+   </table>
+
 
    <h2 class="sep2">Checks</h2>
    <hr />

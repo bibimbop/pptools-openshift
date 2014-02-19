@@ -174,11 +174,16 @@ class pgdp_file_text(pgdp_file):
 
             if self.args.regroup_split_words:
                 self.text = re.sub(r"(\w+)-\*(\n+)\*", r'\2\1', self.text)
+                self.text = re.sub(r"(\w+)-\*_(\n\n)_\*", r"\2\1", self.text)
+                self.text = re.sub(r"(\w+)-\*(\w+)", r"\1\2", self.text)
 
         else:
             if self.args.txt_cleanup_type == "p":
                 # Proofers only. None here. Bail.
                 return
+
+            if self.args.ignore_format:
+                self.text = self.text.replace("_", "")
 
             # Horizontal separation
             self.text = self.text.replace("*       *       *       *       *", "")

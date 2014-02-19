@@ -129,14 +129,14 @@ class DiffForm(Form):
     ignore_format = BooleanField('Silence formating differences', [])
     suppress_footnote_tags = BooleanField('Suppress "[Footnote:" marks', [])
     suppress_illustration_tags = BooleanField('Suppress "[Illustration:" marks', [])
-    with_sidenote_tags = BooleanField("HTML: add [Sidenote: ...]", [])
+    with_sidenote_tags = BooleanField("Add [Sidenote: ...]", [])
     ignore_case = BooleanField('Ignore case when comparing', [])
     extract_footnotes = BooleanField('Extract and process footnotes separately', [])
-    ignore_0_space = BooleanField('HTML: suppress zero width space (U+200b, [])', [])
-    suppress_nbsp_num = BooleanField("Suppress non-breakable spaces between numbers", [])
+    ignore_0_space = BooleanField('Suppress zero width space (U+200B)', [])
+    suppress_nbsp_num = BooleanField("Suppress non-breakable spaces (U+00A0) between numbers", [])
     regroup_split_words = BooleanField("In Px/Fx versions, regroup split wo-* *rds", [])
 
-    css = TextAreaField('HTML: Transformation CSS',
+    css = TextAreaField('Transformation CSS',
                         default="""
 /* Add brackets around footnote anchor */
 /*   .fnanchor:before { content: "["; }
@@ -147,15 +147,15 @@ class DiffForm(Form):
      div.sidenote:after { content: "]"; }' */
 """
 )
-    css_smcap = SelectField('HTML: Transform small caps',
+    css_smcap = SelectField('Transform small caps',
                             choices=[('n', "(no change)"),
                                      ('U', "uppercase"),
                                      ('L', "lowercase"),
                                      ('T', "title")],
                             default='U')
-    css_greek_title_plus = BooleanField("HTML: use greek transliteration in title attribute", [])
-    css_add_illustration = BooleanField("HTML: add [Illustration ] tag", [])
-    css_no_default = BooleanField("HTML: do not use default transformation CSS", [])
+    css_greek_title_plus = BooleanField("Use greek transliteration in title attribute", [])
+    css_add_illustration = BooleanField("Add [Illustration ] tag", [])
+    css_no_default = BooleanField("Do not use default transformation CSS", [])
 
     txt_cleanup_type = SelectField('Type of text cleaning',
                                    choices=[('n', "none"),

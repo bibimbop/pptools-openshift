@@ -86,11 +86,17 @@
 	 </div>
    </form>
 
-   <div class="sep2">
+   {% if err_message %}
+	 <div class="sep2" />
+	   <pre>{{ err_message }}</pre>
+	 </div>
+   {% endif %}
+
+   <div class="sep2" />
 
    {{ usage }}
 
-   <div class="sep2">
+   <div class="sep2" />
 
    {{ diff }}
 

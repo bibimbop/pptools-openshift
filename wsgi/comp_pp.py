@@ -571,7 +571,25 @@ class pgdp_file_html(pgdp_file):
                        # if f_replace_regex and element.text:
                        #     element.text = f_replace_regex(element.text)
 
-        return
+
+        css_errors = ""
+        if stylesheet.errors:
+            # There is transformation CSS errors. If the default css
+            # is included, take the offset into account.
+            i = 0
+            if self.args.css_no_default is False:
+                i = DEFAULT_TRANSFORM_CSS.count('\n')
+            print (stylesheet.errors)
+            css_errors = "<div class='error-border bbox'><p>Error(s) in the transformation CSS:</p><ul>"
+            for err in stylesheet.errors:
+                css_errors += "<li>{0},{1}: {2}</li>".format(err.line-i, err.column, err.reason)
+            css_errors += "</ul>"
+
+        return css_errors
+
+
+
+
 
         # Transform footnote anchors to [..]
         find = etree.XPath("//a")
@@ -730,7 +748,7 @@ class CompPP(object):
         return words
 
 
-    def compare_texts(self, text1, text2):
+    def compare_texts(self, text1, text2, debug=False):
         # Compare two sources
         # We could have used the difflib module, but it's too slow:
         #    for line in difflib.unified_diff(f1.words, f2.words):
@@ -738,12 +756,13 @@ class CompPP(object):
         # Use diff instead.
 
         # Some debug code
-        #f = open("/tmp/text1", "wb")
-        #f.write(text1.encode('utf-8'))
-        #f.close()
-        #f = open("/tmp/text2", "wb")
-        #f.write(text2.encode('utf-8'))
-        #f.close()
+        if False and debug:
+            f = open("/tmp/text1", "wb")
+            f.write(text1.encode('utf-8'))
+            f.close()
+            f = open("/tmp/text2", "wb")
+            f.write(text2.encode('utf-8'))
+            f.close()
 
         with tempfile.NamedTemporaryFile(mode='wb') as t1, tempfile.NamedTemporaryFile(mode='wb') as t2:
 
@@ -990,9 +1009,11 @@ class CompPP(object):
                 if f.myfile.encoding != "latin1":
                     f.convert_to_latin1 = True
 
+        err_message = ""
+
         # Apply the various convertions
         for f in files:
-            f.convert()
+            err_message += f.convert() or ""
 
         # Extract footnotes
         if self.args.extract_footnotes:
@@ -1034,7 +1055,7 @@ class CompPP(object):
 
         html_content = self.create_html(files, main_diff, fnotes_diff, fnotes_errors)
 
-        return html_content, files[0].myfile.basename, files[1].myfile.basename
+        return err_message, html_content, files[0].myfile.basename, files[1].myfile.basename
 
 ######################################
 
@@ -1078,6 +1099,8 @@ hr:before {
   counter-increment: diff; /* inc the diff counter ... */
   content: "Diff " counter(diff) ": "; /* ... and display it */
 }
+
+.error-border { border-style:double; border-color:red; border-width:15px; }
 """
 
 # Describe how to use the diffs

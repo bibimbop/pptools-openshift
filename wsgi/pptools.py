@@ -223,7 +223,7 @@ def diffs(project_id):
 
     # Do diff
     x = CompPP(args)
-    html_content, fn1, fn2 = x.do_process()
+    err_message, html_content, fn1, fn2 = x.do_process()
 
     f1=os.path.basename(f1)
     f2=os.path.basename(f2)
@@ -232,6 +232,7 @@ def diffs(project_id):
                            project_id=project_id,
                            f1=f1,
                            f2=f2,
+                           err_message=err_message,
                            diff=html_content,
                            usage=html_usage(f1, f2),
                            css=diff_css(),

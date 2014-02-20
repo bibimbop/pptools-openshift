@@ -142,11 +142,8 @@ class SourceFile(object):
             return
 
         # Find the namespace - HOW ?
-        #self.xmlns = "{http://www.w3.org/XML/1998/namespace}"
-#        print(self.tree.getroot())
-#        print(self.tree.getroot().attrib)
-#        print(self.tree.docinfo.doctype)
-        xmlns = self.tree.getroot().attrib.get('xmlns', None)
+        # self.tree.getroot().nsmap -> {None: 'http://www.w3.org/1999/xhtml'}
+        xmlns = self.tree.getroot().nsmap.get(None, None)
         if xmlns:
             self.xmlns = '{' + xmlns + '}'
         else:

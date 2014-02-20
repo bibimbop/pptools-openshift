@@ -867,7 +867,8 @@ class CompPP(object):
             else:
                 html_content += "<p>There are " + str(nb_diffs_footnotes) + " diff sections in the footnotes.</p>"
         else:
-            html_content += "<p>There is no footnote.</p>"
+            if self.args.extract_footnotes:
+                html_content += "<p>There is no diff section in the footnote.</p>"
 
         if footnotes_errors:
             html_content += "<p>Error with footnotes numbering:</p>"

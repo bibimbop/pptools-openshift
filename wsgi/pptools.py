@@ -53,14 +53,18 @@ def create_new_project():
 
 
 def check_project_id(project_id):
-    # Validate the project id
+    # Validate the project id, and return its directory
     if len(project_id) != 16:
-        return False
+        return None
 
     if len(set(project_id)-hexnumbers):
-        return False
+        return None
 
-    return True
+    project_dir = os.path.join(os.environ.get('OPENSHIFT_DATA_DIR', ''), "projects", project_id)
+    if not os.path.isdir(project_dir):
+        return None
+
+    return project_dir
 
 
 @app.route('/comp_pp/diff-default-css.txt')
@@ -71,18 +75,38 @@ def send_diff_default_css():
 
 @app.route('/static/<filename>')
 def send_foo(filename):
+    # Send back a static file
     return send_from_directory('static', secure_filename(filename))
+
+
+@app.route('/project/<project_id>/delete', methods=['GET'])
+def del_file(project_id):
+    # Display the project page
+    project_dir = check_project_id(project_id)
+    if project_dir is None:
+        abort(404)
+
+    files_dir = os.path.join(project_dir, "files")
+
+    # We don't really need to check, but ...
+    myfile = os.path.join(files_dir, secure_filename(request.args.get('file', '')))
+    if not os.path.isfile(os.path.join(myfile)):
+        abort(404)
+
+    # Remove the file
+    os.unlink(myfile)
+
+    # Reload the project page
+    return redirect(url_for('project', project_id=project_id))
+
 
 
 @app.route('/project/<project_id>/', methods=['GET', 'POST'])
 def project(project_id):
     # Display the project page
 
-    if not check_project_id(project_id):
-        abort(404)
-
-    project_dir = os.path.join(os.environ.get('OPENSHIFT_DATA_DIR', ''), "projects", project_id)
-    if not os.path.isdir(project_dir):
+    project_dir = check_project_id(project_id)
+    if project_dir is None:
         abort(404)
 
     if request.method == 'GET':
@@ -113,6 +137,9 @@ def project(project_id):
                                combos=combos)
 
     elif request.method == 'POST':
+
+        print(request)
+
         # Posting a new file
         upfile = request.files['file']
 
@@ -175,11 +202,8 @@ class DiffForm(Form):
 def diffs(project_id):
 
     # Validate input
-    if not check_project_id(project_id):
-        abort(404)
-
-    project_dir = os.path.join(os.environ.get('OPENSHIFT_DATA_DIR', ''), "projects", project_id)
-    if not os.path.isdir(project_dir):
+    project_dir = check_project_id(project_id)
+    if project_dir is None:
         abort(404)
 
     files_dir = os.path.join(project_dir, "files")

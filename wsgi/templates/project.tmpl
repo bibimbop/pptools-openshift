@@ -45,14 +45,18 @@
 	   <th>Filename</th>
 	   <th>File size</th>
 	   <th>Date</th>
-	   <th>(Action)</th>
+	   <th>Action</th>
 	 </tr>
 	 {% for file in files %}
 	   <tr>
 		 <td>{{ file[0] }}</td>
 		 <td>{{ file[1] }}</td>
 		 <td>{{ file[2] }}</td>
-		 <td>(delete)</td>
+		 <td>
+		   <form name="deleteSomething" action="delete">
+			 <button type="submit" name="file" value="{{ file[0] }}">delete</button>
+		   </form>
+		 </td>
 	   </tr>
 	 {% endfor %}
    </table>

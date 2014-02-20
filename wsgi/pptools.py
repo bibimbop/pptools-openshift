@@ -263,7 +263,7 @@ def diffs(project_id):
                            form=form)
 
 # Main page
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/", methods=['GET', 'POST', 'HEAD'])
 def main_page():
     if request.method == 'GET':
         return render_template('main_page.tmpl')
@@ -272,6 +272,8 @@ def main_page():
         project_id = create_new_project()
         return redirect(url_for('project', project_id=project_id))
 
+    elif request.method == 'HEAD':
+        return ""
 
 
 

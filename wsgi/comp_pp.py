@@ -814,10 +814,10 @@ class CompPP(object):
             text = text.replace("<", "&lt;")
             text = text.replace(">", "&gt;")
 
-            text = text.replace("]COMPPP_START_DEL[", "<span class='start_del'>")
-            text = text.replace("]COMPPP_STOP_DEL[", "</span>")
-            text = text.replace("]COMPPP_START_INS[", "<span class='start_ins'>")
-            text = text.replace("]COMPPP_STOP_INS[", "</span>")
+            text = text.replace("]COMPPP_START_DEL[", "<del>")
+            text = text.replace("]COMPPP_STOP_DEL[", "</del>")
+            text = text.replace("]COMPPP_START_INS[", "<ins>")
+            text = text.replace("]COMPPP_STOP_INS[", "</ins>")
 
             if text:
                 text = "<hr /><pre>\n" + text
@@ -1068,13 +1068,15 @@ body {
     margin-right: 5%;
 }
 
-.start_del {
+del {
+    text-decoration: none;
     border: 1px solid black;
     color: #700000 ;
     background-color: #f4f4f4;
     font-size: larger;
 }
-.start_ins {
+ins {
+    text-decoration: none;
     border: 1px solid black;
     color: green;
     background-color: #f4f4f4;

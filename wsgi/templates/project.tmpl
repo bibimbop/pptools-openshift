@@ -35,8 +35,10 @@
    </p>
 
    <form action="" method="post" enctype="multipart/form-data" class="i4 sep2">
-     <input type="file" name="file" />
-     <input type=submit value=Upload />
+	 <div>
+       <input type="file" name="file" />
+       <input type="submit" value="Upload" />
+	 </div>
    </form>
 
    <p class="sep2">The following files have been uploaded:</p>
@@ -53,8 +55,10 @@
 		 <td>{{ file[1] }}</td>
 		 <td>{{ file[2] }}</td>
 		 <td>
-		   <form name="deleteSomething" action="delete">
-			 <button type="submit" name="file" value="{{ file[0] }}">delete</button>
+		   <form name="delete" action="delete">
+			 <div>
+			   <button type="submit" name="file" value="{{ file[0] }}">delete</button>
+			 </div>
 		   </form>
 		 </td>
 	   </tr>

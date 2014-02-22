@@ -27,6 +27,9 @@ import sys
 sys.path.append("../pptools")
 from comp_pp import diff_css, CompPP, html_usage, DEFAULT_TRANSFORM_CSS
 
+import helpers.sourcefile as sourcefile
+import kppvh
+
 app = Flask(__name__)
 app.debug = True
 
@@ -90,7 +93,7 @@ def del_file(project_id):
 
     # We don't really need to check, but ...
     myfile = os.path.join(files_dir, secure_filename(request.args.get('file', '')))
-    if not os.path.isfile(os.path.join(myfile)):
+    if not os.path.isfile(myfile):
         abort(404)
 
     # Remove the file
@@ -209,7 +212,7 @@ def diffs(project_id):
     files_dir = os.path.join(project_dir, "files")
 
     f1 = os.path.join(files_dir, secure_filename(request.args.get('f1', '')))
-    if not os.path.isfile(os.path.join(f1)):
+    if not os.path.isfile(f1):
         abort(404)
 
     f2 = os.path.join(files_dir, secure_filename(request.args.get('f2', '')))
@@ -261,6 +264,26 @@ def diffs(project_id):
                            usage=html_usage(f1, f2),
                            css=diff_css(),
                            form=form)
+
+
+@app.route('/project/<project_id>/checks', methods=['GET'])
+def checks(project_id):
+
+    # Validate input
+    project_dir = check_project_id(project_id)
+    if project_dir is None:
+        abort(404)
+
+    files_dir = os.path.join(project_dir, "files")
+    filename = secure_filename(request.args.get('file', ''))
+    f1 = os.path.join(files_dir, filename)
+    if not os.path.isfile(f1):
+        abort(404)
+
+    kppv = kppvh.Kppvh()
+
+    return kppv.process(project_id, f1)
+
 
 # Main page
 @app.route("/", methods=['GET', 'POST', 'HEAD'])

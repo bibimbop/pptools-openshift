@@ -955,7 +955,7 @@ class CompPP(object):
         for i, fname in enumerate(self.args.filename):
 
             # Look for file type.
-            if fname.endswith(('.html', '.htm')):
+            if fname.lower().endswith(('.html', '.htm')):
                 files[i] = pgdp_file_html(self.args)
             else:
                 files[i] = pgdp_file_text(self.args)

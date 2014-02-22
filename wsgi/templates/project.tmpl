@@ -25,7 +25,6 @@
    <p>You can bookmark the URL in your browser or this <a href="">semi permanent URL to this project</a></p>
 
    <h2 class="sep2">Files</h2>
-   <hr />
 
    <p>Upload a file — Only files with the following extension will
 	 be accepted: {{ allowed_ext }}. The file can be a version of the
@@ -67,11 +66,10 @@
 
 
    <h2 class="sep2">Diffs</h2>
-   <hr />
 
-   <p>Once files have been uploaded, a list of combinations will
-   appear. Select one. Fix the potential issues, come back and upload
-   the updated versions.</p>
+   <p>Once 2 or more files have been uploaded, a list of combinations
+   will appear. Select one. Fix the potential issues, come back and
+   upload the updated versions.</p>
 
    <table class="i4">
 	 <tr>
@@ -91,14 +89,20 @@
    </table>
 
 
-   <h2 class="sep2">Checks</h2>
-   <hr />
+   <h2 class="sep2">Checks [BETA]</h2>
 
-   <p>Once files have been uploaded, they can be run through a set of checks. TODO.</p>
+   <p>Once files have been uploaded, they can be run through a set of
+   checks. A lot of the output is informational but can still help
+   catch errors. This is similar to existing tools such as pphtml and
+   pptxt.</p>
 
+   {% for file in files %}
+	 <ul class="listnone">
+	   <li>check <a href="checks?file={{ file[0] }}">{{ file[0] }}</a></li>
+	 </ul>
+   {% endfor %}
 
    <h2 class="sep2">Epubmaker</h2>
-   <hr />
 
    <p>Run epubmaker on the uploaded files. TODO (maybe).</p>
 

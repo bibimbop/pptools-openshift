@@ -1,0 +1,32 @@
+body {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+h1 { margin-top: 1em; }
+h2 { margin-top: 2em; border-bottom: 2px solid gray; }
+h3 { font-weight: normal; }
+
+/* Box for text */
+.box {
+	font-family: "Courier New",Courier,monospace;
+    border: 1px dashed;
+    background-color: #F8FFFF;
+	margin-left: 3em;
+	padding: 1em;
+}
+
+.regex {
+	background-color:lightyellow;
+	font-family: "Courier New",Courier,monospace;
+    white-space: pre;
+}
+
+.highlight {
+	background-color:#FF6633;	/* some orange */
+}
+
+.warning {
+    border: 1px dotted;
+    background-color: #FF6633;
+}

@@ -142,8 +142,6 @@ def project(project_id):
 
     elif request.method == 'POST':
 
-        print(request)
-
         # Posting a new file
         upfile = request.files['file']
 

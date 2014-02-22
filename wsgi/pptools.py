@@ -27,8 +27,8 @@ import sys
 sys.path.append("../pptools")
 from comp_pp import diff_css, CompPP, html_usage, DEFAULT_TRANSFORM_CSS
 
-import helpers.sourcefile as sourcefile
 import kppvh
+import find_langs
 
 app = Flask(__name__)
 app.debug = True
@@ -136,6 +136,7 @@ def project(project_id):
         return render_template('project.tmpl',
                                project_id=project_id,
                                files=files,
+                               files_html=[ x for x in files if x[0].lower().endswith((".htm", ".html")) ],
                                allowed_ext=", ".join(ALLOWED_UPLOAD_EXTENSIONS),
                                combos=combos)
 
@@ -220,8 +221,9 @@ def diffs(project_id):
         abort(404)
 
     form = DiffForm(request.form)
-    if not form.validate():
-       pass #  abort(404)
+    if request.method=='POST':
+        if not form.validate():
+            abort(404)
 
     # Create empty object to store our arguments
     # TODO: find an easier way than recopy all of them.
@@ -263,6 +265,49 @@ def diffs(project_id):
                            diff=html_content,
                            usage=html_usage(f1, f2),
                            css=diff_css(),
+                           form=form)
+
+
+class LangForm(Form):
+    with_lang_only = BooleanField('Show only tags with a lang attribute', default=True)
+
+@app.route('/project/<project_id>/langs', methods=['GET', 'POST'])
+def langs(project_id):
+
+    # Validate input
+    project_dir = check_project_id(project_id)
+    if project_dir is None:
+        abort(404)
+
+    files_dir = os.path.join(project_dir, "files")
+    filename = secure_filename(request.args.get('file', ''))
+    f1 = os.path.join(files_dir, filename)
+    if not os.path.isfile(f1):
+        abort(404)
+
+    form = LangForm(request.form)
+    if request.method=='POST':
+        if not form.validate():
+            abort(404)
+
+        # Workaround for boolean defaulting to True.
+        form.with_lang_only.data = request.form.get('with_lang_only', False)
+
+    # Do diff
+    args = lambda:0
+    args.with_lang_only = form.with_lang_only.data
+    args.filename = f1
+
+    x = find_langs.Languages()
+    x.load_file(args)
+    x.find_tags(args)
+
+    return render_template('find_langs/find_langs.tmpl',
+                           project_id=project_id,
+                           filename=filename,
+                           extracts1=sorted(x.extracts, key=lambda x: (x[1], x[0], x[2].lower())),
+                           extracts2=sorted(x.extracts, key=lambda x: x[2].lower()),
+                           extracts3=sorted(x.extracts, key=lambda x: (x[1], x[2].lower())),
                            form=form)
 
 

@@ -103,9 +103,22 @@
 	 </ul>
    {% endfor %}
 
+   <h2 class="sep2">Find languages</h2>
+   <p>For html files, look for language tags, and display the content in different order. In documents with many languages, this helps validationg that the proper language is set, that the same string doesn't appear with different tags (eg. <i>i</i> and <i>cite</i>) or different language tag.
+   </p>
+
+   {% for file in files_html %}
+	 <ul class="listnone">
+	   <li>check <a href="langs?file={{ file[0] }}">{{ file[0] }}</a></li>
+	 </ul>
+   {% endfor %}
+
+
+   {#
    <h2 class="sep2">Epubmaker</h2>
 
    <p>Run epubmaker on the uploaded files. TODO (maybe).</p>
+   #}
 
 
 {% endblock %}

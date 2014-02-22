@@ -1,0 +1,97 @@
+{#
+ # -*- coding: utf-8 -*-
+
+ # Copyright (C) 2014-2013 bibimbop at pgdp
+
+ # This program is free software; you can redistribute it and/or
+ # modify it under the terms of the GNU General Public License
+ # as published by the Free Software Foundation; either version 2
+ # of the License, or (at your option) any later version.
+ #
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+#}
+
+{% extends "htmlheader.tmpl" %}
+{% from "formhelpers.tmpl" import render_field %}
+
+
+{% block head %}
+{{ super() }}
+ <style type="text/css">
+{{ css }}
+</style>
+{% endblock %}
+
+{% block title %}PPTools{% endblock %}
+
+{% block body %}
+   <h1>Languages tagged in {{ filename }}</h1>
+
+   <p>This extract all strings tagged with a <i>lang</i> or <i>xml:lang</i> attribute, and present them in different order for easy checks.
+   </p>
+
+   <p><a href="/project/{{ project_id }}">Back to project page</a></p>
+
+   <div class="center">
+		<form method="post" action="">
+   		  {{ render_field(form.with_lang_only) }}
+		  <div class="center">
+			<input type="submit" value="Update" class="sep2" />
+		  </div>
+		</form>
+   </div>
+
+   <h2>Sorted by element tag then by language</h2>
+   <table>
+	 <tr>
+	   <th>Language</th>
+	   <th>HTML tag</th>
+	   <th>Content</th>
+	 </tr>
+	 {% for (lang, tag, string) in extracts1 %}
+	   <tr>
+		 <td>{{ lang }}</td>
+		 <td>{{ tag }}</td>
+		 <td>{{ string }}</td>
+	   </tr>
+	 {% endfor %}
+   </table>
+
+   <h2>Sorted by content</h2>
+   <table>
+	 <tr>
+	   <th>Language</th>
+	   <th>HTML tag</th>
+	   <th>Content</th>
+	 </tr>
+	 {% for (lang, tag, string) in extracts2 %}
+	   <tr>
+		 <td>{{ lang }}</td>
+		 <td>{{ tag }}</td>
+		 <td>{{ string }}</td>
+	   </tr>
+	 {% endfor %}
+   </table>
+
+   <h2>Sorted by language then by content</h2>
+   <table>
+	 <tr>
+	   <th>Language</th>
+	   <th>HTML tag</th>
+	   <th>Content</th>
+	 </tr>
+	 {% for (lang, tag, string) in extracts3 %}
+	   <tr>
+		 <td>{{ lang }}</td>
+		 <td>{{ tag }}</td>
+		 <td>{{ string }}</td>
+	   </tr>
+	 {% endfor %}
+   </table>
+
+
+
+{% endblock %}

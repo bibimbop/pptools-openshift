@@ -153,14 +153,15 @@ class pgdp_file_text(pgdp_file):
             return
 
         if self.from_pgdp_rounds:
-
-            # Px or Fx From PGDP
+            # Clean proofers
             self.text = re.sub(r"-----File: \w+.png.*", '', self.text)
 
-            if self.args.txt_cleanup_type == "p":
-                # Proofers only. Done.
-                return
+        if self.args.txt_cleanup_type == "p":
+            # Proofers only. Done.
+            return
 
+        # Clean all.
+        if self.from_pgdp_rounds:
             self.text = self.text.replace("\n/*\n", '\n\n')
             self.text = self.text.replace("\n*/\n", '\n\n')
             self.text = self.text.replace("\n/#\n", '\n\n')
@@ -179,17 +180,6 @@ class pgdp_file_text(pgdp_file):
             self.text = re.sub("</.*?>", '', self.text)
             self.text = re.sub("\[Blank Page\]", '', self.text)
 
-            if self.args.ignore_format or self.args.suppress_footnote_tags:
-                self.text = re.sub(r"\[Footnote (\d+): ", r'\1 ', self.text)
-                self.text = re.sub(r"\*\[Footnote: ", '', self.text)
-
-            if self.args.ignore_format or self.args.suppress_illustration_tags:
-                self.text = re.sub(r"\[Illustrations?:([^]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
-                self.text = re.sub(r"\[Illustration\]", '', self.text)
-
-            if self.args.ignore_format: #or self.args.suppress_sidenote_tags:
-                self.text = re.sub(r"\[Sidenote:([^]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
-
             if self.args.suppress_proofers_notes:
                 self.text = re.sub(r"\[\*\*[^]]*?\]", '', self.text)
 
@@ -199,10 +189,6 @@ class pgdp_file_text(pgdp_file):
                 self.text = re.sub(r"(\w+)-\*(\w+)", r"\1\2", self.text)
 
         else:
-            if self.args.txt_cleanup_type == "p":
-                # Proofers only. None here. Bail.
-                return
-
             if self.args.ignore_format:
                 self.text = self.text.replace("_", "")
 
@@ -210,16 +196,21 @@ class pgdp_file_text(pgdp_file):
             self.text = self.text.replace("*       *       *       *       *", "")
             self.text = self.text.replace("*     *     *     *     *", "")
 
-        # Temp - ndash between numbers
-        #self.text = re.sub("\d\-\-\d", '-', self.text)
-        #self.text = self.text.replace("_", ' ')
+
+        # Remove [Footnote, [Illustrations and [Sidenote tags
+        if self.args.ignore_format or self.args.suppress_footnote_tags:
+            self.text = re.sub(r"\[Footnote (\d+): ", r'\1 ', self.text)
+            self.text = re.sub(r"\*\[Footnote: ", '', self.text)
+
+        if self.args.ignore_format or self.args.suppress_illustration_tags:
+            self.text = re.sub(r"\[Illustrations?:([^]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
+            self.text = re.sub(r"\[Illustration\]", '', self.text)
+
+        if self.args.ignore_format: #or self.args.suppress_sidenote_tags:
+            self.text = re.sub(r"\[Sidenote:([^]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
 
         # Replace -- with real mdash
         self.text = self.text.replace("--", "—")
-
-
-        # temp
-        #self.text = self.text.replace("–", "-")
 
         transtab = str.maketrans("ª₁²₂₃₄₅₆₇",
                                  "a12234567")

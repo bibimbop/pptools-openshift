@@ -163,6 +163,7 @@ class DiffForm(Form):
     ignore_format = BooleanField('Silence formating differences', [])
     suppress_footnote_tags = BooleanField('Suppress "[Footnote:" marks', [])
     suppress_illustration_tags = BooleanField('Suppress "[Illustration:" marks', [])
+    suppress_sidenote_tags = BooleanField('Suppress "[Sidenote:" marks', [])
     with_sidenote_tags = BooleanField("Add [Sidenote: ...]", [])
     ignore_case = BooleanField('Ignore case when comparing', [])
     extract_footnotes = BooleanField('Extract and process footnotes separately', [])
@@ -235,6 +236,7 @@ def diffs(project_id):
     args.ignore_format = form.ignore_format.data
     args.suppress_footnote_tags = form.suppress_footnote_tags.data
     args.suppress_illustration_tags = form.suppress_illustration_tags.data
+    args.suppress_sidenote_tags = form.suppress_sidenote_tags.data
     args.with_sidenote_tags = form.with_sidenote_tags.data
     args.ignore_case = form.ignore_case.data
     args.ignore_0_space = form.ignore_0_space.data

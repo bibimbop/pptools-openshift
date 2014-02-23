@@ -206,7 +206,7 @@ class pgdp_file_text(pgdp_file):
             self.text = re.sub(r"\[Illustrations?:([^]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
             self.text = re.sub(r"\[Illustration\]", '', self.text)
 
-        if self.args.ignore_format: #or self.args.suppress_sidenote_tags:
+        if self.args.ignore_format or self.args.suppress_sidenote_tags:
             self.text = re.sub(r"\[Sidenote:([^]]*?)\]", r'\1', self.text, flags=re.MULTILINE)
 
         # Replace -- with real mdash
@@ -1158,6 +1158,8 @@ def main():
                         help='Suppress "[Footnote ?:" marks')
     parser.add_argument('--suppress-illustration-tags', action='store_true', default=False,
                         help='Suppress "[Illustration:" marks')
+    parser.add_argument('--suppress-sidenote-tags', action='store_true', default=False,
+                        help='Suppress "[Sidenote:" marks')
     parser.add_argument('--with-sidenote-tags', action='store_true', default=False,
                         help="HTML: add [Sidenote: ...]")
     parser.add_argument('--ignore-case', action='store_true', default=False,

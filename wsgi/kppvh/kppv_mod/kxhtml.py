@@ -115,7 +115,7 @@ class KXhtml(object):
             # Get the selector (eg. "body", "p", ".some_class")
             try:
                 sel_xpath = cssselect.GenericTranslator().css_to_xpath(selector)
-            except cssselect.parser.SelectorSyntaxError:
+            except (cssselect.xpath.ExpressionError, cssselect.parser.SelectorSyntaxError):
                 self.sel_unchecked.append(selector)
                 continue
 

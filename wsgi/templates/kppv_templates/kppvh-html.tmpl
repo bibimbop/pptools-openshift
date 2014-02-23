@@ -215,8 +215,6 @@
 
 	<h2>CSS validation</h2>
 
-	<p>Note: some notes might be spurious, particularly when the selectors are complex. @media rules are also ignored.</p>
-
 	{# Direct errors #}
     {% if css.cssutils_errors %}
       <h3>CSS parser errors</h3>
@@ -236,8 +234,8 @@
 	{# Note about CSS that couldn't be checked #}
     {% if css.sel_unchecked %}
 	  <h3>Some info</h3>
-      <p>
-		Note: this software cannot deal with the following selectors. This does not indicate an error with the CSS.
+      <p>Note: this software cannot deal with the following
+		selectors. This does not indicate an error with the CSS.
 	  </p>
 
 	  <div class='box'>
@@ -247,9 +245,9 @@
 	  </div>
 	{% endif %}
 
-	{# Unused CSS #}
+	{# Unused CSS selectors #}
 	{% if css.sel_unused %}
-      <h3>Unused CSS</h3>
+      <h3>Unused CSS selectors</h3>
 
       <div class='box'>
 
@@ -262,7 +260,12 @@
 
 	{# Undefined CSS #}
 	{% if css.classes_undefined %}
-      <h3>Undefined CSS</h3>
+      <h3>Possibly undefined CSS</h3>
+
+	  <p>This check finds every place a class is used, and then looks
+	  in the CSS to see if there is a corresponding selector. There
+	  will be some spurious notes when the class is used indirectly,
+	  and is not an error in the CSS.</p>
 
       <div class='box'>
 		<dl>

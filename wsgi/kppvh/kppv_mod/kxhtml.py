@@ -6,11 +6,9 @@
 """
 
 from lxml import etree
-from lxml.cssselect import CSSSelector
-import cssutils
+import cssselect
+import tinycss
 import re
-import logging
-import io
 import os
 
 # The xml: prefix is equivalent to the following
@@ -21,7 +19,7 @@ XMLNS="{http://www.w3.org/XML/1998/namespace}"
 def load_languages():
     with open(os.path.dirname(__file__) + "/../kppv_misc/language-subtag-registry", "r", encoding='utf-8',) as f:
 
-        languages={}
+        languages = {}
         current = {}
 
         for line in f.readlines():
@@ -71,7 +69,6 @@ class KXhtml(object):
         # Ignores @media
 
         # Find the CCS style
-        css_selectors = []
         css = myfile.tree.find('head').find('style')
 
         if css == None:
@@ -81,34 +78,31 @@ class KXhtml(object):
         if len(css):
             # Not sure whether that covers all the comment cases. Maybe add
             # all the children
-            css_string = etree.tostring(css[0])
+            stylesheet = tinycss.make_parser().parse_stylesheet(etree.tostring(css[0]))
         else:
-            css_string = css.text
+            stylesheet = tinycss.make_parser().parse_stylesheet(css.text)
 
-        # Parse the CSS and retrieve the errors
-        mylog = io.StringIO()
-        h = logging.StreamHandler(mylog)
-        h.setFormatter(logging.Formatter('%(levelname)s %(message)s'))
-        cssutils.log.addHandler(h)
-        cssutils.log.setLevel(logging.INFO)
-        css_sheet = cssutils.parseString(css_string)
+        # retrieve the errors
+        self.cssutils_errors = [ "{0},{1}: {2}".format(err.line+css.sourceline-1, err.column, err.reason) for err in stylesheet.errors]
+        print(stylesheet.errors)
 
-        self.cssutils_errors = [ x for x in mylog.getvalue().splitlines() if x ]
+        css_selectors = []
+        for rule in stylesheet.rules:
 
+            if rule.at_keyword is None:
+                # Regular rules.
+                # Add the selector as a string
+                css_selectors += rule.selector.as_css().split(',')
 
-        for rule in css_sheet:
+            elif rule.at_keyword == '@media':
+                # Itself is a bunch of regular rules
+                for rule2 in rule.rules:
+                    if rule2.at_keyword is None:
+                        # Regular rules.
+                        # Add the selector as a string
+                        css_selectors += rule2.selector.as_css().split(',')
 
-            # We don't want comments, media, ...
-            if rule.type != cssutils.css.CSSRule.STYLE_RULE:
-                continue
-
-            rules = rule.selectorText.split(',')
-            for rule in rules:
-                # Cleanup rule
-                selector = rule.strip()
-
-                css_selectors.append(selector)
-
+        css_selectors = list(set(css_selectors))
 
         # Find the unused/undefined CSS. It is possible 2 rules will
         # match the same class (for instance "p.foo" and ".foo" will
@@ -120,22 +114,22 @@ class KXhtml(object):
 
             # Get the selector (eg. "body", "p", ".some_class")
             try:
-                sel = CSSSelector(selector)
-            except:
+                sel_xpath = cssselect.GenericTranslator().css_to_xpath(selector)
+            except cssselect.parser.SelectorSyntaxError:
                 self.sel_unchecked.append(selector)
                 continue
 
             # Retrieve where it is used in the xhtml
-            occurences = sel(myfile.tree)
+            occurences = etree.XPath(sel_xpath)(myfile.tree)
 
             if len(occurences) == 0:
-                self.sel_unused.append(sel.css)
+                self.sel_unused.append(selector)
                 continue
 
             # If it's from a class, find the name. It should be the
             # last word starting with a dot (eg. "p.foo", ".foo",
             # "#toc .foo" => "foo")
-            m = re.match('^.*\.([\w-]+)$', sel.css)
+            m = re.match(r'^.*\.([\w-]+)$', selector)
 
             if m == None:
                 continue
@@ -207,10 +201,10 @@ class KXhtml(object):
         self.good_format = False
 
         # Try variations
-        for regex in [ "^The Project Gutenberg's eBook of (.*),\s+by (.*)$",
-                       "^The Project Gutenberg eBook of (.*),\s+by (.*)$",
-                       "^The Project Gutenberg eBook of (.*),\s+par (.*)$",
-                       "^The Project Gutenberg eBook of (.*),\s+edited by (.*)$",
+        for regex in [ r"^The Project Gutenberg's eBook of (.*),\s+by (.*)$",
+                       r"^The Project Gutenberg eBook of (.*),\s+by (.*)$",
+                       r"^The Project Gutenberg eBook of (.*),\s+par (.*)$",
+                       r"^The Project Gutenberg eBook of (.*),\s+edited by (.*)$",
                        ]:
 
             m = re.match(regex, title_str, flags=re.I)

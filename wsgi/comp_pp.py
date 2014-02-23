@@ -579,7 +579,6 @@ class pgdp_file_html(pgdp_file):
             i = 0
             if self.args.css_no_default is False:
                 i = DEFAULT_TRANSFORM_CSS.count('\n')
-            print (stylesheet.errors)
             css_errors = "<div class='error-border bbox'><p>Error(s) in the transformation CSS:</p><ul>"
             for err in stylesheet.errors:
                 css_errors += "<li>{0},{1}: {2}</li>".format(err.line-i, err.column, err.reason)

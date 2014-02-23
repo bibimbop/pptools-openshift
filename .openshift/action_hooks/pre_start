@@ -1,1 +1,0 @@
-export XML_CATALOG_FILES=$OPENSHIFT_DATA_DIR/w3c-sgml-lib/schema/dtd/catalog.xml

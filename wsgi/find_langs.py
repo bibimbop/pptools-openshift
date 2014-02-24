@@ -43,6 +43,11 @@ class Languages(object):
         # Indexed by tag then lang
         self.extracts = set()
 
+        if self.myfile.xhtml == 11:
+            lang_attr = "{http://www.w3.org/XML/1998/namespace}lang"
+        else:
+            lang_attr = "lang"
+
         # Transform </br> to space because normalize-space doesn't do it
         find = etree.XPath("//br")
         for element in find(self.myfile.tree):
@@ -53,19 +58,20 @@ class Languages(object):
             tag = element.tag
 
             if tag == 'html':
+                doc_lang = "(" + element.attrib.get(lang_attr, '_doc_') + ")"
                 continue
 
             # Check whether we want a lang attribute
-            if args.with_lang_only and 'lang' not in element.attrib:
+            if args.with_lang_only and lang_attr not in element.attrib:
                 continue
 
             if tag in [ 'i', 'cite', 'em', 'span' ]:
 
                 # Set the language to _doc_ if there is no lang tag
-                lang = element.attrib.get('lang', '_doc_')
+                lang = element.attrib.get(lang_attr, doc_lang)
 
                 # Ignore span in main document language
-                if tag == 'span' and lang == '_doc_':
+                if tag == 'span' and lang == doc_lang:
                     continue
 
                 self.extracts.add((tag, lang, etree.XPath("normalize-space()")(element)))

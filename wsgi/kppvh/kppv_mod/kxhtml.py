@@ -261,7 +261,7 @@ class KXhtml(object):
 
         # Get the document's language
         self.document_lang = attr.get('lang', None)
-        self.document_xmllang = attr.get(XMLNS + 'lang')
+        self.document_xmllang = attr.get(XMLNS + 'lang', None)
 
         if myfile.xhtml == 0 and self.document_lang:
             languages = set([self.document_lang])

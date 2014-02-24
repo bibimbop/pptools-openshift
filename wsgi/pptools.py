@@ -158,18 +158,18 @@ def project(project_id):
 
 
 class DiffForm(Form):
-    extract_footnotes = BooleanField('Extract and process footnotes separately', [])
-    suppress_proofers_notes = BooleanField('In Px/Fx versions, remove [**proofreaders notes]', [])
-    ignore_format = BooleanField('Silence formating differences', [])
-    suppress_footnote_tags = BooleanField('Suppress "[Footnote:" marks', [])
-    suppress_illustration_tags = BooleanField('Suppress "[Illustration:" marks', [])
-    suppress_sidenote_tags = BooleanField('Suppress "[Sidenote:" marks', [])
-    with_sidenote_tags = BooleanField("Add [Sidenote: ...]", [])
-    ignore_case = BooleanField('Ignore case when comparing', [])
-    extract_footnotes = BooleanField('Extract and process footnotes separately', [])
-    ignore_0_space = BooleanField('Suppress zero width space (U+200B)', [])
-    suppress_nbsp_num = BooleanField("Suppress non-breakable spaces (U+00A0) between numbers", [])
-    regroup_split_words = BooleanField("In Px/Fx versions, regroup split wo-* *rds", [])
+    extract_footnotes = BooleanField('Extract and process footnotes separately')
+    suppress_proofers_notes = BooleanField('In Px/Fx versions, remove [**proofreaders notes]')
+    ignore_format = BooleanField('Silence formating differences')
+    suppress_footnote_tags = BooleanField('Suppress "[Footnote:" marks')
+    suppress_illustration_tags = BooleanField('Suppress "[Illustration:" marks')
+    suppress_sidenote_tags = BooleanField('Suppress "[Sidenote:" marks')
+    with_sidenote_tags = BooleanField('Add "[Sidenote:" marks')
+    ignore_case = BooleanField('Ignore case when comparing')
+    extract_footnotes = BooleanField('Extract and process footnotes separately')
+    ignore_0_space = BooleanField('Suppress zero width space (U+200B)')
+    suppress_nbsp_num = BooleanField("Suppress non-breakable spaces (U+00A0) between numbers")
+    regroup_split_words = BooleanField("In Px/Fx versions, regroup split wo-* *rds")
 
     css = TextAreaField('Transformation CSS',
                         default="""
@@ -177,9 +177,7 @@ class DiffForm(Form):
 /*   .fnanchor:before { content: "["; }
      .fnanchor:after { content: "]"; } */
 
-/* Adds [Sidenote: ... ] */
-/*   div.sidenote:before { content: "[Sidenote:"; }
-     div.sidenote:after { content: "]"; }' */
+/* .tb {display: none;} */
 """
 )
     css_smcap = SelectField('Transform small caps',
@@ -188,9 +186,9 @@ class DiffForm(Form):
                                      ('L', "lowercase"),
                                      ('T', "title")],
                             default='U')
-    css_greek_title_plus = BooleanField("Use greek transliteration in title attribute", [])
-    css_add_illustration = BooleanField("Add [Illustration ] tag", [])
-    css_no_default = BooleanField("Do not use default transformation CSS", [])
+    css_greek_title_plus = BooleanField("Use greek transliteration in title attribute")
+    css_add_illustration = BooleanField('Add "[Illustration:" marks')
+    css_no_default = BooleanField("Do not use default transformation CSS")
 
     txt_cleanup_type = SelectField('Type of text cleaning',
                                    choices=[('n', "none"),
@@ -198,7 +196,7 @@ class DiffForm(Form):
                                             ('b', "best effort")],
                                    default='b')
 
-#    css-bold', type=str, default=None,"HTML: Surround bold strings with this string", [])
+#    css-bold', type=str, default=None,"HTML: Surround bold strings with this string")
 
 
 @app.route('/project/<project_id>/diffs', methods=['GET', 'POST'])

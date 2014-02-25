@@ -36,6 +36,7 @@ class FootNotes(object):
                     r"^     \[Note ([\w\-]+):( |$)",
                     r"^          \[Note ([\w\-]+):( |$)",
                     r"^\[Footnote ([\w\-]+):( |$)",
+                    r"^  \[Footnote ([\w\-]+)\]:( |$)",
                     r"^     \[Footnote ([\w\-]+):( |$)",
                     r"^          \[Footnote ([\w\-]+):( |$)",
                     r"^\     Note ([\w\-]+):",

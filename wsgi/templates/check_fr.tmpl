@@ -17,7 +17,7 @@
 {% extends "htmlheader.tmpl" %}
 {% from "formhelpers.tmpl" import render_field %}
 
-{% block title %}Vérification du français{% endblock %}
+{% block title %}Vérification du français ({{ filename }}){% endblock %}
 
 {% block body %}
    <h1>Vérification du français ({{ filename }})</h1>
@@ -39,10 +39,10 @@
    <div class="check_fr">
 	 <table>
 	   <tr>
-		 <th>Ancienne ortographe</th>
-		 <th>Nouvelle ortographe</th>
+		 <th>Ancienne orthographe</th>
+		 <th>Nouvelle orthographe</th>
 	   </tr>
-	   {% for ortho in ortographe %}
+	   {% for ortho in orthographe %}
 		 <tr>
 		   <td class="border-right">{{ortho[0][0]}}</td>
 		   <td>{{ortho[1][0]}}</td>

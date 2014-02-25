@@ -349,12 +349,12 @@ def mycheck_fr(project_id):
     if not os.path.isfile(f1):
         abort(404)
 
-    ancienne_ortographe, nouvelle_ortographe, mots_ens, mots_ents, mots_ens_ents, mots_ans, mots_ants, mots_ans_ants = check_fr(f1)
+    ancienne_orthographe, nouvelle_orthographe, mots_ens, mots_ents, mots_ens_ents, mots_ans, mots_ants, mots_ans_ants = check_fr(f1)
 
     return render_template('check_fr.tmpl',
                            project_id=project_id,
                            filename=filename,
-                           ortographe=zip_longest(ancienne_ortographe, nouvelle_ortographe, fillvalue=""),
+                           orthographe=zip_longest(ancienne_orthographe, nouvelle_orthographe, fillvalue=""),
                            mots_ens=zip_longest(mots_ens, mots_ents, mots_ens_ents, fillvalue=""),
                            mots_ans=zip_longest(mots_ans, mots_ants, mots_ans_ants, fillvalue=""))
 

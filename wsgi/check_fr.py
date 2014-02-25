@@ -94,19 +94,19 @@ def check_fr(filename):
     # Trie la liste
     words = sorted(words)
 
-    # Ancienne ortographe
-    ancienne_ortographe = []
+    # Ancienne orthographe
+    ancienne_orthographe = []
     for word in words:
         for spelling in old_spelling:
             if word.startswith(spelling):
-                ancienne_ortographe.append((word, spelling))
+                ancienne_orthographe.append((word, spelling))
 
-    # Nouvelle ortographe
-    nouvelle_ortographe = []
+    # Nouvelle orthographe
+    nouvelle_orthographe = []
     for word in words:
         for spelling in new_spelling:
             if word.startswith(spelling):
-                nouvelle_ortographe.append((word, spelling))
+                nouvelle_orthographe.append((word, spelling))
 
     # Mots finissant en "ens" et "ents"
     mots_ens = [ word for word in words if word.endswith("ens") and not word.endswith("iens") ]
@@ -118,23 +118,23 @@ def check_fr(filename):
     mots_ants = [ word for word in words if word.endswith("ants") ]
     mots_ans_ants = [ mot + " / " + mot[:-1] + "ts" for mot in mots_ans if mot[:-1] + "ts" in mots_ants ]
 
-    return ancienne_ortographe, nouvelle_ortographe, mots_ens, mots_ents, mots_ens_ents, mots_ans, mots_ants, mots_ans_ants
+    return ancienne_orthographe, nouvelle_orthographe, mots_ens, mots_ents, mots_ens_ents, mots_ans, mots_ants, mots_ans_ants
 
 
 
 
 def main():
 
-    ancienne_ortographe, nouvelle_ortographe, mots_ens, mots_ents, mots_ens_ents, mots_ans, mots_ants, mots_ans_ants = check_fr(sys.argv[1])
+    ancienne_orthographe, nouvelle_orthographe, mots_ens, mots_ents, mots_ens_ents, mots_ans, mots_ants, mots_ans_ants = check_fr(sys.argv[1])
 
-    print("Ancienne ortographe:")
+    print("Ancienne orthographe:")
     print("====================")
-    for word, spelling in ancienne_ortographe:
+    for word, spelling in ancienne_orthographe:
         print("%-30s (racine: %s)" % (word, spelling))
 
-    print("\n\nNouvelle ortographe:")
+    print("\n\nNouvelle orthographe:")
     print("====================")
-    for word, spelling in nouvelle_ortographe:
+    for word, spelling in nouvelle_orthographe:
         print("%-30s (racine: %s)" % (word, spelling))
 
 

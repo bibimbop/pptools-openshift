@@ -624,7 +624,7 @@ class pgdp_file_html(pgdp_file):
         # Find footnotes, then remove them
         if self.args.extract_footnotes:
             for find in [ "//div[@id[starts-with(.,'FN_')]]",
-                          "//div[p/a[@id[starts-with(.,'Footnote_')]]]",
+                        #  "//div[p/a[@id[starts-with(.,'Footnote_')]]]",
                           "//p[a[@id[starts-with(.,'Footnote_')]]]",
                           "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
                           #"//p[a[@id[not(starts-with(.,'footnotetag')) and starts-with(.,'footnote')]]]",

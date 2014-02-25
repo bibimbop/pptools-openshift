@@ -133,6 +133,9 @@ def project(project_id):
         filenames = [ x[0] for x in files ]
         combos = combinations(filenames, 2)
 
+        # Sort them again by alphabetical order
+        files.sort()
+
         return render_template('project.tmpl',
                                project_id=project_id,
                                files=files,

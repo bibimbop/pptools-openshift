@@ -83,36 +83,57 @@
 	   <tr>
 		 <td>{{ combo[0] }}</td>
 		 <td>{{ combo[1] }}</td>
-		 <td><a href="diffs?f1={{ combo[0] }}&f2={{ combo[1] }}">compare 1 & 2</td>
-		 <td><a href="diffs?f1={{ combo[1] }}&f2={{ combo[0] }}">compare 2 & 1</td>
+		 <td><a href="diffs?f1={{ combo[0] }}&amp;f2={{ combo[1] }}">compare 1 &amp; 2</a></td>
+		 <td><a href="diffs?f1={{ combo[1] }}&amp;f2={{ combo[0] }}">compare 2 &amp; 1</a></td>
 	   </tr>
 	 {% endfor %}
    </table>
 
 
-   <h2 class="sep2">Checks [BETA]</h2>
+   <table class="mini-checks">
+	 <tr>
+	   <td>
+		 <h2 class="sep2">Checks [BETA]</h2>
 
-   <p>Once files have been uploaded, they can be run through a set of
-   checks. A lot of the output is informational but can still help
-   catch errors. This is similar to existing tools such as pphtml and
-   pptxt.</p>
+		 <p>Once files have been uploaded, they can be run through a
+		   set of checks. A lot of the output is informational but can
+		   still help catch errors. This is similar to existing tools
+		   such as pphtml and pptxt.</p>
 
-   {% for file in files %}
-	 <ul class="listnone">
-	   <li>check <a href="checks?file={{ file[0] }}">{{ file[0] }}</a></li>
-	 </ul>
-   {% endfor %}
+		   {% for file in files %}
+			 <ul class="listnone">
+			   <li>check <a href="checks?file={{ file[0] }}">{{ file[0] }}</a></li>
+			 </ul>
+		   {% endfor %}
+	   </td>
 
-   <h2 class="sep2">Find languages</h2>
-   <p>For html files, look for language tags, and display the content in different order. In documents with many languages, this helps validationg that the proper language is set, that the same string doesn't appear with different tags (eg. <i>i</i> and <i>cite</i>) or different language tag.
-   </p>
+	   <td>
+		 <h2 class="sep2">Find languages</h2>
+		 <p>For html files, look for language tags, and display the
+		 content in different order. In documents with many languages,
+		 this helps validationg that the proper language is set, that
+		 the same string doesn't appear with different tags
+		 (eg. <i>i</i> and <i>cite</i>) or different language tag.
+		 </p>
 
-   {% for file in files_html %}
-	 <ul class="listnone">
-	   <li>check <a href="langs?file={{ file[0] }}">{{ file[0] }}</a></li>
-	 </ul>
-   {% endfor %}
+		 {% for file in files_html %}
+		   <ul class="listnone">
+			 <li>check <a href="langs?file={{ file[0] }}">{{ file[0] }}</a></li>
+		   </ul>
+		 {% endfor %}
+	   </td>
 
+	   <td>
+		 <h2 class="sep2">For documents in French only</h2>
+
+		 {% for file in files_txt %}
+		   <ul class="listnone">
+			 <li>check <a href="check_fr?file={{ file[0] }}">{{ file[0] }}</a></li>
+		   </ul>
+		 {% endfor %}
+	   </td>
+	 </tr>
+   </table>
 
    {#
    <h2 class="sep2">Epubmaker</h2>

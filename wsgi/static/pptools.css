@@ -21,8 +21,17 @@ hr.c50 { width: 50%; }
 
 .diffs table { border-collapse: collapse; }
 .diffs td { padding: 1em; vertical-align:top; }
-.diffs .border-right { border-right:thick double gray; }
+.border-right { border-right:thick double gray; }
 .diffs .centerdiv { margin-left: auto;
-					margin-right: auto;
-					width: 90%;
-				  }
+			 margin-right: auto;
+			 width: 90%;
+		   }
+
+
+.check_fr { padding-left: 4em; }
+.check_fr table { border-collapse: collapse; margin-top: 2em; }
+.check_fr td:not(:last-child), .check_fr th:not(:last-child){ border-right: thin solid gray; }
+.check_fr td, .check_fr th { padding-left: 1em; padding-right: 1em; }
+.check_fr tr:first-child { border-bottom: solid medium gray; }
+
+.mini-checks td { vertical-align: top; padding-left: 1em; padding-right: 1em; width: 33%; }

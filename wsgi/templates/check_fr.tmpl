@@ -1,0 +1,92 @@
+{#
+ # -*- coding: utf-8 -*-
+
+ # Copyright (C) 2014-2013 bibimbop at pgdp
+
+ # This program is free software; you can redistribute it and/or
+ # modify it under the terms of the GNU General Public License
+ # as published by the Free Software Foundation; either version 2
+ # of the License, or (at your option) any later version.
+ #
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+#}
+
+{% extends "htmlheader.tmpl" %}
+{% from "formhelpers.tmpl" import render_field %}
+
+{% block title %}Vérification du français{% endblock %}
+
+{% block body %}
+   <h1>Vérification du français ({{ filename }})</h1>
+
+   <p><a href="/project/{{ project_id }}">Back to project page</a></p>
+
+   <p>Listes de mots du documents. Ceci est plutôt destiné aux textes
+   datant d'avant la
+   <a href="https://fr.wikipedia.org/wiki/R%C3%A9forme_de_l%27orthographe_fran%C3%A7aise_de_1878">
+   réforme de 1878</a>.
+   </p>
+
+
+   <h2>Mots en ège / ége</h2>
+
+   <p>Note: ceci n'est pas toujours exact, en particulier quand le mot
+   est un verbe conjugué.</p>
+
+   <div class="check_fr">
+	 <table>
+	   <tr>
+		 <th>Ancienne ortographe</th>
+		 <th>Nouvelle ortographe</th>
+	   </tr>
+	   {% for ortho in ortographe %}
+		 <tr>
+		   <td class="border-right">{{ortho[0][0]}}</td>
+		   <td>{{ortho[1][0]}}</td>
+		 </tr>
+	   {% endfor %}
+	 </table>
+   </div>
+
+
+   <h2>Mots en ens / ents</h2>
+   <div class="check_fr">
+	 <table>
+	   <tr>
+		 <th>ens</th>
+		 <th>ents</th>
+		 <th>les deux</th>
+	   </tr>
+	   {% for mots in mots_ens %}
+		 <tr>
+		 <td>{{ mots[0] }}</td>
+		 <td>{{ mots[1] }}</td>
+		 <td>{{mots[2]}}</td>
+		 </tr>
+	   {% endfor %}
+	 </table>
+   </div>
+
+
+   <h2>Mots en ans / ants</h2>
+   <div class="check_fr">
+	 <table>
+	   <tr>
+		 <th>ans</th>
+		 <th>ants</th>
+		 <th>les deux</th>
+	   </tr>
+	   {% for mots in mots_ans %}
+		 <tr>
+		   <td>{{ mots[0] }}</td>
+		   <td>{{ mots[1] }}</td>
+		   <td>{{mots[2]}}</td>
+		 </tr>
+	   {% endfor %}
+	 </table>
+   </div
+
+{% endblock %}

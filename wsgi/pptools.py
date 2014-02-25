@@ -22,6 +22,7 @@ from werkzeug.utils import secure_filename
 from itertools import combinations
 import subprocess
 from wtforms import Form, BooleanField, TextField, validators, StringField, TextAreaField, SelectField
+from itertools import zip_longest
 
 import sys
 sys.path.append("../pptools")
@@ -29,6 +30,7 @@ from comp_pp import diff_css, CompPP, html_usage, DEFAULT_TRANSFORM_CSS
 
 import kppvh
 import find_langs
+from check_fr import check_fr
 
 app = Flask(__name__)
 app.debug = True
@@ -140,6 +142,7 @@ def project(project_id):
                                project_id=project_id,
                                files=files,
                                files_html=[ x for x in files if x[0].lower().endswith((".htm", ".html")) ],
+                               files_txt=[ x for x in files if x[0].lower().endswith((".txt")) ],
                                allowed_ext=", ".join(ALLOWED_UPLOAD_EXTENSIONS),
                                combos=combos)
 
@@ -329,6 +332,31 @@ def checks(project_id):
     kppv = kppvh.Kppvh()
 
     return kppv.process(project_id, f1)
+
+
+@app.route('/project/<project_id>/check_fr', methods=['GET'])
+def mycheck_fr(project_id):
+    """Check for french documents only"""
+
+    # Validate input
+    project_dir = check_project_id(project_id)
+    if project_dir is None:
+        abort(404)
+
+    files_dir = os.path.join(project_dir, "files")
+    filename = secure_filename(request.args.get('file', ''))
+    f1 = os.path.join(files_dir, filename)
+    if not os.path.isfile(f1):
+        abort(404)
+
+    ancienne_ortographe, nouvelle_ortographe, mots_ens, mots_ents, mots_ens_ents, mots_ans, mots_ants, mots_ans_ants = check_fr(f1)
+
+    return render_template('check_fr.tmpl',
+                           project_id=project_id,
+                           filename=filename,
+                           ortographe=zip_longest(ancienne_ortographe, nouvelle_ortographe, fillvalue=""),
+                           mots_ens=zip_longest(mots_ens, mots_ents, mots_ens_ents, fillvalue=""),
+                           mots_ans=zip_longest(mots_ans, mots_ants, mots_ans_ants, fillvalue=""))
 
 
 # Main page

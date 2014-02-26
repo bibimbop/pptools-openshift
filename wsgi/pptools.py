@@ -23,6 +23,7 @@ from itertools import combinations
 import subprocess
 from wtforms import Form, BooleanField, TextField, validators, StringField, TextAreaField, SelectField
 from itertools import zip_longest
+from furtif import Furtif
 
 import sys
 sys.path.append("../pptools")
@@ -351,12 +352,18 @@ def mycheck_fr(project_id):
 
     ancienne_orthographe, nouvelle_orthographe, mots_ens, mots_ents, mots_ens_ents, mots_ans, mots_ants, mots_ans_ants = check_fr(f1)
 
+    furtif = Furtif()
+    furtif = Furtif()
+    furtif.load_config()
+    furtif.check_furtif(f1, '<span class="furtif-check">', '</span>', to_html=True)
+
     return render_template('check_fr.tmpl',
                            project_id=project_id,
                            filename=filename,
                            orthographe=zip_longest(ancienne_orthographe, nouvelle_orthographe, fillvalue=""),
                            mots_ens=zip_longest(mots_ens, mots_ents, mots_ens_ents, fillvalue=""),
-                           mots_ans=zip_longest(mots_ans, mots_ants, mots_ans_ants, fillvalue=""))
+                           mots_ans=zip_longest(mots_ans, mots_ants, mots_ans_ants, fillvalue=""),
+                           furtif=furtif)
 
 
 # Main page

@@ -35,3 +35,5 @@ hr.c50 { width: 50%; }
 .check_fr tr:first-child { border-bottom: solid medium gray; }
 
 .mini-checks td { vertical-align: top; padding-left: 1em; padding-right: 1em; width: 33%; }
+
+.furtif-check { text-decoration: underline; }

@@ -83,10 +83,32 @@
 		 <tr>
 		   <td>{{ mots[0] }}</td>
 		   <td>{{ mots[1] }}</td>
-		   <td>{{mots[2]}}</td>
+		   <td>{{ mots[2] }}</td>
 		 </tr>
 	   {% endfor %}
 	 </table>
-   </div
+   </div>
+
+
+   <h2>Furtif</h2>
+
+   <p>Ceci est un outil contribué par lvl. Il s'agit d'une série de
+   regex essayant de trouver des erreurs communes.
+   </p>
+
+   <div class="check_fr">
+	 <table>
+	   <tr>
+		 <th>Ligne</th>
+		 <th>Texte</th>
+	   </tr>
+	   {% for lineno, line in furtif.matching %}
+		 <tr>
+		   <td>{{ lineno }}</td>
+		   <td>{{ line }}</td>
+		 </tr>
+	   {% endfor %}
+	 </table>
+   </div>
 
 {% endblock %}

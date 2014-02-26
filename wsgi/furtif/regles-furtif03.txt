@@ -1,0 +1,700 @@
+
+# li/fi ligature
+
+fiai
+lias
+fiasse
+fiasses
+fibre
+licha
+lichai
+lichaient
+lichais
+lichait
+lichant
+liche
+lichent
+lichera
+licherai
+licherais
+licherait
+licherez
+licheront
+liches
+lichez
+lichons
+lichât
+lichée
+lichées
+lichés
+et lier
+fierons
+fieu
+fieux
+figes
+ligure
+ligures
+filas
+liliales
+mettre lin
+la lin
+une lin
+sans lin
+sa lin
+bonne lin
+en lin
+/[^A-Za-zÀ-ÿ'-]lin, il[^A-Za-zÀ-ÿ'-]/
+lin des
+lin de
+lin du
+linette
+fion
+fions
+leur lis
+lui lis
+me lis
+je lis un
+lis une
+lissent
+lissiez
+lissions
+fiâmes
+liât
+la lièvre
+un fièvre
+une lièvre
+fié avec
+fiées
+déliaient
+déliais
+déliant
+déliante
+déliantes
+déliants
+délierais
+délierait
+délierez
+délieriez
+délierons
+délies
+déliez
+délions
+délirent
+flagrant défit
+défiâmes
+déliât
+mélia
+méfisse
+
+
+# baleine/haleine
+
+/pr[^ ]* baleine/
+son baleine
+mon baleine
+ton baleine
+
+
+#
+
+pue
+gui
+
+# 11 / Il / II
+
+". 11 "
+"11 y"
+# Louis Il, George Il, etc.
+/[A-ZÀ-Ü][a-zà-ÿ]+ Il([^a-zà-ÿ]|$)/
+
+
+
+# divers
+
+Gela
+Gomme
+Gomment
+#  Four/Pour unlikely?
+Hais
+
+Fauteur
+Franco
+
+
+# paris/Paris => rien trouvé
+# vienne/Vienne
+# altitude / attitude
+
+
+#
+# accents
+#
+
+
+
+faîtes
+
+
+
+# par la/parla??? (TODO => grammatical)
+
+
+# HTML égaré
+
+"ldquo;"
+/[^h]amp;/
+/[aeiou]acute;/
+/[aeiou]grave;/
+/[aeiou]circ;/
+# etc.
+
+
+
+
+
+
+
+
+
+
+#
+# h/b - beaucoup moins fréquents?
+#
+
+
+
+
+#
+# r/t
+#
+
+# avoir/avoit
+# pouvoir/pouvoit
+# devoir/devoit
+# voir/voit
+# lavoir/lavoit
+# ...
+
+
+#
+# e / é
+#
+
+
+# confusion nom / participe (figure/figuré)
+
+# valid: clé, pitié, liberté
+/ ([lstLSmM]a|une|[Cc]ette|[Qq]uelle|d'une) [a-zà-ÿ]*[^tli]é[^a-zà-ÿ]/
+
+# confusion verbe / participe
+/ ([Ii]l|[Ee]lle|[Oo]n|[nJjmts]e|ça|[nmtljJ]'en|l'on|qu'il|qu'elle|s'il) [a-zà-ÿ]*é[^a-zà-ÿ]/
+/ (qui|il|elle|qu'il|qu'elle|s'il|ne) le [a-zà-ÿ]*é[^a-zà-ÿ]/
+
+# sauf malgré
+/qui [a-zà-ÿ]*[^r]é[^a-zà-ÿ]/
+
+# en ...é => sauf congé, résumé, habitué, abrégé, etc.
+en né
+
+/ (leur|[tTl]u|[tm]e) [a-zà-ÿ]*és[^a-zà-ÿ]/
+
+
+
+#
+# a / à
+#
+
+# verbes à l'imparfait, sauf noms fait, trait
+/[^rf]ait a /
+"aient a "
+avais a
+étais a
+aurais a
+trouvais a
+devrais a
+cherchais a
+songeais a
+
+
+nez a nez
+vis a vis
+face a face
+tout a l'heure
+tout a fait
+"main a la main"
+/ a l'(époque|ère|image|instar|envi|encontre|instant)/
+
+# a <infinitif>
+/ a [a-zà-ÿ]{2,}[ei]r /
+/ a [a-zà-ÿ]{2,}ndre /
+
+#  a <majuscule> (à Paris/Versailles, etc.)
+/ a [A-Z]/
+
+# TODO, => chercher également les expressions avant à: se mit à, partir à,
+#
+
+
+ça et là
+/ çà [^e]/
+/([^ur]|[^a][ur]) delà/
+
+
+#
+# e / o / c
+#
+
+
+#  no/ne?
+
+/ no [a-zà-ÿ]+ant /
+/ no [a-zà-ÿ]+ pas/
+
+
+#
+# c/e
+#
+
+#due/duc
+
+du due
+le due
+
+#
+# e/o
+#
+
+#de/do
+/ do ([^ncw]|[nc][^o])/
+
+#que/quo
+/[^u] quo /
+
+#on/en
+/ on [A-ZÉ]/
+/ on (effet|ce|même|face|un|plus|avant|partie|peinture|bas|haut) /
+/ on ([mnl]e )*[a-zà-ÿ']*ant /
+
+#dos/des
+Dos
+/([^ser]|[^u]r|[^l]e) dos [a-zà-ÿ]{4,}s /
+
+#pour/peur ???
+
+# cotte/cette
+/([^ae]|[^mts]a|[^n]e) cotte /
+
+# deux/doux
+
+doux ou trois
+
+# colle/celle?
+
+
+# coté / côté
+
+l'autre coté
+à coté
+A coté
+du coté
+d'un coté
+
+# o / u
+
+forent
+
+#
+# i/t/l
+#
+
+#?? la/ta
+#?? le/te
+#?? lu/tu
+#?? les/tes
+
+#lut/lui
+
+/ lut [a-zà-ÿ]{2,}a /
+# TODO, lut VERBE
+
+# celle/cette/celte
+
+celte
+
+# licite: celle de/qui/du/des/que/d'/qu'/où/dont/
+# illicite: celle NOM
+# et l'inverse pour cette.
+# dans un premier temps:
+
+/ celle (fois|femme|époque|nuit|heure|lettre|maison|petite|idée) /
+/ cette (d[eu]|qu[ei]|où|dont|à|par) /
+
+# => celle
+#  de du des
+#  qu...
+#  dont où au à par pour vers même avec sur près loin devant chez
+#  sans, etc.
+#  TODO, faire une regex pour les prépositions,
+# et pour les non-propositions.
+
+
+# notre/noire
+
+" de noire "
+Noire
+
+#votre/voire
+
+# licite voire: voire un/une/le/la/sur/dans/.../même/ adverbe/ adjectif
+# illicite: voire NOM; PREPOSITION voire
+" de voire"
+" à voire"
+" où voire"
+" et voire"
+
+# fut/fui
+
+'il fui '
+'à fui '
+/fui [a-zà-ÿ]*ée? /
+'e fui '
+
+# mats/mais
+Mats
+', mats'
+
+# mol/mot
+'seul mol'
+
+# mot/moi
+'seul moi'
+
+#tu/lu
+# légitime: lu dans/le/la/les/un/
+/ lu [a-zà-ÿ']*ai?s /
+/ lu [a-zà-ÿ']{2,}es /
+/ lu [pv]eux /
+" lu te "
+
+peul
+fols
+
+étalent
+
+# fit/fît
+"quoiqu'il fit"
+
+#fit/fil
+"il fil "
+
+rot
+avals
+trots
+ion
+
+
+
+
+# étude/élude
+
+"s élude"
+"une élude"
+/l'élude[^r]/
+
+#
+avalent
+étal
+soupirail
+
+
+
+# an/au
+
+d'an
+
+"essidor au"
+"ermidor au"
+"ctidor au"
+"rumaire au"
+"rimaire au"
+"endémiaire au"
+"loréal au"
+"rairial au"
+"erminal au"
+"ivôse au"
+"entôse au"
+"luviôse au"
+
+/ an [XIV]+e/
+
+/ au ([dl]es?|e[tn]|dans|la|les|à|qu[ei]) /
+/ au (se|une|pour|un|il|sans|avait|au|du|tout|comme) /
+/ au [ldsnq]u?'/
+
+# an NOM !?
+# an grand/premier/...
+# (TODO, grammaire)
+
+
+# ...
+
+
+# en/eu
+
+/ eu (Europe|Allemagne|Angleterre|Amérique|Espagne|Australie)/
+/ eu (France|Asie|Normandie|Dieu)/
+/ eu (partie|signe|gage|peinture|art|bas|haut) /
+"eu ce monde"
+
+#  a eu/a en
+#  a en pitié
+/ eu ([mt]oi|[mtn]e) /
+/ eu ([mnl]e )?[a-zà-ÿ]+ant /
+
+
+# tous/tons
+
+" tons les"
+
+/tontes \([lmts]e\|[nv]o\|leur\|sorte\)s/
+
+
+
+# son/sou
+#usage légitimes sou:
+##  un sou
+#  le sou
+#  petit sou
+#  sans sou
+#  sans le sou
+#  sou par sou
+#  dernier sou
+#  ni sou ni
+#  gros sou
+#  votre sou
+#  mon sou
+
+/([^uo]n|[^no]s|[^ae]r|[^lcu]e|[^i]t|[^d]u|[^ntsreu]) sou ([^pà]|p[^a])/
+
+# mon/mon
+
+/ mou \([^epqd]\|d[^e]\|e[^t]\|p[^o]\)/
+
+# tous/tons
+
+Tons
+/ tons les ([^p]|p[^l]|pl[^u])/
+/ tons ([nv]os|[mtsc]es|leurs|ensemble) /
+/ nous tons /
+
+
+# autre/antre, autres/antres
+# TODO, grammaire
+
+# toute/tonte
+
+"Tonte"
+/([^l]a|[^l]) tonte/
+
+# ont/out
+
+out
+
+
+# contre/coutre
+
+coutre
+
+
+# lieu/lien
+
+
+"au lien d"
+"lien où"
+"lien à"
+"lien dans"
+"y a lien"
+"avait lien"
+"eu lien"
+"lien sûr"
+"lieu conju"
+"lieu moral"
+
+# veut/vent  TODO, grammaire
+
+'qui vent'
+
+# tandis/taudis
+
+'taudis qu'
+
+# moyen/moyeux
+'même moyeu'
+'meilleur moyeu'
+'au moyeu'
+'seul moyeu'
+
+
+# font/fout
+
+fout
+
+# où/ou
+
+
+" où plutôt "
+" où trois "
+" deux où "
+" chambre ou "
+" endroit ou "
+" l'heure ou "
+" lieu ou "
+" maison ou "
+" moment ou "
+" par ou "
+" temps ou "
+" point ou "
+" où plutôt "
+
+
+# ou/on
+
+" deux on "
+" on trois "
+" on encore "
+" comme ou "
+" dont ou "
+" mais ou "
+" et ou "
+" car ou "
+" quand ou "
+" si ou "
+" on de "
+" on des "
+" on deux "
+" on du "
+" on plutôt "
+" on bien "
+" on encore "
+" on trois "
+" on une "
+" on à "
+" ou a "
+" ou avait "
+" ou dit "
+" ou eût "
+" ou peut "
+" ou pouvait "
+" ou voit "
+" ou voyait "
+
+/ on [a-zà-ÿ]{4,}[bcf-su-zà-ÿ][, ]/
+/ [Oo]n (je|tu|ils?|elles?) /
+" on on "
+" ou ou "
+"au moment on"
+"'instant on "
+
+"Ou est"
+"Ou sont"
+# où es/est/suis/étais/...
+
+# on deux/trois/à/de/des/
+# Ou a/avait/dit/entendait/eût/lui/n'avait, ne, peut, pouvait, se, voit, voyait, y,
+
+#là ou je/tu/il/l'on/...
+#et ou
+#si ou
+#uand ou
+# dont ou
+# ou voit
+# ou en voit
+
+
+# monde/inonde
+
+" le inonde "
+" un inonde "
+" au inonde "
+" ce inonde "
+
+# mon/mou
+
+
+
+# a / à
+
+" n'y à "
+" y à "
+" avait a "
+" a a "
+/[ ']est a /
+/commen[cç][a-zà-ÿ]* a /
+" dit a "
+" aller a "
+" allait a "
+" allais a "
+" à dit "
+" à eu "
+" à pris "
+" à été "
+" a cheval "
+" a coup "
+" a côté "
+" a demi "
+" a chaque "
+" a distance "
+" a dire "
+" a elle "
+" a faire "
+" a gauche "
+
+# jeux/yeux
+
+" jeux bleus "
+" beaux jeux "
+
+
+# mots non suivis de ponctuation
+
+" à,"
+/[' ]à\.[^\.]/
+/[' ]au[,.]/
+/[' ]aux[,.]/
+" celle."
+" celles."
+/ cet[,.]/
+/ d'y[,.]/
+/ n'y[,.]/
+/ dans[,.]/
+" de,"
+" des,"
+" du,"
+" envers,"
+" hors,"
+/[^t] il[,.]/
+" la,"
+" le,"
+" les,"
+/ lord, [A-Z]/
+"'on,"
+" ma,"
+"'il,"
+"'ils,"
+" sur,"
+"malgré,"
+
+
+# imparfaits du subjonctif en ît
+
+/(Bien |pour |sans |afin |jusqu'à ce |quoi *)qu['e][^,?;.:!]*([ru]b|[cghmnsv]|[^e ]d|[^é]p|[^o]f|[^ e-][lt]|[^pc]r|[^s]pr)it /
+/([^sS]i|[^i]) bien qu['e][^,?;.:!]*([ru]b|[cghmnsv]|[^e ]d|[^é]p|[^o]f|[^ e-][lt]|[^pc]r|[^s]pr)it /
+
+/ (empêch|demand|fallu|fallait|permi|permett|esper|craign|ordonn|voul|désir)[^ ]* qu['e][^,?;.:!]*([ru]b|[cghmnsv]|[^e ]d|[^é]p|[^o]f|[^ e-][lt]|[^pc]r|[^s]pr)it /
+
+
+#
+
+l'évoque de
+
+

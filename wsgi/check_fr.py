@@ -78,7 +78,6 @@ def clean_text(f):
 
 def check_fr(filename):
 
-    print("FZ10")
     myfile = helpers.sourcefile.SourceFile()
     myfile.load_file(filename)
 

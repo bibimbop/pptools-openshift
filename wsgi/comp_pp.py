@@ -980,14 +980,16 @@ hr:before {
 def html_usage(filename1, filename2):
     return """
     <div class="bbox">
-      <p class="center">— Usage —</p>
+      <p class="center">— Note —</p>
       <p>
         The first number is the line number in the first file (""" + filename1 + """)<br />
         The second number is the line number in the second file (""" + filename2 + """)<br />
+        Line numbers can sometimes be very approximate.
       </p>
       <p>
-        Deleted words that were in the first file but not in the second will appear <span class='start_del'>like this</span>.<br />
-        Inserted words that were in the second file but not in the first will appear <span class='start_ins'>like this</span>.<br />
+        Deleted words that were in the first file but not in the second will appear <del>like this</del>.<br />
+        Inserted words that were in the second file but not in the first will appear <ins>like this</ins>.<br />
+        Some of these can be suppressed using with the various options above.
       </p>
     </div>
     """

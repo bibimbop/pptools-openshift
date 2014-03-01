@@ -219,15 +219,13 @@
     {% if css.cssutils_errors %}
       <h3>CSS parser errors</h3>
 
-      <p>
-		Note: these could be errors in the CSS, however the CSS parser used by this tool doesn't fully support CSS 2.1 or 3. Confirm with the <a href='http://jigsaw.w3.org/css-validator/'>W3C CSS validator</a>.
+      <p>Note: these could be errors in the CSS, however the CSS parser used by this tool doesn't fully support CSS 2.1 or 3. Confirm with the <a href='http://jigsaw.w3.org/css-validator/'>W3C CSS validator</a>.
 	  </p>
 
 	  <div class='box'>
         {% for line in css.cssutils_errors %}
           {{ line | e }} <br />
 		{% endfor %}
-
       </div>
 	{% endif %}
 
@@ -250,11 +248,9 @@
       <h3>Unused CSS selectors</h3>
 
       <div class='box'>
-
 		{% for sel in css.sel_unused %}
           {{ sel | e }} <br />
-	  {% endfor %}
-
+		{% endfor %}
       </div>
 	{% endif %}
 
@@ -437,13 +433,17 @@
   <h2>Footnotes</h2>
 
   {% if pages.note_anchors %}
-	{% set expected_num = 1 %}
-	{% for lineno, num in pages.note_anchors %}
-      {% if num != expected_num %}
-		<li>Line {{ lineno }}: expected footnote anchor <b>{{ expected_num }}</b>, found <b>{{ num }}</b></li>
-	  {% endif %}
-      {% set expected_num = num + 1 %}
-	{% endfor %}
+    <div class='box'>
+	  <ul>
+		{% set expected_num = 1 %}
+		{% for lineno, num in pages.note_anchors %}
+		  {% if num != expected_num %}
+			<li>Line {{ lineno }}: expected footnote anchor <b>{{ expected_num }}</b>, found <b>{{ num }}</b></li>
+		  {% endif %}
+		  {% set expected_num = num + 1 %}
+		{% endfor %}
+	  </ul>
+	</div>
   {% else %}
     <p>
 	  None found

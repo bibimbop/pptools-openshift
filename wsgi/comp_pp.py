@@ -31,6 +31,7 @@ import tinycss
 import cssselect
 #from functools import partial
 
+from helpers.exfootnotes import extract_footnotes_pp
 from helpers import sourcefile
 
 DEFAULT_TRANSFORM_CSS =  '''
@@ -87,7 +88,7 @@ class pgdp_file(object):
         self.transform_func = []
 
         # Footnotes, if extracted
-        self.footnotes = []
+        self.footnotes = ""
 
         # First line of the text. This is where <body> is for html.
         self.start_line = 0
@@ -221,6 +222,9 @@ class pgdp_file_text(pgdp_file):
         # Extract the footnotes from an F round
         # Start with [Footnote ... and finish with ] at the end of a line
 
+        # Note: this is really dirty code. Should rewrite. Don't use
+        # self.footnotes inside loop. Don't use cur_fnote[0].
+
         in_fnote = False        # currently processing a footnote
         cur_fnote = []          # keeping current footnote
         text = []               # new text without footnotes
@@ -230,16 +234,13 @@ class pgdp_file_text(pgdp_file):
             # New footnote
             if "[Footnote" in line:
 
-                if in_fnote:
-#                    print("Error in text -- manual cleanup is needed around line %d" % (lineno), file=sys.stderr)
-                    sys.exit()
-
                 if "*[Footnote" in line:
                     # Join to previous - Remove the last from the existing
                     # footnotes.
                     line = line.replace("*[Footnote: ", "")
                     cur_fnote, self.footnotes = self.footnotes[-1], self.footnotes[:-1]
                 else:
+                    line = re.sub(r"\[Footnote \d+: ", "", line)
                     cur_fnote = [-1, ""]
 
                 in_fnote = True
@@ -249,7 +250,12 @@ class pgdp_file_text(pgdp_file):
 
                 # Footnote continuation: ] or ]*
                 # We don't try to regroup yet
-                if line.endswith((']', "]*")):
+                if line.endswith(']'):
+                    cur_fnote[1] = cur_fnote[1][:-1]
+                    self.footnotes.append(cur_fnote)
+                    in_fnote = False
+                elif line.endswith("]*"):
+                    cur_fnote[1] = cur_fnote[1][:-2]
                     self.footnotes.append(cur_fnote)
                     in_fnote = False
 
@@ -258,96 +264,17 @@ class pgdp_file_text(pgdp_file):
 
         # Rebuild text, now without footnotes
         self.text = '\n'.join(text)
+        self.footnotes = "\n".join([x[1] for x in self.footnotes])
 
 
     def extract_footnotes_pp(self):
         # Extract the footnotes from a PP text version
         # Convert to lines and back
-        in_fnote = False        # currently processing a footnote
-        cur_fnote = []          # keeping current footnote
-        text = []               # new text without footnotes
-        blanc_cur = False       # current line is empty
-        indent_fnote = 0        # indentation of current footnote
-
-        for line in self.text.splitlines():
-
-            blanc_prev = blanc_cur
-            blanc_cur = len(line) == 0
-
-            if line.startswith("——-File:") and in_fnote:
-                self.footnotes.append(cur_fnote)
-                text.append(line)
-                in_fnote = False
-                continue
-
-            if line.endswith((".]", "]]", "»]", " ]", ")]", "_]", "-]", "—]")) and in_fnote:
-                cur_fnote[1] += "\n" + line
-                text.append("")
-                self.footnotes.append(cur_fnote)
-                in_fnote = False
-                continue
-
-            # Check for new footnote
-            m = re.match("(\s*)\[([\w-]+)\](.*)", line)
-            if not m:
-                m = re.match("(\s*)\[Note (\d+): (.*)", line)
-
-            if m and (m.group(2) == 'Illustration' or m.group(2) == "Décoration"):
-                # An illustration, possibly inside a footnote. Treat
-                # as part of text or footnote.
-                m = None
-
-            if m and blanc_prev:
-                # It matches, and the previous line was empty
-
-                if in_fnote:
-                    # New footnote - Append current one to footnotes
-                    self.footnotes.append(cur_fnote)
-                    text.append("")
-
-                in_fnote = True
-                cur_fnote = [ m.group(2), m.group(3) ]
-                indent_fnote = len(m.group(1))
-
-                if line.endswith((".]", "]]", "»]", " ]", ")]", "_]", "-]", "—]")) and in_fnote:
-                    self.footnotes.append(cur_fnote)
-                    in_fnote = False
-
-                continue
-
-            if in_fnote:
-                if ((blanc_prev and blanc_cur) or
-                    (not blanc_cur and not line.startswith(' '*indent_fnote))):
-                    # Two empty lines
-                    # or
-                    # Not a blank line, but indentation is less than
-                    # when the footnote was open
-                    #
-                    #  -> end of footnote
-                    in_fnote = False
-
-                    if blanc_prev:
-                        text.append("")
-
-                    # Append to footnotes
-                    self.footnotes.append(cur_fnote)
-
-                else:
-                    # still in footnote
-                    cur_fnote[1] += "\n" + line
-                    text.append("")
-                    continue
-
-
-            # Not a footnote - regular text
-            text.append(line)
-
-        # Last footnote
-        if in_fnote:
-            self.footnotes.append(cur_fnote)
+        text, footnotes = extract_footnotes_pp(self.text.splitlines())
 
         # Rebuild text, now without footnotes
         self.text = '\n'.join(text)
+        self.footnotes = '\n'.join(footnotes)
 
 
     def extract_footnotes(self):
@@ -363,9 +290,8 @@ class pgdp_file_text(pgdp_file):
             self.text = func(self.text)
 
         # Apply transform function to the footnotes
-        for fn in self.footnotes:
-            for func in self.transform_func:
-                fn[1] = func(fn[1])
+        for func in self.transform_func:
+            self.footnotes = func(self.footnotes)
 
 
 class pgdp_file_html(pgdp_file):
@@ -623,6 +549,7 @@ class pgdp_file_html(pgdp_file):
     def extract_footnotes(self):
         # Find footnotes, then remove them
         if self.args.extract_footnotes:
+            footnotes = []
             for find in [ "//div[@id[starts-with(.,'FN_')]]",
                         #  "//div[p/a[@id[starts-with(.,'Footnote_')]]]",
                           "//p[a[@id[starts-with(.,'Footnote_')]]]",
@@ -650,17 +577,17 @@ class pgdp_file_html(pgdp_file):
 
                     #print("*" + element.xpath("string()") + "*")
 
-                    self.footnotes.append([ m.group(1), m.group(2) ])
+                    footnotes += [ m.group(2) ]
 
-                    clear_element(element)
+                    # Remove the footnote from the main document
+                    #clear_element(element)
+                    element.getparent().remove(element)
 
                 if len(self.footnotes):
                     # Found them. Stop now.
                     break
 
-            #for fn in self.footnotes:
-            #    print(fn[0])
-            #raise
+            self.footnotes = "\n".join(footnotes)
 
 
     def transform(self):
@@ -676,9 +603,8 @@ class pgdp_file_html(pgdp_file):
             self.text = func(self.text)
 
         # Apply transform function to the footnotes
-        for fn in self.footnotes:
-            for func in self.transform_func:
-                fn[1] = func(fn[1])
+        for func in self.transform_func:
+            self.footnotes = func(self.footnotes)
 
         # zero width space
         if self.args.ignore_0_space:
@@ -883,7 +809,7 @@ class CompPP(object):
 
 
     def check_char(self, files, char_best, char_other):
-        """Check whether each file has a the best character. If not, add a
+        """Check whether each file has the best character. If not, add a
         conversion request.
 
         This is used for instance if one version uses ’ while the other
@@ -1029,20 +955,7 @@ class CompPP(object):
         fnotes_diff = ""
         fnotes_errors = []
         if self.args.extract_footnotes:
-            if len(files[0].footnotes) != len(files[1].footnotes):
-                fnotes_errors += [ "FOOTNOTE ERRORS: uneven number of footnotes: {0} and {1}. Footnotes diffs WILL NOT be displayed.".format(len(files[0].footnotes), len(files[1].footnotes)) ]
-
-            else:
-                fnotes1 = []
-                fnotes2 = []
-                for fn1, fn2 in zip(files[0].footnotes, files[1].footnotes):
-                    if fn1[0] != fn2[0] and fn1[0] != -1 and fn2[0] != -1:
-                        fnotes_errors += [ "FOOTNOTE ERROR: different footnote numbers: {0} and {1}".format(fn1[0], fn2[0]) ]
-
-                    fnotes1 += [ fn1[1] ]
-                    fnotes2 += [ fn2[1] ]
-
-                fnotes_diff = self.compare_texts("\n".join(fnotes1), "\n".join(fnotes2))
+            fnotes_diff = self.compare_texts(files[0].footnotes, files[1].footnotes)
 
         html_content = self.create_html(files, main_diff, fnotes_diff, fnotes_errors)
 
@@ -1194,7 +1107,7 @@ def main():
     args = parser.parse_args()
 
     x = CompPP(args)
-    html_content, fn1, fn2 = x.do_process()
+    err_msg, html_content, fn1, fn2 = x.do_process()
 
     output_html(args, html_content, fn1, fn2)
 

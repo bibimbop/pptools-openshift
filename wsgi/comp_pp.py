@@ -504,48 +504,6 @@ class pgdp_file_html(pgdp_file):
         return css_errors
 
 
-
-
-
-        # Transform footnote anchors to [..]
-        find = etree.XPath("//a")
-        for element in find(self.myfile.tree):
-            href = element.attrib.get('href', None)
-            if not href or not href.startswith("#Footnote_"):
-                continue
-
-            if element.text and not element.text.startswith('['):
-                # Some PP have [xx], other have just xx for a page
-                # number. Do not add [ ] if they are already there.
-                element.text = '[' + (element.text or '') # opening tag
-                element.tail = ']' + (element.tail or '') # closing tag
-
-        # Add illustration tag, wherever we find it
-        for figclass in [ 'figcenter', 'figleft', 'figright', 'caption' ]:
-            find = etree.XPath("//div[contains(concat(' ', normalize-space(@class), ' '), ' " + figclass + " ')]")
-            for element in find(self.myfile.tree):
-                if element.text and len(element.text) > 1:
-                    element.text = '[Illustration:' + element.text # opening tag
-                else:
-                    element.text = '[Illustration' + (element.text or '') # opening tag
-                element.tail = ']' + (element.tail or '') # closing tag
-
-#        for figclass in [ 'caption' ]:
-#            find = etree.XPath("//p[contains(concat(' ', normalize-space(@class), ' '), ' " + figclass + " ')]")
-#            for element in find(self.myfile.tree):
-#                element.text = '[Illustration:' + (element.text or '')  # opening tag
-#                element.tail = ']' + (element.tail or '') # closing tag
-
-        # Add sidenote tag
-        if self.args.with_sidenote_tags:
-            for sntag in [ 'sidenote' ]:
-                for find in [ "//p[contains(concat(' ', normalize-space(@class), ' '), ' " + sntag + " ')]",
-                              "//div[starts-with(@class, 'sidenote')]" ]:
-                    for element in etree.XPath(find)(self.myfile.tree):
-                        element.text = '[Sidenote:' + (element.text or '') # opening tag
-                        element.tail = ']' + (element.tail or '') # closing tag
-
-
     def extract_footnotes(self):
         # Find footnotes, then remove them
         if self.args.extract_footnotes:

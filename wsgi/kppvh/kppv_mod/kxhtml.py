@@ -78,9 +78,11 @@ class KXhtml(object):
         if len(css):
             # Not sure whether that covers all the comment cases. Maybe add
             # all the children
-            stylesheet = tinycss.make_parser().parse_stylesheet(etree.tostring(css[0]))
+            css_text = etree.tostring(css[0]).decode("utf8")
         else:
-            stylesheet = tinycss.make_parser().parse_stylesheet(css.text)
+            css_text = css.text
+
+        stylesheet = tinycss.make_parser().parse_stylesheet(css_text)
 
         # retrieve the errors
         self.cssutils_errors = [ "{0},{1}: {2}".format(err.line+css.sourceline-1, err.column, err.reason) for err in stylesheet.errors]

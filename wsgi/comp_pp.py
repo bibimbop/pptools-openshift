@@ -506,44 +506,64 @@ class pgdp_file_html(pgdp_file):
 
     def extract_footnotes(self):
         # Find footnotes, then remove them
+
+        def strip_note_tag(string, keep_num=False):
+            """Remove not tag and only keep the number.  For instance
+            "Note 123: lorem ipsum" becomes "123 lorem ipsum" or just
+            "lorem ipsum".
+            """
+            for regex in [ r"\s*\[([\w-]+)\](.*)",
+                           r"\s*([\d]+)\s+(.*)",
+                           r"\s*([\d]+):(.*)",
+                           r"\s*Note ([\d]+):\s+(.*)",
+                           ]:
+                m = re.match(regex, string, re.DOTALL)
+                if m:
+                    break
+
+            if m:
+                if keep_num:
+                    return m.group(1) + " " + m.group(2)
+                else:
+                    return m.group(2)
+            else:
+                # That may be bad
+                return string
+
         if self.args.extract_footnotes:
             footnotes = []
-            for find in [ "//div[@id[starts-with(.,'FN_')]]",
-                        #  "//div[p/a[@id[starts-with(.,'Footnote_')]]]",
-                          "//p[a[@id[starts-with(.,'Footnote_')]]]",
-                          "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
-                          #"//p[a[@id[not(starts-with(.,'footnotetag')) and starts-with(.,'footnote')]]]",
-                          #"//p[a[@id[starts-with(.,'footnote')]]]",
-                          ]:
-                for element in etree.XPath(find)(self.myfile.tree):
 
-                    # Grab the text and remove the footnote number
-                    m = re.match("\s*\[([\w-]+)\](.*)", element.xpath("string()"), re.DOTALL)
-                    if not m:
-                        m = re.match("\s*([\d]+)\s+(.*)", element.xpath("string()"), re.DOTALL)
-                    if not m:
-                        m = re.match("\s*([\d]+):(.*)", element.xpath("string()"), re.DOTALL)
-                    if not m:
-                        m = re.match("\s*Note ([\d]+):\s+(.*)", element.xpath("string()"), re.DOTALL)
+            # Special case for PPers who lose the marking around the
+            # footnote. They only mark the first paragraph.
+            elements = etree.XPath("//div[@class='footnote']")(self.myfile.tree)
+            if len(elements) == 1:
+                element = elements[0]
 
-                    if not m:
-                        # That's probably bad
-                        print("BAD? " , element.sourceline)
-                        print("*" + element.xpath("string()") + "*")
-                        #continue
-                        raise
+                # Clean footnote number
+                for el in element:
+                    footnotes += [ strip_note_tag(el.xpath("string()")) ]
 
-                    #print("*" + element.xpath("string()") + "*")
+                # Remove the footnote from the main document
+                element.getparent().remove(element)
+            else:
+                for find in [ "//div[@id[starts-with(.,'FN_')]]",
+                            #  "//div[p/a[@id[starts-with(.,'Footnote_')]]]",
+                              "//p[a[@id[starts-with(.,'Footnote_')]]]",
+                              "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
+                              #"//p[a[@id[not(starts-with(.,'footnotetag')) and starts-with(.,'footnote')]]]",
+                              #"//p[a[@id[starts-with(.,'footnote')]]]",
+                              ]:
+                    for element in etree.XPath(find)(self.myfile.tree):
 
-                    footnotes += [ m.group(2) ]
+                        # Grab the text and remove the footnote number
+                        footnotes += [ strip_note_tag(element.xpath("string()")) ]
 
-                    # Remove the footnote from the main document
-                    #clear_element(element)
-                    element.getparent().remove(element)
+                        # Remove the footnote from the main document
+                        element.getparent().remove(element)
 
-                if len(self.footnotes):
-                    # Found them. Stop now.
-                    break
+                    if len(self.footnotes):
+                        # Found them. Stop now.
+                        break
 
             self.footnotes = "\n".join(footnotes)
 
@@ -680,7 +700,7 @@ class CompPP(object):
             return p.stdout.read().decode('utf-8')
 
 
-    def create_html(self, files, text, footnotes, footnotes_errors):
+    def create_html(self, files, text, footnotes):
 
         def massage_input(text, start0, start1):
             # Massage the input
@@ -742,14 +762,7 @@ class CompPP(object):
                 html_content += "<p>There are " + str(nb_diffs_footnotes) + " diff sections in the footnotes.</p>"
         else:
             if self.args.extract_footnotes:
-                html_content += "<p>There is no diff section in the footnote.</p>"
-
-        if footnotes_errors:
-            html_content += "<p>Error with footnotes numbering:</p>"
-            html_content += "<ul>"
-            for err in footnotes_errors:
-                html_content += "<li>" + err + "</li>"
-            html_content += "</ul>"
+                html_content += "<p>There is no diff section in the footnotes.</p>"
 
         if nb_diffs_text:
             html_content += "<h2 class='sep4'>Main text</h2>"
@@ -899,23 +912,15 @@ class CompPP(object):
         for f in files:
             f.transform()
 
-
         # Compare the two versions
         main_diff = self.compare_texts(files[0].text, files[1].text)
 
-    #    for fn1, fn2 in zip(files[0].footnotes, files[1].footnotes):
-    #        print()
-    #        print("==========================================")
-    #        print(fn1[1])
-    #        print()
-    #        print(fn2[1])
-
-        fnotes_diff = ""
-        fnotes_errors = []
         if self.args.extract_footnotes:
             fnotes_diff = self.compare_texts(files[0].footnotes, files[1].footnotes)
+        else:
+            fnotes_diff = ""
 
-        html_content = self.create_html(files, main_diff, fnotes_diff, fnotes_errors)
+        html_content = self.create_html(files, main_diff, fnotes_diff)
 
         return err_message, html_content, files[0].myfile.basename, files[1].myfile.basename
 

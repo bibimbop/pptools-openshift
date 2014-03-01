@@ -171,7 +171,6 @@ class DiffForm(Form):
     suppress_footnote_tags = BooleanField('Suppress "[Footnote:" marks')
     suppress_illustration_tags = BooleanField('Suppress "[Illustration:" marks')
     suppress_sidenote_tags = BooleanField('Suppress "[Sidenote:" marks')
-    with_sidenote_tags = BooleanField('Add "[Sidenote:" marks')
     ignore_case = BooleanField('Ignore case when comparing')
     extract_footnotes = BooleanField('Extract and process footnotes separately')
     ignore_0_space = BooleanField('Suppress zero width space (U+200B)')
@@ -195,6 +194,7 @@ class DiffForm(Form):
                             default='U')
     css_greek_title_plus = BooleanField("Use greek transliteration in title attribute")
     css_add_illustration = BooleanField('Add "[Illustration:" marks')
+    css_add_sidenote = BooleanField('Add "[Sidenote:" marks')
     css_no_default = BooleanField("Do not use default transformation CSS")
 
     txt_cleanup_type = SelectField('Type of text cleaning',
@@ -242,7 +242,7 @@ def diffs(project_id):
     args.suppress_footnote_tags = form.suppress_footnote_tags.data
     args.suppress_illustration_tags = form.suppress_illustration_tags.data
     args.suppress_sidenote_tags = form.suppress_sidenote_tags.data
-    args.with_sidenote_tags = form.with_sidenote_tags.data
+    args.css_add_sidenote = form.css_add_sidenote.data
     args.ignore_case = form.ignore_case.data
     args.ignore_0_space = form.ignore_0_space.data
     args.suppress_nbsp_num = form.suppress_nbsp_num.data

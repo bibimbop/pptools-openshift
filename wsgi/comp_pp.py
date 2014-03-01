@@ -334,6 +334,10 @@ class pgdp_file_html(pgdp_file):
                 self.mycss += '.' + figclass + ':before { content: "[Illustration: "; }'
                 self.mycss += '.' + figclass + ':after { content: "]"; }'
 
+        if self.args.css_add_sidenote:
+            self.mycss += '.sidenote:before { content: "[Sidenote: "; }'
+            self.mycss += '.sidenote:after { content: "]"; }'
+
         # --css can be present multiple times, so it's a list.
         for css in self.args.css:
             self.mycss += css
@@ -1036,8 +1040,6 @@ def main():
                         help='Suppress "[Illustration:" marks')
     parser.add_argument('--suppress-sidenote-tags', action='store_true', default=False,
                         help='Suppress "[Sidenote:" marks')
-    parser.add_argument('--with-sidenote-tags', action='store_true', default=False,
-                        help="HTML: add [Sidenote: ...]")
     parser.add_argument('--ignore-case', action='store_true', default=False,
                         help='Ignore case when comparing')
     parser.add_argument('--extract-footnotes', action='store_true', default=False,
@@ -1060,6 +1062,8 @@ def main():
                         help="HTML: use greek transliteration in title attribute")
     parser.add_argument('--css-add-illustration', action='store_true', default=False,
                         help="HTML: add [Illustration ] tag")
+    parser.add_argument('--css-add-sidenote', action='store_true', default=False,
+                        help="HTML: add [Sidenote: ...]")
     parser.add_argument('--css-no-default', action='store_true', default=False,
                         help="HTML: do not use default transformation CSS")
     parser.add_argument('--without-html-header', action='store_true', default=False,

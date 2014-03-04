@@ -24,6 +24,7 @@ old_spelling = [
     "complétement",
     "incomplétement",
     "orfévre",
+    "déréglement",
     ]
 
 new_spelling = [
@@ -45,7 +46,8 @@ new_spelling = [
     "manège"
     "complètement",
     "incomplètement",
-    "orfèvre"
+    "orfèvre",
+    "dérèglement",
     ]
 
 # Split a document in a list of words/punctuation

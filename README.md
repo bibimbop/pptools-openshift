@@ -1,3 +1,15 @@
-The OpenShift `python` cartridge documentation can be found at:
+pptools
+=======
 
-https://github.com/openshift/origin-server/tree/master/cartridges/openshift-origin-cartridge-python/README.md
+Several tools to help check the documents resulting from post-processing.
+
+
+This application can run on RedHat's Openshift, or individually.
+
+
+Installation on OpenShift
+-------------------------
+
+dwdiff - TODO
+
+w3c-sgml-lib - TODO

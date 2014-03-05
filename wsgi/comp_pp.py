@@ -670,7 +670,7 @@ class CompPP(object):
             t1.flush()
             t2.flush()
 
-            repo_dir = os.environ.get("OPENSHIFT_REPO_DIR", "")
+            repo_dir = os.environ.get("OPENSHIFT_DATA_DIR", "")
             if repo_dir:
                 dwdiff_path = os.path.join(repo_dir, "bin", "dwdiff")
             else:

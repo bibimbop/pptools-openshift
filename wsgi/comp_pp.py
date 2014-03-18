@@ -932,6 +932,51 @@ class CompPP(object):
 
         return err_message, html_content, files[0].myfile.basename, files[1].myfile.basename
 
+
+    def simple_html(self):
+        """For debugging purposes. Transform the html and print the
+        text output."""
+
+        fname = self.args.filename[0]
+
+        if fname.lower().endswith(('.html', '.htm')):
+            f = pgdp_file_html(self.args)
+        else:
+            print("Error: not an html file")
+
+        f.load(fname)
+        if f.myfile is None:
+            print("Couldn't load file:", fname)
+            return
+
+        f.process_args(self.args)
+        f.analyze()
+
+        # Remove non-breakable spaces between numbers. For instance, a
+        # text file could have 250000, and the html could have 250 000.
+        if self.args.suppress_nbsp_num:
+            func = lambda text: re.sub(r"(\d)\u00A0(\d)", r"\1\2", text)
+            f.transform_func.append(func)
+
+        # Suppress shy (soft hyphen)
+        func = lambda text: re.sub(r"\u00AD", r"", text)
+        f.transform_func.append(func)
+
+        err_message = ""
+
+        # Apply the various convertions
+        err_message += f.convert() or ""
+
+        # Extract footnotes
+        if self.args.extract_footnotes:
+            f.extract_footnotes()
+
+        # Transform the final document into a diffable format
+        f.transform()
+
+        print(f.text)
+
+
 ######################################
 
 # Sample CSS used to display the diffs.
@@ -1076,13 +1121,18 @@ def main():
                         help="HTML: do not output html header and footer")
     parser.add_argument('--txt-cleanup-type', type=str, default='b',
                         help="TXT: Type of text cleaning -- (b)est effort, (n)one, (p)roofers")
+    parser.add_argument('--simple-html', action='store_true', default=False,
+                        help="HTML: Process the html file and print the output (debug)")
 
     args = parser.parse_args()
 
     x = CompPP(args)
-    err_msg, html_content, fn1, fn2 = x.do_process()
+    if args.simple_html:
+        x.simple_html()
+    else:
+        err_msg, html_content, fn1, fn2 = x.do_process()
 
-    output_html(args, html_content, fn1, fn2)
+        output_html(args, html_content, fn1, fn2)
 
 if __name__ == '__main__':
     main()

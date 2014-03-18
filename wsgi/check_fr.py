@@ -8,46 +8,50 @@ old_spelling = [
     "allége",
     "assiége",
     "avénement",
-    "événement",
     "collége",
+    "complétement",
     "cortége",
+    "déréglement",
+    "entiérement",
+    "incomplétement",
     "liége",
+    "manége",
+    "orfévre",
     "piége",
+    "poëme",
+    "poëte",
     "privilége",
     "protége",
     "sacrilége",
     "siége",
     "solfége",
-    "poëme",
-    "poëte",
-    "manége",
-    "complétement",
-    "incomplétement",
-    "orfévre",
-    "déréglement",
+    "sortilége",
+    "événement",
     ]
 
 new_spelling = [
-    "avènement"
-    "évènement"
     "allège",
     "assiège",
+    "avènement"
     "collège",
+    "complètement",
     "cortège",
+    "dérèglement",
+    "entièrement",
+    "incomplètement",
     "liège",
+    "manège"
+    "orfèvre",
     "piège",
+    "poême",
+    "poête",
     "privilège",
     "protège",
     "sacrilège",
     "siège",
     "solfège",
-    "poême",
-    "poête",
-    "manège"
-    "complètement",
-    "incomplètement",
-    "orfèvre",
-    "dérèglement",
+    "sortilège",
+    "évènement"
     ]
 
 # Split a document in a list of words/punctuation

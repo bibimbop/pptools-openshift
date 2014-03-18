@@ -537,8 +537,9 @@ class pgdp_file_html(pgdp_file):
         if self.args.extract_footnotes:
             footnotes = []
 
-            # Special case for PPers who lose the marking around the
-            # footnote. They only mark the first paragraph.
+            # Special case for PPers who do not keep the marking
+            # around the whole footnote. They only mark the first
+            # paragraph.
             elements = etree.XPath("//div[@class='footnote']")(self.myfile.tree)
             if len(elements) == 1:
                 element = elements[0]
@@ -554,8 +555,11 @@ class pgdp_file_html(pgdp_file):
                             #  "//div[p/a[@id[starts-with(.,'Footnote_')]]]",
                               "//p[a[@id[starts-with(.,'Footnote_')]]]",
                               "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
+                              "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
                               #"//p[a[@id[not(starts-with(.,'footnotetag')) and starts-with(.,'footnote')]]]",
                               #"//p[a[@id[starts-with(.,'footnote')]]]",
+                              "//p[@class='footnote']",
+                              "//div[@class='footnote']",
                               ]:
                     for element in etree.XPath(find)(self.myfile.tree):
 

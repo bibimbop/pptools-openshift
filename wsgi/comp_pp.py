@@ -326,8 +326,7 @@ class pgdp_file_html(pgdp_file):
 
         if self.args.css_greek_title_plus:
             # greek: if there is a title, use it to replace the greek. */
-            self.mycss += 'body *[lang=grc] { _replace_with_attr: "title"; }'
-            self.mycss += 'body *[lang=grc]:before, body *[lang=grc]:after { content: "+"; }'
+            self.mycss += '*[lang=grc] { content: "+" attr(title) "+"; }'
 
         if self.args.css_add_illustration:
             for figclass in [ 'figcenter', 'figleft', 'figright' ]:
@@ -418,12 +417,31 @@ class pgdp_file_html(pgdp_file):
     def convert(self):
         """Remove HTML and PGDP marker from the text."""
 
+        def new_content(element, declaration):
+            """Process the "content:" property
+            """
+            retstr = ""
+            for token in val.value:
+                if token.type == "STRING":
+                    # e.g. { content: "xyz" }
+                    retstr += token.value
+                elif token.type == "FUNCTION":
+                    if token.function_name == 'attr':
+                        # e.g. { content: attr(title) }
+                        retstr += element.attrib.get(token.content[0].value, "")
+                elif token.type == "IDENT":
+                    if token.value == "content":
+                        # Identity, e.g. { content: content }
+                        retstr += element.text
+
+            return retstr
+
+
         # Process each rule from our transformation CSS
         stylesheet = tinycss.make_parser().parse_stylesheet(self.mycss)
         for rule in stylesheet.rules:
 
             # Extract values we care about
-            v_content = None
             f_transform = None
             f_replace_with_attr = None
             f_replace_regex = None
@@ -432,10 +450,7 @@ class pgdp_file_html(pgdp_file):
 
             for val in rule.declarations:
 
-                if val.name == 'content':
-                    v_content = val.value[0].value
-
-                elif val.name == "text-transform":
+                if val.name == "text-transform":
                     v = val.value[0].value
                     if v == "uppercase":
                         f_transform = lambda x: x.upper()
@@ -475,10 +490,15 @@ class pgdp_file_html(pgdp_file):
                         if f_replace_with_attr:
                             element.text = f_replace_with_attr(element)
 
-                        if pseudo_element == "before":
-                            element.text = v_content + (element.text or '') # opening tag
-                        elif pseudo_element == "after":
-                            element.tail = v_content + (element.tail or '') # closing tag
+                        if val.name == 'content':
+                            v_content = new_content(element, val)
+                            if pseudo_element == "before":
+                                element.text = v_content + (element.text or '') # opening tag
+                            elif pseudo_element == "after":
+                                element.tail = v_content + (element.tail or '') # closing tag
+                            else:
+                                # Replace all content
+                                element.text = new_content(element, val)
 
                         if f_transform:
                             self.text_apply(element, f_transform)

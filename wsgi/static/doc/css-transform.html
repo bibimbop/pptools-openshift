@@ -68,6 +68,16 @@ version will be transformed to <strong>_..._</strong> so that will not generate 
 diff with another file. That should be enough for a normal project,
 without having to define some specialized CSS rules.</p>
 </div>
+<div class="section" id="handling-of-files">
+<h2>Handling of files<a class="headerlink" href="#handling-of-files" title="Permalink to this headline">¶</a></h2>
+<p>Depending on certain criteria, the internal handling of files will be
+different.</p>
+<p>Files which name ends with <em>.html</em> or <em>.htm</em> are recognized as HTML
+files. Files starting with <em>ProjectID</em> and ending with <em>.txt</em> will be
+considered as P1/2/3 or F1/2, and files ending with <em>.txt</em> are
+regular text files. Files not matching these criteria will be rejected.</p>
+<p>The encoding (either ASCII/latin1 or UTF-8) is autodetected.</p>
+</div>
 <div class="section" id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="extract-and-process-footnotes-separately">
@@ -160,10 +170,27 @@ and suppresses it.</p>
 CSS, some are new.</p>
 <div class="section" id="content">
 <h4>content<a class="headerlink" href="#content" title="Permalink to this headline">¶</a></h4>
-<p>Insert some content in a tag. Used in conjonction with the <strong>:before</strong> and
-<strong>:after</strong> pseudo selector.</p>
+<p>Insert some content in a tag. Used on the element, or in conjonction
+with the <strong>:before</strong> and <strong>:after</strong> pseudo selector. If no
+pseudo-element is used, then the existing content is replaced.</p>
+<p>Supports multiple parameters, such as a string, the <em>attr()</em> function
+(insert the content of the attribute), <em>content</em> (the identity,
+ie. the original content).</p>
+<p>The original content is only the first string in the html until either
+the closing of the matched element or the opening of a sub
+element. For instance, if the matched html is
+<em>&#8220;&lt;span&gt;abc&lt;i&gt;def&lt;/i&gt;&lt;/span&gt;&#8221;, then the content is only *abc</em>.</p>
 <p>For instance:</p>
 <div class="highlight-css"><div class="highlight"><pre><span class="nt">br</span><span class="nd">:before</span> <span class="p">{</span> <span class="k">content</span><span class="o">:</span> <span class="s2">&quot; &quot;</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="o">*[</span><span class="nt">lang</span><span class="o">=</span><span class="nt">grc</span><span class="o">]</span> <span class="p">{</span> <span class="k">content</span><span class="o">:</span> <span class="s2">&quot;+&quot;</span> <span class="n">attr</span><span class="p">(</span><span class="n">title</span><span class="p">)</span> <span class="s2">&quot;+&quot;</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="nc">.dumb</span> <span class="p">{</span> <span class="k">content</span><span class="o">:</span> <span class="s2">&quot;abc&quot;</span> <span class="n">attr</span><span class="p">(</span><span class="n">title</span><span class="p">)</span> <span class="s2">&quot;def&quot;</span> <span class="k">content</span><span class="p">;</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>The <em>&#8220;use greek transliteration in title attribute&#8221;</em> option is
+implemented with this:</p>
+<div class="highlight-css"><div class="highlight"><pre><span class="o">*[</span><span class="nt">lang</span><span class="o">=</span><span class="nt">grc</span><span class="o">]</span> <span class="p">{</span> <span class="k">content</span><span class="o">:</span> <span class="s2">&quot;+&quot;</span> <span class="n">attr</span><span class="p">(</span><span class="n">title</span><span class="p">)</span> <span class="s2">&quot;+&quot;</span><span class="p">;</span> <span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -184,12 +211,7 @@ CSS, some are new.</p>
 </div>
 <div class="section" id="replace-with-attr">
 <h4>_replace_with_attr<a class="headerlink" href="#replace-with-attr" title="Permalink to this headline">¶</a></h4>
-<p>Replace the content inside the selected tags with the value of an
-attribute.</p>
-<p>For instance this is how part of the <em>&#8220;use greek transliteration in
-title attribute&#8221;</em> option is implemented:</p>
-<div class="highlight-css"><pre>body \*[lang=grc] { _replace_with_attr: "title"; }</pre>
-</div>
+<p><strong>OBSOLETE</strong>. Use <em>content</em> instead.</p>
 </div>
 <div class="section" id="display">
 <h4>display<a class="headerlink" href="#display" title="Permalink to this headline">¶</a></h4>
@@ -208,6 +230,7 @@ replaced.</p>
 <div class="highlight-css"><div class="highlight"><pre><span class="nt">p</span> <span class="p">{</span> <span class="k">text</span><span class="o">-</span><span class="n">replace</span><span class="o">:</span> <span class="s2">&quot;⁄&quot;</span> <span class="s2">&quot;/&quot;</span><span class="p">;</span> <span class="p">}</span>
 </pre></div>
 </div>
+<p>With &#8220;1⁄2 + 1⁄2 = 1&#8221;, this will result in &#8220;1/2 + 1/2 = 1&#8221;.</p>
 <p>It is also possible to use unicode numbers:</p>
 <div class="highlight-css"><div class="highlight"><pre><span class="nt">p</span> <span class="p">{</span> <span class="k">text</span><span class="o">-</span><span class="n">replace</span><span class="o">:</span> <span class="s2">&quot;Z&quot;</span> <span class="s2">&quot;\u1234&quot;</span><span class="p">;</span> <span class="p">}</span>
 </pre></div>
@@ -278,6 +301,7 @@ not the case in the html, this can be easily fixed with the following:</p>
   <ul>
 <li><a class="reference internal" href="#">comp_pp — comparing files easy</a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#handling-of-files">Handling of files</a></li>
 <li><a class="reference internal" href="#options">Options</a><ul>
 <li><a class="reference internal" href="#extract-and-process-footnotes-separately">Extract and process footnotes separately</a></li>
 <li><a class="reference internal" href="#transform-small-caps">Transform small caps</a></li>

@@ -31,6 +31,20 @@ diff with another file. That should be enough for a normal project,
 without having to define some specialized CSS rules.
 
 
+Handling of files
+-----------------
+
+Depending on certain criteria, the internal handling of files will be
+different.
+
+Files which name ends with *.html* or *.htm* are recognized as HTML
+files. Files starting with *ProjectID* and ending with *.txt* will be
+considered as P1/2/3 or F1/2, and files ending with *.txt* are
+regular text files. Files not matching these criteria will be rejected.
+
+The encoding (either ASCII/latin1 or UTF-8) is autodetected.
+
+
 Options
 -------
 
@@ -131,8 +145,7 @@ delimited by the <i> tag. On the left side is regular CSS selector. On
 the right side is more or less standard CSS 3 property/value, although
 only a few are implemented.
 
-The removal of page numbers is done with this:
-::
+The removal of page numbers is done with this::
 
   span[class^="pagenum"] { display: none }
 
@@ -157,13 +170,32 @@ CSS, some are new.
 content
 .......
 
-Insert some content in a tag. Used in conjonction with the **:before** and
-**:after** pseudo selector.
+Insert some content in a tag. Used on the element, or in conjonction
+with the **:before** and **:after** pseudo selector. If no
+pseudo-element is used, then the existing content is replaced.
 
-For instance:
-::
+Supports multiple parameters, such as a string, the *attr()* function
+(insert the content of the attribute), *content* (the identity,
+ie. the original content).
+
+The original content is only the first string in the html until either
+the closing of the matched element or the opening of a sub
+element. For instance, if the matched html is
+*"<span>abc<i>def</i></span>", then the content is only *abc*.
+
+For instance::
 
   br:before { content: " "; }
+
+  *[lang=grc] { content: "+" attr(title) "+"; }
+
+  .dumb { content: "abc" attr(title) "def" content; }
+
+
+The *"use greek transliteration in title attribute"* option is
+implemented with this::
+
+  *[lang=grc] { content: "+" attr(title) "+"; }
 
 
 text-transform
@@ -175,8 +207,7 @@ Transform the content inside the selected tags. The options are:
   * "lowercase":  *Lorem ipsum dolor*  -->  *lorem ipsum dolor*
   * "capitalize": *Lorem ipsum dolor*  -->  *Lorem Ipsum Dolor*
 
-For instance:
-::
+For instance::
 
   .smcap { text-transform:uppercase; }
 
@@ -184,14 +215,7 @@ For instance:
 _replace_with_attr
 ..................
 
-Replace the content inside the selected tags with the value of an
-attribute.
-
-For instance this is how part of the *"use greek transliteration in
-title attribute"* option is implemented:
-::
-
-  body \*[lang=grc] { _replace_with_attr: "title"; }
+**OBSOLETE**. Use *content* instead.
 
 
 display
@@ -200,8 +224,7 @@ display
 How to display some content. Right now only "none" is supported, which
 simply suppresses the content.
 
-For instance:
-::
+For instance::
 
   span[class^="pagenum"] { display: none }
 
@@ -215,6 +238,8 @@ replaced.
 For instance, to replace a divide symbol with a slash::
 
   p { text-replace: "⁄" "/"; }
+
+With "1⁄2 + 1⁄2 = 1", this will result in "1/2 + 1/2 = 1".
 
 It is also possible to use unicode numbers::
 
@@ -263,8 +288,7 @@ Anchors
 .......
 
 By default anchors are expected to be surrounded by brackets. If it is
-not the case in the html, this can be easily fixed with the following:
-::
+not the case in the html, this can be easily fixed with the following::
 
   .fnanchor:before { content: "["; } .fnanchor:after { content: "]"; }
 

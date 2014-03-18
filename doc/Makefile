@@ -154,5 +154,5 @@ doctest:
 
 # Compile and install the html
 dist: html
-	rsync -a _build/html ../wsgi/static/doc/
+	rsync -a _build/html/* ../wsgi/static/doc/
 

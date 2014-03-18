@@ -63,6 +63,7 @@ def extract_footnotes_pp(pp_text):
         if len(block):
             for (regex, fn_type) in [ (r"(\s*)\[([\w-]+)\](.*)", 1),
                                       (r"(\s*)\[Note (\d+): (.*)", 2),
+                                      (r"(      )Note (\d+): (.*)", 1),
                                       ]:
                 m = re.match(regex, block[0])
                 if m:

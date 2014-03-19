@@ -86,7 +86,6 @@ class KXhtml(object):
 
         # retrieve the errors
         self.cssutils_errors = [ "{0},{1}: {2}".format(err.line+css.sourceline-1, err.column, err.reason) for err in stylesheet.errors]
-        print(stylesheet.errors)
 
         css_selectors = []
         for rule in stylesheet.rules:
@@ -131,54 +130,36 @@ class KXhtml(object):
             # If it's from a class, find the name. It should be the
             # last word starting with a dot (eg. "p.foo", ".foo",
             # "#toc .foo" => "foo")
-            m = re.match(r'^.*\.([\w-]+)$', selector)
-
+            #
+            # Remove a pseudo selector with rsplit, if there is one.
+            m = re.search(r'\.([\w-]+)$', selector.rsplit(":", 1)[0])
             if m == None:
                 continue
 
             cl = m.group(1)
-            assert len(cl) > 0
+            if len(cl) == 0:
+                continue
 
             # Mark the class wherever it is used, in each element
             for item in occurences:
-                if 'class' in item.attrib:
-                    old_classes = item.attrib['class'].split(' ')
-
-                    found = 0
-                    for it_cl in old_classes:
-                        it_cl.strip()
-                        if it_cl == cl:
-                            # The class has been found. Mark it.
-                            found = 1
-                            if '__used_classes' not in item.attrib:
-                                item.attrib['__used_classes'] = it_cl
-                            else:
-                                item.attrib['__used_classes'] += ' ' + it_cl
-
-                    assert found == 1
-
-                else:
-                    # I don't think that should happen
-                    print("KPPVH ERROR - matches " + cl + " but no class - line " + str(item.sourceline))
+                item.attrib['__used_classes'] = item.attrib.get('__used_classes', '') + ' ' + cl
 
         # Look for unused classes
         self.classes_undefined = []
-        # todo- use xpath instead
-        for element in myfile.tree.iter(tag=etree.Element):
-            if 'class' in element.attrib:
-                classes = element.attrib['class'].strip()
-                classes = re.sub(r"\s+", " ", classes)
-                classes = classes.split(' ')
+        find = etree.XPath("//*[@class]")
+        for element in find(myfile.tree):
+            classes = element.attrib['class'].split()
 
-                if '__used_classes' in element.attrib:
-                    used_classes = element.attrib['__used_classes'].strip().split(' ')
+            if '__used_classes' in element.attrib:
+                used_classes = element.attrib['__used_classes'].split()
 
-                    # Substract content of used_classes from classes
-                    classes = list(set(classes) - set(used_classes))
+                # Substract content of used_classes from classes
+                # leaving classes that were not matched.
+                classes = set(classes) - set(used_classes)
 
-                # Finally, print the warning)
-                for cl in classes:
-                    self.classes_undefined.append([element.sourceline, cl])
+            # Finally, create the warning
+            for cl in classes:
+                self.classes_undefined.append([element.sourceline, cl])
 
 
     def check_title(self, myfile):

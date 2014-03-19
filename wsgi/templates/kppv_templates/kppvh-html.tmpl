@@ -92,10 +92,11 @@
 	<div class='box'>
 	  <ul>
 		{% for l in x.languages %}
+		{% set ll = l.split('_')[0] %}
 		  <li>
 			<b>{{ l }}</b>
-			{% if x.iana_languages[l] %}
-			  ({{ x.iana_languages[l]['Description'] }})
+			{% if x.iana_languages[ll] %}
+			  ({{ x.iana_languages[ll]['Description'] }})
 			{% else %}
 			  (<span class='highlight'>not found in the IANA list</span>. See <a href="http://www.w3.org/International/articles/language-tags/">Language tags in HTML and XML</a> and the IANA list it refers to.)
 			{% endif %}

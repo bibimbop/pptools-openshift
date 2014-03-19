@@ -163,16 +163,23 @@ class KXhtml(object):
 
 
     def check_title(self, myfile):
-        """Check whether the title is built accoring to PG or PGDP suggestion.
+        """Check whether the title is built according to PG or PGDP suggestion.
         """
+        self.good_format = False
+        self.title = None
+        self.author = None
+
+        # Find the title and sanitize it.
         title = myfile.tree.find('head').find('title')
-        lines = [ line.strip() for line in title.text.splitlines()]
-        title_str = ' '.join(lines).strip()
+        title_str = ' '.join(title.text.splitlines()).strip()
+        title_str = re.sub(r"\s+", " ", title_str)
         title_str = title_str.replace('—', '&mdash;')
 
+        print(title_str)
+
         # Try the recommended format
-        for regex in [ r'^The Project Gutenberg eBook of (.*),\s+by (.*)$',
-                       r'^(.*), by (.*)\s?&mdash;\s?A Project Gutenberg eBook\.?$' ]:
+        for regex in [ r'The Project Gutenberg eBook of (.*), by (.*)$',
+                       r'(.*), by (.*)\s?&mdash;\s?A Project Gutenberg eBook\.?$' ]:
 
             m = re.match(regex, title_str)
             if m:
@@ -181,13 +188,11 @@ class KXhtml(object):
                 self.author = m.group(2)
                 return
 
-        self.good_format = False
-
         # Try variations
-        for regex in [ r"^The Project Gutenberg's eBook of (.*),\s+by (.*)$",
-                       r"^The Project Gutenberg eBook of (.*),\s+by (.*)$",
-                       r"^The Project Gutenberg eBook of (.*),\s+par (.*)$",
-                       r"^The Project Gutenberg eBook of (.*),\s+edited by (.*)$",
+        for regex in [ r"The Project Gutenberg's eBook of (.*), by (.*)$",
+                       r"The Project Gutenberg eBook of (.*), by (.*)$",
+                       r"The Project Gutenberg eBook of (.*), par (.*)$",
+                       r"The Project Gutenberg eBook of (.*), edited by (.*)$",
                        ]:
 
             m = re.match(regex, title_str, flags=re.I)
@@ -196,8 +201,7 @@ class KXhtml(object):
                 self.author = m.group(2)
                 return
 
-        self.title = None
-        self.author = None
+        self.title = title_str
 
 
     def epub_toc(self, myfile):

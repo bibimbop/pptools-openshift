@@ -201,11 +201,15 @@
 	</p>
   {% endif %}
 
-  {% if x.author and x.title %}
-    <div class='box'>
+  {% if x.author or x.title %}
+	<div class='box'>
       <dl>
-		<dt><b>Title:</b></dt>  <dd>{{ x.title | e }}</dd>
-		<dt><b>Author:</b></dt> <dd>{{ x.author | e }}</dd>
+		{% if x.title %}
+		  <dt><b>Title:</b></dt>  <dd>{{ x.title | e }}</dd>
+		{% endif %}
+		{% if x.author %}
+		  <dt><b>Author:</b></dt> <dd>{{ x.author | e }}</dd>
+		{% endif %}
 	  </dl>
 	</div>
   {% endif %}

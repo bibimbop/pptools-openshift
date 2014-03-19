@@ -171,8 +171,8 @@ class KXhtml(object):
 
         # Find the title and sanitize it.
         title = myfile.tree.find('head').find('title')
-        title_str = ' '.join(title.text.splitlines()).strip()
-        title_str = re.sub(r"\s+", " ", title_str)
+        title_str = ' '.join(title.text.splitlines())
+        title_str = re.sub(r"\s+", " ", title_str).strip()
         title_str = title_str.replace('—', '&mdash;')
 
         print(title_str)
@@ -219,20 +219,14 @@ class KXhtml(object):
 
             # Attribute title overrides the content
             if 'title' in element.attrib:
-                text = element.attrib['title'].replace('\n', ' ').strip(' ')
+                text = ' '.join(element.attrib['title'].splitlines())
             else:
-                text = etree.tostring(element).decode("utf-8").replace('\n', ' ')
-
-                # Remove the tag markers
-                text = re.sub('<[^<]*>', ' ', text, 0)
+                text = element.xpath("string()")
 
                 # Replace series of spaces with only one space
-                text = re.sub(' +', ' ', text, 0)
+                text = re.sub(r'\s+', ' ', text).strip()
 
-                # Strip leading and trailing spaces
-                text = text.strip(' ')
-
-            # Print the title with an offset and indent)
+            # Print the title with an offset and indent
             if text != "":
                 self.toc.append((level, text))
 

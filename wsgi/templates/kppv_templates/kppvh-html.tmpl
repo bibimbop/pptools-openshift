@@ -299,7 +299,7 @@
   {% if x.toc %}
     <div class='box'>
 	  {% for level, title in x.toc %}
-        <div style='text-indent:{{ 2*level }}em'>{{ title }}</div>
+        <div style='text-indent:{{ 2*level }}em'>{{ title | e }}</div>
 	  {% endfor %}
     </div>
   {% else %}

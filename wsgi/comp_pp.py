@@ -439,6 +439,7 @@ class pgdp_file_html(pgdp_file):
 
         # Process each rule from our transformation CSS
         stylesheet = tinycss.make_parser().parse_stylesheet(self.mycss)
+        property_errors = []
         for rule in stylesheet.rules:
 
             # Extract values we care about
@@ -450,22 +451,34 @@ class pgdp_file_html(pgdp_file):
 
             for val in rule.declarations:
 
-                if val.name == "text-transform":
-                    v = val.value[0].value
-                    if v == "uppercase":
-                        f_transform = lambda x: x.upper()
-                    elif v == "lowercase":
-                        f_transform = lambda x: x.lower()
-                    elif v == "capitalize":
-                        f_transform = lambda x: x.title()
+                if val.name == 'content':
+                    # result depends on element and pseudo elements.
+                    pass
+
+                elif val.name == "text-transform":
+                    if len(val.value) != 1:
+                        property_errors += [ (val.line, val.column, val.name + " needs only 1 argument") ]
+                    else:
+                        v = val.value[0].value
+                        if v == "uppercase":
+                            f_transform = lambda x: x.upper()
+                        elif v == "lowercase":
+                            f_transform = lambda x: x.lower()
+                        elif v == "capitalize":
+                            f_transform = lambda x: x.title()
+                        else:
+                            property_errors += [ (val.line, val.column, val.name + " accepts only 'uppercase', 'lowercase' or 'capitalize'") ]
 
                 elif val.name == "_replace_with_attr":
                     f_replace_with_attr = lambda el: el.attrib[val.value[0].value]
 
                 elif val.name == "text-replace":
-                    v1 = val.value[0].value
-                    v2 = val.value[2].value
-                    f_text_replace = lambda x: x.replace(v1, v2)
+                    if len(val.value) != 2:
+                        property_errors += [ (val.line, val.column, val.name + " needs 2 arguments") ]
+                    else:
+                        v1 = val.value[0].value
+                        v2 = val.value[2].value
+                        f_text_replace = lambda x: x.replace(v1, v2)
 
                 elif val.name == "display":
                     # Support display none only. So ignore "none" argument.
@@ -474,6 +487,9 @@ class pgdp_file_html(pgdp_file):
 #                elif val.name == "_replace_regex":
 #                    f_replace_regex = partial(re.sub, r"(\d)\u00A0(\d)", r"\1\2")
 #                    f_replace_regex = partial(re.sub, val.value[0].value, val.value[1].value)
+
+                else:
+                    property_errors += [ (val.line, val.column, "Unsupported property " + val.name) ]
 
                 # Iterate through each selectors in the rule
                 for selector in cssselect.parse(rule.selector.as_css()):
@@ -514,7 +530,7 @@ class pgdp_file_html(pgdp_file):
 
 
         css_errors = ""
-        if stylesheet.errors:
+        if stylesheet.errors or property_errors:
             # There is transformation CSS errors. If the default css
             # is included, take the offset into account.
             i = 0
@@ -523,6 +539,8 @@ class pgdp_file_html(pgdp_file):
             css_errors = "<div class='error-border bbox'><p>Error(s) in the transformation CSS:</p><ul>"
             for err in stylesheet.errors:
                 css_errors += "<li>{0},{1}: {2}</li>".format(err.line-i, err.column, err.reason)
+            for err in property_errors:
+                css_errors += "<li>{0},{1}: {2}</li>".format(err[0]-i, err[1], err[2])
             css_errors += "</ul>"
 
         return css_errors

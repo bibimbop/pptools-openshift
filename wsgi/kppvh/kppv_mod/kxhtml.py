@@ -175,8 +175,6 @@ class KXhtml(object):
         title_str = re.sub(r"\s+", " ", title_str).strip()
         title_str = title_str.replace('—', '&mdash;')
 
-        print(title_str)
-
         # Try the recommended format
         for regex in [ r'The Project Gutenberg eBook of (.*), by (.*)$',
                        r'(.*), by (.*)\s?&mdash;\s?A Project Gutenberg eBook\.?$' ]:

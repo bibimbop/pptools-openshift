@@ -457,7 +457,7 @@ class pgdp_file_html(pgdp_file):
 
                 elif val.name == "text-transform":
                     if len(val.value) != 1:
-                        property_errors += [ (val.line, val.column, val.name + " needs only 1 argument") ]
+                        property_errors += [ (val.line, val.column, val.name + " takes only 1 argument") ]
                     else:
                         v = val.value[0].value
                         if v == "uppercase":
@@ -473,11 +473,13 @@ class pgdp_file_html(pgdp_file):
                     f_replace_with_attr = lambda el: el.attrib[val.value[0].value]
 
                 elif val.name == "text-replace":
-                    if len(val.value) != 2:
-                        property_errors += [ (val.line, val.column, val.name + " needs 2 arguments") ]
+                    # Skip S (spaces) tokens.
+                    values = [ v for v in val.value if v.type != "S"]
+                    if len(values) != 2:
+                        property_errors += [ (val.line, val.column, val.name + " takes 2 string arguments") ]
                     else:
-                        v1 = val.value[0].value
-                        v2 = val.value[2].value
+                        v1 = values[0].value
+                        v2 = values[1].value
                         f_text_replace = lambda x: x.replace(v1, v2)
 
                 elif val.name == "display":

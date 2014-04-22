@@ -457,7 +457,7 @@ class pgdp_file_html(pgdp_file):
 
                 elif val.name == "text-transform":
                     if len(val.value) != 1:
-                        property_errors += [ (val.line, val.column, val.name + " takes only 1 argument") ]
+                        property_errors += [ (val.line, val.column, val.name + " takes 1 argument") ]
                     else:
                         v = val.value[0].value
                         if v == "uppercase":

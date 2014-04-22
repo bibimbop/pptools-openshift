@@ -33,6 +33,12 @@
    <p>This extract all strings tagged with a <i>lang</i> or <i>xml:lang</i> attribute, and present them in different order for easy checks.
    </p>
 
+   <p>
+	 <a href="#taglang">Sorted by element tag then by language</a><br />
+	 <a href="#content">Sorted by content</a><br />
+	 <a href="#langcontent">Sorted by language then by content</a>
+   </p>
+
    <p><a href="/project/{{ project_id }}">Back to project page</a></p>
 
    <div class="center">
@@ -44,7 +50,7 @@
 		</form>
    </div>
 
-   <h2>Sorted by element tag then by language</h2>
+   <h2 id="taglang">Sorted by element tag then by language</h2>
    <table>
 	 <tr>
 	   <th>Language</th>
@@ -60,7 +66,7 @@
 	 {% endfor %}
    </table>
 
-   <h2>Sorted by content</h2>
+   <h2 id="content">Sorted by content</h2>
    <table>
 	 <tr>
 	   <th>Language</th>
@@ -76,7 +82,7 @@
 	 {% endfor %}
    </table>
 
-   <h2>Sorted by language then by content</h2>
+   <h2 id="langcontent">Sorted by language then by content</h2>
    <table>
 	 <tr>
 	   <th>Language</th>

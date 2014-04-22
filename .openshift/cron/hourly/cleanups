@@ -1,3 +1,0 @@
-#!/bin/bash
-
-#find $OPENSHIFT_DATA_DIR/projects -maxdepth 1 -mtime +1 -exec rm -rf {} \;

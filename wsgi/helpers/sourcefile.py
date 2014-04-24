@@ -128,8 +128,8 @@ class SourceFile(object):
                 self.text = self.text[index+1:]
 
         # Try the XML then HTML parser
-        for xparser in [ ('XML', etree.XMLParser(load_dtd=True)),
-                         ('HTML', etree.HTMLParser()) ]:
+        for xparser in [ ('XML', etree.XMLParser(load_dtd=True, remove_comments=True)),
+                         ('HTML', etree.HTMLParser(remove_comments=True)) ]:
             try:
                 self.tree = etree.fromstring(self.text, xparser[1]).getroottree()
             except:

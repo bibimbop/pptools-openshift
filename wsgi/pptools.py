@@ -24,6 +24,8 @@ import subprocess
 from wtforms import Form, BooleanField, TextField, validators, StringField, TextAreaField, SelectField
 from itertools import zip_longest
 from furtif import Furtif
+import zipfile
+import shutil
 
 import sys
 sys.path.append("../pptools")
@@ -38,14 +40,9 @@ app.debug = True
 
 hexnumbers = set("abcdef0123456789")
 
-ALLOWED_UPLOAD_EXTENSIONS = sorted(['.txt', '.htm', '.html'])
+ALLOWED_EXTENSIONS = sorted(['.txt', '.htm', '.html'])
+ALLOWED_UPLOAD_EXTENSIONS = sorted(ALLOWED_EXTENSIONS + ['.zip'])
 PROJECT_FILES = "files"
-
-
-
-def check_extension(filename):
-    ext = os.path.splitext(filename)[1]
-    return ext.lower() in ALLOWED_UPLOAD_EXTENSIONS
 
 def create_new_project():
 
@@ -72,6 +69,22 @@ def check_project_id(project_id):
 
     return project_dir
 
+def extract_zip(project_dir, zipname):
+
+    try:
+        with zipfile.ZipFile(zipname, 'r') as myzip:
+            for zipf in myzip.infolist():
+                filename = os.path.basename(zipf.filename)
+
+                # Ignore everything but files ending with the correct
+                # extension.
+                ext = os.path.splitext(filename)[1].lower()
+                if ext in ALLOWED_EXTENSIONS:
+                    with myzip.open(zipf) as source, open(os.path.join(project_dir, "files", filename), "wb") as target:
+                        shutil.copyfileobj(source, target)
+
+    except Exception as e:
+        pass
 
 @app.route('/comp_pp/diff-default-css.txt')
 def send_diff_default_css():
@@ -156,10 +169,14 @@ def project(project_id):
             filename = secure_filename(upfile.filename)
 
             # Check extension
-            if check_extension(filename):
-                upfile.save(os.path.join(project_dir, "files", filename))
-
-                # TODO: unzip
+            ext = os.path.splitext(filename)[1].lower()
+            if ext in ALLOWED_UPLOAD_EXTENSIONS:
+                dest_name = os.path.join(project_dir, "files", filename)
+                upfile.save(dest_name)
+                # If it's a zip file, unzip them
+                if ext == ".zip":
+                    extract_zip(project_dir, dest_name)
+                    os.unlink(dest_name)
 
         return redirect(url_for('project', project_id=project_id))
 
@@ -391,6 +408,3 @@ if __name__ == '__main__':
 
     app.debug = True
     app.run()
-
-
-

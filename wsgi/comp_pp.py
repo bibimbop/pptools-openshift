@@ -270,7 +270,7 @@ class pgdp_file_text(pgdp_file):
     def extract_footnotes_pp(self):
         # Extract the footnotes from a PP text version
         # Convert to lines and back
-        text, footnotes = extract_footnotes_pp(self.text.splitlines())
+        text, footnotes = extract_footnotes_pp(self.text.splitlines(), None)
 
         # Rebuild text, now without footnotes
         self.text = '\n'.join(text)

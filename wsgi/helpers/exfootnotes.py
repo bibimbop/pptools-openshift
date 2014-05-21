@@ -22,11 +22,15 @@
 
 import re
 
-def extract_footnotes_pp(pp_text):
+def extract_footnotes_pp(pp_text, fn_regexes):
     """Extract footnotes from a text file. text is iterable. Returns
     the text as an iterable, without the footnotes, and footnotes as a
     list of (footnote string id, line number of the start of the
-    footnote, list of strings comprising the footnote)."""
+    footnote, list of strings comprising the footnote).
+    fn_regexes is a list of (regex, fn_type) that identify the beginning
+    and end of a footnote. The fn_type is 1 when a ] terminates it, or
+    2 when a new block terminates it.
+    """
 
     def get_block():
         """Get a block of text, followed by the number of empty lines"""
@@ -49,6 +53,27 @@ def extract_footnotes_pp(pp_text):
 
         yield block, empty_lines
 
+    # If the caller didn't give a list of regex to identify the
+    # footnotes, build one, taking only the most common.
+    if fn_regexes is None:
+        all_regexes = [ (r"(\s*)\[([\w-]+)\](.*)", 1),
+                        (r"(\s*)\[Note (\d+):( .*|$)", 2),
+                        (r"(      )Note (\d+):( .*|$)", 1),
+        ]
+        regex_count = [0] * len(all_regexes) # i.e. [0, 0, 0]
+
+        for block, empty_lines in get_block():
+            if not len(block):
+                continue
+
+            for i, (regex, fn_type) in enumerate(all_regexes):
+                m = re.match(regex, block[0])
+                if m:
+                    regex_count[i] += 1
+                    break
+
+        # Pick the regex with the most matches
+        fn_regexes = [ all_regexes[regex_count.index(max(regex_count))] ]
 
     # Different types of footnote. 0 means not in footnote.
     cur_fn_type, cur_fn_indent, cur_fn_num = 0, 0, 0
@@ -61,10 +86,7 @@ def extract_footnotes_pp(pp_text):
         # Is the block a new footnote?
         next_fn_type = 0
         if len(block):
-            for (regex, fn_type) in [ (r"(\s*)\[([\w-]+)\](.*)", 1),
-                                      (r"(\s*)\[Note (\d+): (.*)", 2),
-                                      (r"(      )Note (\d+): (.*)", 1),
-                                      ]:
+            for (regex, fn_type) in fn_regexes:
                 m = re.match(regex, block[0])
                 if m:
                     if m and m.group(2).startswith(("Illustration", "Décoration")):
@@ -138,7 +160,7 @@ if __name__ == '__main__':
     f = sourcefile.SourceFile()
     f.load_text(sys.argv[1])
 
-#    mytext, myfootnotes = extract_footnotes_pp(f.text)
+#    mytext, myfootnotes = extract_footnotes_pp(f.text, None)
 
 #    print("\n".join(mytext))
 
@@ -147,5 +169,3 @@ if __name__ == '__main__':
 #    for x in myfootnotes:
 #        print(x[0], "\n".join(x[2]))
 #        print()
-
-

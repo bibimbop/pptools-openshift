@@ -246,6 +246,31 @@ It is also possible to use unicode numbers::
   p { text-replace: "Z" "\u1234"; }
 
 
+_graft
+......
+
+Prune and graft an element to another element. The element to graft to
+is relative to the element to prune. The path to the new position is
+created with 3 parameters:
+
+  * parent: a parent
+  * prev-sib: the previous sibling
+  * next-sib: the next sibling
+
+The path can be as long as necessary. For instance, the following CSS
+will move all span elements with the class "sidenote" to the 2nd
+previous sibling of the parent::
+
+  span.sidenote { _graft: parent prev-sib prev-sib; }
+
+For every element, comp_pp will find the parent, then its previous
+sibling, then its previous sibling. It will detach the element and
+attach it to this new element.
+
+The elements must exist; i.e. all the elements in the path, for all
+element matching the selector, must exist.
+
+
 Expectations in default transformational CSS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -304,7 +329,3 @@ Just a few more CSS examples::
   h4:before, h4:after { content: "_"; }
   a[id^=FNanchor_]:before { content: "[" } a[id^=FNanchor_]:after{ content: "]" }
   span[lang]:before { content: "_" }
-
-
-
-

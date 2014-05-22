@@ -448,6 +448,7 @@ class pgdp_file_html(pgdp_file):
             f_replace_regex = None
             f_text_replace = None
             f_element_func = None
+            f_move = None
 
             for val in rule.declarations:
 
@@ -486,12 +487,35 @@ class pgdp_file_html(pgdp_file):
                     # Support display none only. So ignore "none" argument.
                     f_element_func = clear_element
 
+                elif val.name == "_graft":
+                    values = [ v for v in val.value if v.type != "S"]
+                    if len(values) < 1:
+                        property_errors += [ (val.line, val.column, val.name + " takes at least one argument") ]
+                        continue
+                    f_move = []
+                    for v in values:
+                        print("[", v.value, "]")
+                        if v.value == 'parent':
+                            f_move.append(lambda el: el.getparent())
+                        elif v.value == 'prev-sib':
+                            f_move.append(lambda el: el.getprevious())
+                        elif v.value == 'next-sib':
+                            f_move.append(lambda el: el.getnext())
+                        else:
+                            property_errors += [ (val.line, val.column, val.name + " invalid value " + v.value) ]
+                            f_move = None
+                            break
+
+                    if not f_move:
+                        continue
+
 #                elif val.name == "_replace_regex":
 #                    f_replace_regex = partial(re.sub, r"(\d)\u00A0(\d)", r"\1\2")
 #                    f_replace_regex = partial(re.sub, val.value[0].value, val.value[1].value)
 
                 else:
                     property_errors += [ (val.line, val.column, "Unsupported property " + val.name) ]
+                    continue
 
                 # Iterate through each selectors in the rule
                 for selector in cssselect.parse(rule.selector.as_css()):
@@ -526,6 +550,25 @@ class pgdp_file_html(pgdp_file):
 
                         if f_element_func:
                             f_element_func(element)
+
+                        if f_move:
+                            parent = element.getparent()
+                            new = element
+                            for f in f_move:
+                                new = f(new)
+
+                            # Move the tail to the sibling or the parent
+                            if element.tail:
+                                sibling = element.getprevious()
+                                if sibling:
+                                    sibling.tail = (sibling.tail or "") + element.tail
+                                else:
+                                    parent.text = (parent.text or "") + element.tail
+                                element.tail = None
+
+                            # Prune and graft
+                            parent.remove(element)
+                            new.append(element)
 
                        # if f_replace_regex and element.text:
                        #     element.text = f_replace_regex(element.text)

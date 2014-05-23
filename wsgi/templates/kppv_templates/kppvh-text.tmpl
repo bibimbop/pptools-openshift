@@ -72,8 +72,12 @@
 	{% if fn_numerical %}
       <b>Numerical:</b>
 	  <ul>
-        {% for n in fn_numerical %}
-		  <li>{{ n }}</li>
+        {% for a in fn_numerical %}
+		  {% if a[0] == a[1] %}
+			<li><b>{{ a[0] }}</b></li>
+		  {% else %}
+			<li><b>{{ a[0] }}</b> to <b>{{ a[1] }}</b></li>
+		  {% endif %}
 		{% endfor %}
 	  </ul>
 	{% endif %}
@@ -81,11 +85,10 @@
 	{% if fn_non_numerical %}
       <b>Non numerical:</b>
 	  <ul>
-        {% for n in fn_non_numerical %}
-		  <li>{{ n }}</li>
+        {% for a in fn_non_numerical %}
+		  <li>{{ a }}</li>
 		{% endfor %}
 	  </ul>
-
 	{% endif %}
 
 	</div>
@@ -99,12 +102,16 @@
 {% endif %}
 
 {# Anchors found #}
-<h3>Range(s) of footnote anchors found</h3>
+<h3>Range(s) of footnote anchors found, in document order</h3>
 {% if fn.anchor_ranges %}
   <div class='box'>
 	<ul>
       {% for a in fn.anchor_ranges %}
-		<li>{{ a }}</li>
+		{% if a[0] == a[1] %}
+		  <li><b>{{ a[0] }}</b></li>
+		{% else %}
+		  <li><b>{{ a[0] }}</b> to <b>{{ a[1] }}</b></li>
+		{% endif %}
 	  {% endfor %}
 	</ul>
   </div>

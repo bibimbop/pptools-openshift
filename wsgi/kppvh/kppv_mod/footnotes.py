@@ -7,6 +7,7 @@
 
 import re
 from itertools import count, groupby
+from helpers.exfootnotes import get_block
 
 class FootNotes(object):
 
@@ -47,8 +48,12 @@ class FootNotes(object):
         # while note_regexes[2] will contain the other (non numerical)
         note_regexes = [ (re.compile(x), [], []) for x in regexes ]
 
-        for line in myfile.text:
+        for block, empty_lines in get_block(myfile.text):
+            if not len(block):
+                continue
+
             # Look for the Footnote
+            line = block[0]
             for regex in note_regexes:
                 m = regex[0].match(line)
                 if m is not None:
@@ -64,10 +69,13 @@ class FootNotes(object):
                             continue
 
                         regex[2].append(m.group(1))
-                    break
-            else:
-                # The line doesn't have a footnote. Check for one or more
-                # numerical anchors anywhere on the line.
+
+                    # Remove the footnote marker, but keep the rest of
+                    # the line because it might contain an anchor
+                    block[0] = m.group(2)
+
+            # Look for the anchors anywhere in the block.
+            for line in block:
                 for m in re.finditer("\[(\d+)\]", line):
                     anchors.append(int(m.group(1)))
 
@@ -81,7 +89,6 @@ class FootNotes(object):
         for regex in note_regexes:
             for note in regex[2]:
                 anchor = '['+note+']'
-                found = 0
 
                 for line in myfile.text:
                     if anchor in line:
@@ -89,11 +96,9 @@ class FootNotes(object):
                         # Ensure it's not the declaration
                         if regex[0].match(line):
                             continue
-
-                        found = 1
                         break
-
-                if not found:
+                else:
+                    # For loop completed, so the anchor hasn't been found
                     self.anchor_not_found.append(anchor)
 
         # Build ranges of footnotes found
@@ -119,3 +124,34 @@ class FootNotes(object):
 
 
 
+def main():
+
+    import argparse
+    import sys
+
+    sys.path.append("../../helpers")
+    import sourcefile
+    import exfootnotes
+
+    parser = argparse.ArgumentParser(description='Footnotes checker PGDP PP.')
+    parser.add_argument('filename', metavar='FILENAME', type=str,
+                        help='input text file')
+    args = parser.parse_args()
+
+    myfile = sourcefile.SourceFile()
+
+    myfile.load_text(args.filename)
+
+    if myfile.text is None:
+        print("Cannot read file", f)
+        return
+
+    x = FootNotes()
+    x.check_footnotes(myfile)
+
+    print(x.anchor_ranges)
+    print(x.fn_found)
+    print(x.anchor_not_found)
+
+if __name__ == '__main__':
+    main()

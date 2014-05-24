@@ -22,6 +22,30 @@
 
 import re
 
+def get_block(pp_text):
+    """Generator to get a block of text, followed by the number of empty
+    lines.
+    """
+
+    empty_lines = 0
+    block = []
+
+    for lineno, line in enumerate(pp_text):
+
+        if len(line):
+            # One or more empty lines will stop a block
+            if empty_lines:
+                yield block, empty_lines
+                block = []
+                empty_lines = 0
+
+            block += [ line ]
+
+        else:
+            empty_lines += 1
+
+    yield block, empty_lines
+
 def extract_footnotes_pp(pp_text, fn_regexes):
     """Extract footnotes from a text file. text is iterable. Returns
     the text as an iterable, without the footnotes, and footnotes as a
@@ -32,27 +56,6 @@ def extract_footnotes_pp(pp_text, fn_regexes):
     2 when a new block terminates it.
     """
 
-    def get_block():
-        """Get a block of text, followed by the number of empty lines"""
-        empty_lines = 0
-        block = []
-
-        for lineno, line in enumerate(pp_text):
-
-            if len(line):
-                # One or more empty lines will stop a block
-                if empty_lines:
-                    yield block, empty_lines
-                    block = []
-                    empty_lines = 0
-
-                block += [ line ]
-
-            else:
-                empty_lines += 1
-
-        yield block, empty_lines
-
     # If the caller didn't give a list of regex to identify the
     # footnotes, build one, taking only the most common.
     if fn_regexes is None:
@@ -62,7 +65,7 @@ def extract_footnotes_pp(pp_text, fn_regexes):
         ]
         regex_count = [0] * len(all_regexes) # i.e. [0, 0, 0]
 
-        for block, empty_lines in get_block():
+        for block, empty_lines in get_block(pp_text):
             if not len(block):
                 continue
 

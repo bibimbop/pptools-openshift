@@ -84,7 +84,7 @@ def extract_footnotes_pp(pp_text, fn_regexes):
     text = []
     prev_block = None
 
-    for block, empty_lines in get_block():
+    for block, empty_lines in get_block(pp_text):
 
         # Is the block a new footnote?
         next_fn_type = 0

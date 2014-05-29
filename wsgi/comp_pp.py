@@ -223,11 +223,12 @@ class pgdp_file_text(pgdp_file):
         # Start with [Footnote ... and finish with ] at the end of a line
 
         # Note: this is really dirty code. Should rewrite. Don't use
-        # self.footnotes inside loop. Don't use cur_fnote[0].
+        # cur_fnote[0].
 
         in_fnote = False        # currently processing a footnote
         cur_fnote = []          # keeping current footnote
         text = []               # new text without footnotes
+        footnotes = []
 
         for lineno, line in enumerate(self.text.splitlines()):
 
@@ -238,7 +239,7 @@ class pgdp_file_text(pgdp_file):
                     # Join to previous - Remove the last from the existing
                     # footnotes.
                     line = line.replace("*[Footnote: ", "")
-                    cur_fnote, self.footnotes = self.footnotes[-1], self.footnotes[:-1]
+                    cur_fnote, footnotes = footnotes[-1], footnotes[:-1]
                 else:
                     line = re.sub(r"\[Footnote \d+: ", "", line)
                     cur_fnote = [-1, ""]
@@ -252,11 +253,11 @@ class pgdp_file_text(pgdp_file):
                 # We don't try to regroup yet
                 if line.endswith(']'):
                     cur_fnote[1] = cur_fnote[1][:-1]
-                    self.footnotes.append(cur_fnote)
+                    footnotes.append(cur_fnote)
                     in_fnote = False
                 elif line.endswith("]*"):
                     cur_fnote[1] = cur_fnote[1][:-2]
-                    self.footnotes.append(cur_fnote)
+                    footnotes.append(cur_fnote)
                     in_fnote = False
 
             else:
@@ -264,7 +265,7 @@ class pgdp_file_text(pgdp_file):
 
         # Rebuild text, now without footnotes
         self.text = '\n'.join(text)
-        self.footnotes = "\n".join([x[1] for x in self.footnotes])
+        self.footnotes = "\n".join([x[1] for x in footnotes])
 
 
     def extract_footnotes_pp(self):

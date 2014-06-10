@@ -40,8 +40,8 @@ class FootNotes(object):
                     r"^  \[Footnote ([\w\-]+)\]:( |$)",
                     r"^     \[Footnote ([\w\-]+):( |$)",
                     r"^          \[Footnote ([\w\-]+):( |$)",
-                    r"^\     Note ([\w\-]+):",
-                    r"^\      Note ([\w\-]+):",
+                    r"^\     Note ([\w\-]+):( |$)",
+                    r"^\      Note ([\w\-]+):( |$)",
                     ]
 
         # note_regexes[1] will contain matching numerical matches,

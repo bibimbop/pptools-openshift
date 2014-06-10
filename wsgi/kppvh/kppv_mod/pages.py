@@ -198,3 +198,36 @@ class KPages(object):
                 # Got one
                 num = int(m.group(1))
                 self.note_anchors.append([element.sourceline, num])
+
+
+
+
+def main():
+
+    import argparse
+    import sys
+
+    sys.path.append("../../helpers")
+    import sourcefile
+    import exfootnotes
+
+    parser = argparse.ArgumentParser(description='Footnotes checker PGDP PP.')
+    parser.add_argument('filename', metavar='FILENAME', type=str,
+                        help='input text file')
+    args = parser.parse_args()
+
+    myfile = sourcefile.SourceFile()
+
+    myfile.load_xhtml(args.filename)
+
+    if myfile.text is None:
+        print("Cannot read file", f)
+        return
+
+    x = KPages()
+    x.check_footnotes(myfile)
+
+    print(x.note_anchors)
+
+if __name__ == '__main__':
+    main()

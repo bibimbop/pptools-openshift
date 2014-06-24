@@ -22,36 +22,43 @@ def load_languages():
         languages = {}
         current = {}
 
-        for line in f.readlines():
+        for line in f:
             if line.startswith('  '):
                 # Continuation of previous field on a new line
                 continue
 
             line = line.strip()
 
+            # End of record. Store it.
             if line == '%%':
-                if 'Subtag' in current:
-                    languages[current['Subtag']] = current
+                # Some record don't have subtags
+                subtag = current.get('Subtag')
+                if subtag:
+                    languages[subtag] = current
+
                 current = {}
                 continue
 
-            m = re.match("(.*): (.*)", line)
-            if m is None:
-                # parse Error ?
+            # Ignore lines that do not have "key: value"
+            try:
+                key, value = line.split(': ')
+            except ValueError:
                 continue
 
-            key = m.group(1)
-            value = m.group(2)
-            if key in [ 'Type', 'Subtag', 'Description' ]:
-                if key is 'Description':
-                    # Some languages have several descriptions, so concat them
-                    current[key] = ','.join([current.get('Description', None), value])
+            if key == 'Description':
+                # Some languages have several descriptions, so concat them
+                desc = current.get('Description', None)
+                if desc:
+                    current[key] = desc + ', ' + value
                 else:
                     current[key] = value
+            elif key in [ 'Type', 'Subtag' ]:
+                current[key] = value
 
-
-        if 'Subtag' in current:
-            languages[current['Subtag']] = current
+        # Last record.
+        subtag = current.get('Subtag')
+        if subtag:
+            languages[subtag] = current
 
         return languages
 

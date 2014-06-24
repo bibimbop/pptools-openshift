@@ -155,14 +155,13 @@ class KXhtml(object):
         self.classes_undefined = []
         find = etree.XPath("//*[@class]")
         for element in find(myfile.tree):
-            classes = element.attrib['class'].split()
+            classes = set(element.attrib['class'].split())
 
-            if '__used_classes' in element.attrib:
-                used_classes = element.attrib['__used_classes'].split()
-
+            used_classes = element.attrib.get('__used_classes', None)
+            if used_classes:
                 # Substract content of used_classes from classes
                 # leaving classes that were not matched.
-                classes = set(classes) - set(used_classes)
+                classes -= set(used_classes.split())
 
             # Finally, create the warning
             for cl in classes:
@@ -223,8 +222,9 @@ class KXhtml(object):
             level = int(element.tag[1]) - 1
 
             # Attribute title overrides the content
-            if 'title' in element.attrib:
-                text = ' '.join(element.attrib['title'].splitlines())
+            title = element.attrib.get('title', None)
+            if title:
+                text = ' '.join(title.splitlines())
             else:
                 text = element.xpath("string()")
 
@@ -261,15 +261,16 @@ class KXhtml(object):
         xmllang_set = set()
         for element in myfile.tree.iter():
             # With the lang attribute
-            if 'lang' in element.attrib:
-                languages.add(element.attrib['lang'])
+            lang = element.attrib.get('lang', None)
+            if lang:
+                languages.add(lang)
                 lang_set.add(element)
 
             # With the xml:lang attribute
-            if XMLNS+'lang' in element.attrib:
-                languages.add(element.attrib[XMLNS+'lang'])
+            lang = element.attrib.get(XMLNS+'lang')
+            if lang:
+                languages.add(lang)
                 xmllang_set.add(element)
-                continue
 
         self.languages = list(languages)
 

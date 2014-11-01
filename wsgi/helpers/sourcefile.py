@@ -3,7 +3,7 @@
 
 # sourcefile -
 
-# Copyright (C) 2012 bibimbop at pgdp
+# Copyright 2012, 2014, bibimbop at pgdp, All rights reserved
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -32,25 +32,20 @@ def clear_element(element):
 
     We can't properly remove an XML element while traversing the
     tree. But we can clean it. Remove its text and children. However
-    the tail must be preserved because it belong to the next element,
-    so re-attach."""
+    the tail must be preserved because it belongs to the next element,
+    so re-attach.
+    """
     tail = element.tail
     element.clear()
     element.tail = tail
 
 class SourceFile(object):
-    """Represent a file in memory. """
-
-    def __init__(self):
-        self.text = None
-        self.xhtml = None
-
-        # Number of the first line in the text after the PG header.
-        self.start = 0
-
+    """Represent a file in memory.
+    """
 
     def load_file(self, fname, encoding=None):
-        """Load a file (text ot html) and finds its encoding."""
+        """Load a file (text ot html) and finds its encoding.
+        """
 
         # Keep the full name, the file name and its path
         self.fullname = fname
@@ -58,14 +53,14 @@ class SourceFile(object):
         self.dirname = os.path.dirname(fname)
 
         with open(fname, "rb") as f:
-            rawdata = f.read()
+            raw = f.read()
 
-        if rawdata is None:
-            return
+        if raw is None or len(raw) < 10:
+            return None, None, None
 
         # Remove BOM if present
-        if rawdata[0] == 0xef and rawdata[1] == 0xbb and rawdata[2] == 0xbf:
-            rawdata = rawdata[3:]
+        if raw[0] == 0xef and raw[1] == 0xbb and raw[2] == 0xbf:
+            raw = raw[3:]
 
         # Try various encodings. Much faster than using chardet
         if encoding is None:
@@ -77,34 +72,33 @@ class SourceFile(object):
             try:
                 # Encode the raw data string into an internal unicode
                 # string, according to the discovered encoding.
-                self.text = rawdata.decode(enc)
-                self.encoding = enc
-            except:
+                text = raw.decode(enc)
+            except Exception:
                 continue
+            else:
+                return raw, text, enc
 
-            break
-
+        # Encoding couldn't be found
+        return None, None, None
 
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from a text version if present.
         """
         new_text = []
-        num = 0
         self.start = 0
-        for line in self.text:
-            num += 1
+        for lineno, line in enumerate(self.text, start=1):
             # Find the markers. Unfortunately PG lacks consistency
-            if (line.startswith("*** START OF THIS PROJECT GUTENBERG EBOOK") or
-                line.startswith("*** START OF THE PROJECT GUTENBERG EBOOK") or
-                line.startswith("***START OF THE PROJECT GUTENBERG EBOOK")):
+            if line.startswith(("*** START OF THIS PROJECT GUTENBERG EBOOK",
+                                "*** START OF THE PROJECT GUTENBERG EBOOK",
+                                "***START OF THE PROJECT GUTENBERG EBOOK")):
                 new_text = []
-                self.start = num
-            elif (line.startswith("*** END OF THIS PROJECT GUTENBERG EBOOK") or
-                  line.startswith("***END OF THIS PROJECT GUTENBERG EBOOK") or
-                  line.startswith("*** END OF THE PROJECT GUTENBERG EBOOK") or
-                  line.startswith("End of the Project Gutenberg EBook of") or
-                  line.startswith("End of Project Gutenberg's") or
-                  line.startswith("***END OF THE PROJECT GUTENBERG EBOOK")):
+                self.start = lineno
+            elif line.startswith(("*** END OF THIS PROJECT GUTENBERG EBOOK",
+                                  "***END OF THIS PROJECT GUTENBERG EBOOK",
+                                  "*** END OF THE PROJECT GUTENBERG EBOOK",
+                                  "End of the Project Gutenberg EBook of",
+                                  "End of Project Gutenberg's",
+                                  "***END OF THE PROJECT GUTENBERG EBOOK")):
                 break
             else:
                 new_text.append(line)
@@ -112,34 +106,107 @@ class SourceFile(object):
         self.text = new_text
 
 
-    def load_xhtml(self, name, encoding=None):
+    def parse_html_xhtml(self, raw, text, relax=False):
+        """Parse a byte array. Find the correct parser. Returns both the
+        parser, which contains the error log, and the resulting tree,
+        if the parsing was successful.
 
-        self.load_file(name, encoding)
+        If relax is True, then the lax html parser is used, even for
+        XHTML, so the parsing will almost always succeed.
+        """
 
-        if self.text is None:
-            return
+        parser = None
+        tree = None
 
-        # todo - get rid of BOM
+        # Get the first 5 lines and find the DTD
+        header = text.splitlines()[:5]
 
-        # Get rid of the encoding declaration. It throws off lxml.
-        if self.text.startswith("<?xml"):
-            index = self.text.find('>')
-            if index != -1:
-                self.text = self.text[index+1:]
+        if any(["DTD XHTML" in x for x in header]):
+            parser = etree.XMLParser(dtd_validation=True)
+        if any(["DTD HTML" in x for x in header]):
+            parser = etree.HTMLParser()
 
-        # Try the XML then HTML parser
-        for xparser in [ ('XML', etree.XMLParser(load_dtd=True, remove_comments=True)),
-                         ('HTML', etree.HTMLParser(remove_comments=True)) ]:
-            try:
-                self.tree = etree.fromstring(self.text, xparser[1]).getroottree()
-            except:
-                continue
+        if parser is None:
+            return None, None
 
-            self.parser_used = xparser[0]
-            break
+        # Try the decoded file first.
+        try:
+            tree = etree.fromstring(text, parser)
+        except etree.XMLSyntaxError:
+            if relax == False:
+                return parser, tree
+        except Exception:
+            pass
         else:
-            # Could not parse the file
+            return parser, tree
+
+        # Try raw string. This will decode files with <?xml ...
+        try:
+            tree = etree.fromstring(raw, parser)
+        except etree.XMLSyntaxError:
+            if relax == False:
+                return parser, tree
+        except Exception:
+            pass
+        else:
+            return parser, tree
+
+        # The XHTML file may have some errors. If the caller really
+        # wants a result then use the HTML parser.
+        if relax and any(["DTD XHTML" in x for x in header]):
+            parser = etree.HTMLParser()
+            try:
+                tree = etree.fromstring(text, parser)
+            except etree.XMLSyntaxError:
+                return parser, tree
+            except Exception:
+                pass
+            else:
+                return parser, tree
+
+        return None, None
+
+
+    def load_xhtml(self, name, encoding=None, relax=False):
+        """Load an html/xhtml file. If it is an XHTML file, get rid of the
+        namespace since that makes things much easier later.
+
+        If parsing fails, then self.parser_errlog is not empty.
+
+        If parsing succeeded, then self.tree is set, and
+        self.parser_errlog is [].
+        """
+        self.parser_errlog = None
+        self.tree = None
+
+        raw, text, encoding = self.load_file(name, encoding)
+        if raw is None:
             return
+
+        parser, tree = self.parse_html_xhtml(raw, text, relax)
+        if parser == None:
+            return
+
+        self.parser_errlog = parser.error_log
+        self.encoding = encoding
+
+        if len(self.parser_errlog):
+            # Cleanup some errors
+            #print(parser.error_log[0].domain_name)
+            #print(parser.error_log[0].type_name)
+            #print(parser.error_log[0].level_name)
+
+            if type(parser) == etree.HTMLParser:
+                # HTML parser rejects tags with both id and name
+                #   (513 == DTD_ID_REDEFINED)
+                self.parser_errlog = [
+                    x for x in parser.error_log if parser.error_log[0].type != 513 ]
+
+        if len(self.parser_errlog):
+            return
+
+        self.tree = tree.getroottree()
+        self.text = text.splitlines()
 
         # Find the namespace - HOW ?
         # self.tree.getroot().nsmap -> {None: 'http://www.w3.org/1999/xhtml'}
@@ -153,9 +220,6 @@ class SourceFile(object):
         # (eg. {http://www.w3.org/1999/xhtml})
         for element in self.tree.iter(tag=etree.Element):
             element.tag = element.tag.replace(self.xmlns, "")
-
-        # Split the source file into lines
-        self.text = self.text.splitlines()
 
         # Find type of xhtml (10 or 11 for 1.0 and 1.1). 0=html or
         # unknown. So far, no need to differentiate 1.0 strict and
@@ -181,10 +245,15 @@ class SourceFile(object):
             elif text.startswith("End of the Project Gutenberg") or text.startswith("End of Project Gutenberg"):
                 clear_element(element)
 
+
     def load_text(self, fname, encoding=None):
         """Load the file as text."""
-        self.load_file(fname, encoding)
+        raw, text, encoding = self.load_file(fname, encoding)
 
-        if self.text:
-            self.text = self.text.splitlines()
-            self.strip_pg_boilerplate()
+        if raw is None:
+            return
+
+        self.text = text.splitlines()
+        self.encoding = encoding
+
+        self.strip_pg_boilerplate()

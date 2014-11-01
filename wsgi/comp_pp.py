@@ -306,7 +306,7 @@ class pgdp_file_html(pgdp_file):
 
     def load(self, filename):
         """Load the file"""
-        self.myfile.load_xhtml(filename)
+        self.myfile.load_xhtml(filename, relax=True)
 
 
     def process_args(self, args):

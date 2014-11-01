@@ -327,6 +327,7 @@ def langs(project_id):
     return render_template('find_langs/find_langs.tmpl',
                            project_id=project_id,
                            filename=filename,
+                           myfile=x.myfile,
                            extracts1=sorted(x.extracts, key=lambda x: (x[1], x[0], x[2].lower())),
                            extracts2=sorted(x.extracts, key=lambda x: x[2].lower()),
                            extracts3=sorted(x.extracts, key=lambda x: (x[1], x[2].lower())),

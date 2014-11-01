@@ -74,27 +74,34 @@ class Kppvh(object):
         """Process an html file."""
 
         x = kxhtml.KXhtml()
-        x.check_document(myfile)
-        x.check_title(myfile)
-        x.epub_toc(myfile)
-        x.check_anchors(myfile)
+        if myfile.tree:
+            x.check_document(myfile)
+            x.check_title(myfile)
+            x.epub_toc(myfile)
+            x.check_anchors(myfile)
 
-        css = kxhtml.KXhtml()
-        css.check_css(myfile)
+            css = kxhtml.KXhtml()
+            css.check_css(myfile)
 
-        img = images.KImages()
-        img.check_images(myfile)
+            img = images.KImages()
+            img.check_images(myfile)
 
-        pgs = pages.KPages()
-        pgs.check_pages_links(myfile)
-        pgs.check_footnotes(myfile)
-        pgs.check_pages_sequence(myfile)
+            pgs = pages.KPages()
+            pgs.check_pages_links(myfile)
+            pgs.check_footnotes(myfile)
+            pgs.check_pages_sequence(myfile)
 
-        pts = points.KPoints()
-        pts.check_points(myfile)
+            pts = points.KPoints()
+            pts.check_points(myfile)
 
-        grc = greek.KGreekTrans()
-        grc.check_greek_trans(myfile)
+            grc = greek.KGreekTrans()
+            grc.check_greek_trans(myfile)
+        else:
+            css = None
+            img = None
+            pgs = None
+            pts = None
+            grc = None
 
         return render_template("kppv_templates/kppvh-html.tmpl",
                                myfile=myfile, project_id=project_id,
@@ -119,7 +126,3 @@ class Kppvh(object):
             return self.process_html(myfile, project_id)
         else:
             abort(404)
-
-
-
-

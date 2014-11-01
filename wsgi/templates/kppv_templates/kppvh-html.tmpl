@@ -34,7 +34,19 @@
 <p><a href="/project/{{ project_id }}">Back to project page</a></p>
 
 {% if not myfile.tree %}
-  <p>Error: could not parse the file as xhtml or html.</p>
+  {% if myfile.parser_errlog %}
+	<p class='highlight'>Error: the document has some syntax errors.</p>
+	<p>If there is more than one error, fixing the first one may fix the others.</p>
+	<div class='box'>
+	  <ul>
+		{% for err in myfile.parser_errlog %}
+		  <li>{{ err.line }}:{{ err.column }} -- {{ err.message | e }}</li>
+		{% endfor %}
+	  </ul>
+	</div>
+  {% else %}
+	<p class='highlight'>Error: could not parse the file as xhtml or html.</p>
+  {% endif %}
 
 {% else %}
 

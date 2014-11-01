@@ -57,14 +57,18 @@ new_spelling = [
 # Split a document in a list of words/punctuation
 # ie. goes from "My name is Bond, James Bond!"
 # into ['My', 'name', 'is', 'Bond', ',', 'James', 'Bond', '!']
-def split_doc(doc):
+def split_doc(text):
     """Split the text into a list of words from the text."""
 
+    # Put spaces between 2 or more dashes.
+    text = re.sub("(--+)", ' \1 ', text);
+    text = re.sub("(_+)", ' _ ', text);
+
     # Split into list of words
-    doc = re.findall(r'([\w-]+|\W)', doc)
+    text = re.findall(r'([\w-]+|\W)', text)
     words = []
 
-    for line in doc:
+    for line in text:
         line = line.strip()
 
         if line != '':
@@ -73,22 +77,16 @@ def split_doc(doc):
     return words
 
 
-def clean_text(f):
-
-    # Put spaces between 2 or more dashes.
-    f.text = re.sub("(--+)", ' \1 ', f.text);
-    f.text = re.sub("(_+)", ' _ ', f.text);
-
-    return split_doc(f.text)
-
-
 def check_fr(filename):
 
     myfile = helpers.sourcefile.SourceFile()
-    myfile.load_file(filename)
+    raw, text, enc = myfile.load_file(filename)
+
+    if not raw:
+        return None, None, None, None, None, None, None, None
 
     # Get list of words
-    words = clean_text(myfile)
+    words = split_doc(text)
 
     # Convertit en minuscules
     words = [ word.lower() for word in words]

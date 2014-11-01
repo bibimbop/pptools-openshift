@@ -36,12 +36,15 @@ class Languages(object):
 
     def load_file(self, args):
         self.myfile = helpers.sourcefile.SourceFile()
-        self.myfile.load_xhtml(args.filename)
+        self.myfile.load_xhtml(args.filename, relax=True)
 
     def find_tags(self, args):
 
         # Indexed by tag then lang
         self.extracts = set()
+
+        if not self.myfile.tree:
+            return
 
         if self.myfile.xhtml == 11:
             lang_attr = "{http://www.w3.org/XML/1998/namespace}lang"
@@ -115,4 +118,3 @@ if __name__ == '__main__':
     print("====\nSorted by language\n====\n\n")
     for (tag, lang, string) in sorted(x.extracts, key=lambda x: (x[1], x[2].lower())):
         print ("%-6s %-8s" % (tag, lang), string)
-

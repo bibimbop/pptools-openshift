@@ -30,6 +30,21 @@
 {% block body %}
    <h1>Languages tagged in {{ filename }}</h1>
 
+{% if not myfile.tree %}
+  {% if myfile.parser_errlog %}
+	<p class='highlight'>Error: the document has some syntax errors.</p>
+	<div class='box'>
+	  <ul>
+		{% for err in myfile.parser_errlog %}
+		  <li>{{ err.line }}:{{ err.column }} -- {{ err.message | e }}</li>
+		{% endfor %}
+	  </ul>
+	</div>
+  {% else %}
+	<p class='highlight'>Error: could not parse the file as xhtml or html.</p>
+  {% endif %}
+
+{% else %}
    <p>This extract all strings tagged with a <i>lang</i> or <i>xml:lang</i> attribute, and present them in different order for easy checks.
    </p>
 
@@ -97,7 +112,7 @@
 	   </tr>
 	 {% endfor %}
    </table>
-
+{% endif %}
 
 
 {% endblock %}

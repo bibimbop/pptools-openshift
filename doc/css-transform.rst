@@ -241,10 +241,10 @@ For instance, to replace a divide symbol with a slash::
 
 With "1⁄2 + 1⁄2 = 1", this will result in "1/2 + 1/2 = 1".
 
-It is also possible to use unicode numbers::
+It is also possible to use unicode numbers (with 2 backslashes)::
 
-  p { text-replace: "Z" "\u1234"; }
-
+  p { text-replace: "Z" "\\u1234"; }
+  [id^=Footnote_]:before { content: "\\u200C"; }
 
 _graft
 ......

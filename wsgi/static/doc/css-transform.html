@@ -230,8 +230,9 @@ replaced.</p>
 </pre></div>
 </div>
 <p>With &#8220;1⁄2 + 1⁄2 = 1&#8221;, this will result in &#8220;1/2 + 1/2 = 1&#8221;.</p>
-<p>It is also possible to use unicode numbers:</p>
-<div class="highlight-css"><div class="highlight"><pre><span class="nt">p</span> <span class="p">{</span> <span class="k">text</span><span class="o">-</span><span class="n">replace</span><span class="o">:</span> <span class="s2">&quot;Z&quot;</span> <span class="s2">&quot;\u1234&quot;</span><span class="p">;</span> <span class="p">}</span>
+<p>It is also possible to use unicode numbers (with 2 backslashes):</p>
+<div class="highlight-css"><div class="highlight"><pre><span class="nt">p</span> <span class="p">{</span> <span class="k">text</span><span class="o">-</span><span class="n">replace</span><span class="o">:</span> <span class="s2">&quot;Z&quot;</span> <span class="s2">&quot;\\u1234&quot;</span><span class="p">;</span> <span class="p">}</span>
+<span class="o">[</span><span class="nt">id</span><span class="o">^=</span><span class="nt">Footnote_</span><span class="o">]</span><span class="nd">:before</span> <span class="p">{</span> <span class="k">content</span><span class="o">:</span> <span class="s2">&quot;\\u200C&quot;</span><span class="p">;</span> <span class="p">}</span>
 </pre></div>
 </div>
 </div>

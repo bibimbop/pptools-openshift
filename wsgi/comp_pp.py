@@ -418,6 +418,15 @@ class pgdp_file_html(pgdp_file):
     def convert(self):
         """Remove HTML and PGDP marker from the text."""
 
+        escaped_unicode_re = re.compile(r"\\u[0-9a-fA-F]{4}")
+        def escaped_unicode(m):
+            try:
+                newstr = bytes(m.group(0), 'utf8').decode('unicode-escape')
+            except Exception:
+                newstr = m.group(0)
+
+            return newstr
+
         def new_content(element, declaration):
             """Process the "content:" property
             """
@@ -425,7 +434,7 @@ class pgdp_file_html(pgdp_file):
             for token in val.value:
                 if token.type == "STRING":
                     # e.g. { content: "xyz" }
-                    retstr += token.value
+                    retstr += escaped_unicode_re.sub(escaped_unicode, token.value)
                 elif token.type == "FUNCTION":
                     if token.function_name == 'attr':
                         # e.g. { content: attr(title) }

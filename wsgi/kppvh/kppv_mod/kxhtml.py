@@ -223,7 +223,7 @@ class KXhtml(object):
 
             # Attribute title overrides the content
             title = element.attrib.get('title', None)
-            if title:
+            if title is not None:
                 text = ' '.join(title.splitlines())
             else:
                 text = element.xpath("string()")

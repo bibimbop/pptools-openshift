@@ -193,8 +193,8 @@
 
 	<div class='box'>
 	  <ul>
-		{% for lineno, tag in x.inline_style %}
-		  <li>Line {{ lineno }}: tag <b>{{ tag }}</b></li>
+		{% for lineno, tag, style in x.inline_style %}
+		  <li>Line {{ lineno }}: tag: <b>{{ tag | e }}</b>, style: <b>{{ style | e }}</b></li>
 		{% endfor %}
 	  </ul>
 	</div>

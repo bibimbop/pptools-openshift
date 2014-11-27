@@ -317,7 +317,7 @@ class KXhtml(object):
                 # One of the image_position style was found
                 continue
 
-            self.inline_style.append((element.sourceline, element.tag))
+            self.inline_style.append((element.sourceline, element.tag, element.attrib['style']))
 
         # No empty td
 #        elements = myfile.tree.findall('//td')

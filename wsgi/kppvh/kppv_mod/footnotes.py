@@ -64,7 +64,9 @@ class FootNotes(object):
                     else:
                         # Remove known words, that are certainly not a
                         # footnote
-                        if m.group(1) in [ "Illustration", "Decoration", "Décoration", "Bandeau" ]:
+                        if m.group(1) in [ "Illustration", "Decoration",
+                                           "Décoration", "Bandeau", "Logo",
+                                           "Ornement" ]:
                             m = None
                             continue
 

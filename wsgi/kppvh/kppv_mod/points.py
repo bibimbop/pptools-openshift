@@ -15,7 +15,7 @@ class KPoints(object):
 
     def check_points(self, myfile):
 
-        # Transform html into text - get rid of <head> content first..
+        # Transform html into text - get rid of <head> content first.
         head = myfile.tree.find('head')
         tail = head.tail
         head.clear()
@@ -26,6 +26,13 @@ class KPoints(object):
 
         for m in re.finditer("(\w+\.)»? [a-z]\w+", text):
 
+            string = m.group(1)
+
+            # Remove all uppercase letter. They usually are initials.
+            if len(string) == 2 and string[0].isupper():
+                continue
+
+            # Skip some common abbreviations
             if m.group(1) in [ 'Voy.', 'voy.',            # voyez
                                'Biblioth.', 'Bibl.', 'biblioth.',     # bibliothèque
                                'man.', 'Man.', 'manusc.', # manuscript
@@ -45,8 +52,46 @@ class KPoints(object):
                                'Mém.',                    # Mémoire
                                'ff.',                     # digramme latin
                                'édit.',                   # édition
-                               'M.', 'MM.',               # monsieur, messieurs
+                               'MM.',                     # messieurs
                                'mm.',                     # millimètre
+                               'Acad.',
+                               'Anc.',
+                               'Antiq.',
+                               'Archiv.',
+                               'Bibliog.',
+                               'Bibliogr.',
+                               'Catal.',
+                               'Chron.',
+                               'Chronol.',
+                               'Corresp.',
+                               'Curios.',
+                               'Descript.',
+                               'Dict.',
+                               'Edit.',
+                               'Fragm.',
+                               'Hist.',
+                               'Interprét.',
+                               'Journ.',
+                               'Nouv.',
+                               'Ordonn.',
+                               'Suppl.',
+                               'antiq.',
+                               'histor.',
+                               'loc.',
+                               'nouv.',
+                               'trad.',
+                               'Éd.',
+                               'Édit.',
+                               'chap.',
+                               'lbs.',
+                               'viz.',
+                               'vols.',
+                               'pick',
+                               'Mr.',
+                               'p.',
+                               'pp.',
+                               'Pron.',
+                               'etc.',
                                ]:
                 continue
 
@@ -55,6 +100,27 @@ class KPoints(object):
         self.point_matches = sorted(set(self.point_matches))
 
 
+def test_kpoints():
+
+    import argparse
+    import os
+    import sys
+
+    sys.path.append("../../helpers")
+    import sourcefile
+
+    myfile = sourcefile.SourceFile()
+    myfile.load_xhtml("../../../data/testfiles/kpoints.html")
+
+    assert(myfile.tree)
+
+    kp = KPoints()
+    kp.check_points(myfile)
+
+    # There should be 2 strings to check
+    assert("centimes. traduct" in kp.point_matches)
+    assert("dot. or" in kp.point_matches)
+    assert(len(kp.point_matches) == 2)
 
 
 if __name__ == '__main__':
@@ -62,6 +128,8 @@ if __name__ == '__main__':
     import argparse
     import os
 
+    import sys
+    sys.path.append("../../helpers")
     import sourcefile
 
     parser = argparse.ArgumentParser(description='Diff text document for PGDP PP.')
@@ -80,8 +148,3 @@ if __name__ == '__main__':
 
     for x in sorted(kp.point_matches):
         print (x)
-
-
-
-
-

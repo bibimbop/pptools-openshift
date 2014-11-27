@@ -275,14 +275,14 @@ class KXhtml(object):
         self.languages = list(languages)
 
         # Find elements with lang but not xml:lang
-        self.missing_xmllang = []
-        for element in lang_set - xmllang_set:
-            self.missing_xmllang.append((element.sourceline, element.tag))
+        self.missing_xmllang = [(element.sourceline, element.tag)
+                                for element in lang_set - xmllang_set]
+        self.missing_xmllang.sort()
 
         # Find elements with xml:lang but not lang
-        self.missing_lang = []
-        for element in xmllang_set - lang_set:
-            self.missing_lang.append((element.sourceline, element.tag))
+        self.missing_lang = [(element.sourceline, element.tag)
+                             for element in xmllang_set - lang_set]
+        self.missing_lang.sort()
 
         # Find elements with different values for xml:lang and lang
         self.different_lang = []
@@ -290,6 +290,7 @@ class KXhtml(object):
             for element in xmllang_set & lang_set: # intersection of both sets
                 if element.attrib['lang'] != element.attrib[XMLNS+'lang']:
                     self.different_lang.append((element.sourceline, element.tag))
+            self.different_lang.sort()
 
         # Misc errors
 

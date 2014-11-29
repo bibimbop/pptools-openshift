@@ -104,7 +104,7 @@
 	<div class='box'>
 	  <ul>
 		{% for l in x.languages %}
-		{% set ll = l.split('_')[0] %}
+		{% set ll = l.split('-')[0] %}
 		  <li>
 			<b>{{ l }}</b>
 			{% if x.iana_languages[ll] %}

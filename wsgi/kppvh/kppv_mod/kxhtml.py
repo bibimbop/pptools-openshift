@@ -18,6 +18,8 @@ XMLNS="{http://www.w3.org/XML/1998/namespace}"
 
 # List of language, indexed on the language tag, from
 #   http://www.iana.org/assignments/language-subtag-registry
+# Its format is record-jar -- (TODO) May be one day use a converted
+#   version by https://github.com/mattcg/language-subtag-registry
 def load_languages():
     with open(os.path.dirname(__file__) + "/../kppv_misc/language-subtag-registry", "r", encoding='utf-8',) as f:
 

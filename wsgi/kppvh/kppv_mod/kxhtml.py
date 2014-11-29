@@ -11,6 +11,8 @@ import tinycss
 import re
 import os
 
+from helpers import k_unicode
+
 # The xml: prefix is equivalent to the following
 XMLNS="{http://www.w3.org/XML/1998/namespace}"
 
@@ -476,3 +478,18 @@ class KXhtml(object):
         # todo - find anchor with name/id that have no corresponding href
         #  self.unused_anchors = name_id_set - hrefs
         self.unused_anchors = []
+
+    def check_unicode(self, myfile):
+        res = k_unicode.analyze_file(etree.XPath("string(/)")(myfile.tree))
+
+        self.unicode_bad = []
+        self.unicode_misc = []
+
+        # Separate various categories
+        for cat, ordl, l, name, num in res:
+
+            # Control characters should not appear
+            if cat[0] == 'C':
+                self.unicode_bad.append((cat, ordl, l, name, num))
+            else:
+                self.unicode_misc.append((cat, ordl, l, name, num))

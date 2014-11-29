@@ -30,3 +30,17 @@ h3 { font-weight: normal; }
     border: 1px dotted;
     background-color: #FF6633;
 }
+
+/* Unicode characters tables */
+.unitab {
+    border-collapse: collapse;
+	margin-left: 3em;
+}
+
+.unitab td, .unitab th {
+    border: 1px solid black;
+}
+
+.unitab td {
+	text-align: center;
+}

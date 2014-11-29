@@ -29,6 +29,8 @@ from itertools import count, groupby
 import datetime
 from collections import Counter
 
+from helpers import k_unicode
+
 class MiscChecks(object):
 
     def guess_language(self, myfile):
@@ -384,6 +386,20 @@ class MiscChecks(object):
         # also have it.
         pass
 
+    def check_unicode(self, myfile):
+        res = k_unicode.analyze_file("".join(myfile.text))
+
+        self.unicode_bad = []
+        self.unicode_misc = []
+
+        # Separate various categories
+        for cat, ordl, l, name, num in res:
+
+            # Control characters should not appear
+            if cat[0] == 'C':
+                self.unicode_bad.append((cat, ordl, l, name, num))
+            else:
+                self.unicode_misc.append((cat, ordl, l, name, num))
 
     def check_misc(self, myfile):
         """Misc checks."""
@@ -405,6 +421,7 @@ class MiscChecks(object):
         self.low_count_chars(myfile)
         self.check_indent(myfile)
         self.check_regex(myfile)
+        self.check_unicode(myfile)
 
 
 

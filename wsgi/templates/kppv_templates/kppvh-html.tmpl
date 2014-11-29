@@ -354,7 +354,7 @@
         {% for (lineno, error) in img.errors %}
 		  <li>
 			{% if lineno %}
-			  Line {{ lineno }}: "
+			  Line {{ lineno }}:
 			{% endif %}
 			{{ error }}
 		  </li>
@@ -553,6 +553,61 @@
 	<h2>Greek transliterrations</h2>
 
 	<p>Not tested — DChars module is not installed</p>
+  {% endif %}
+
+  {# Unicode characters #}
+  {% if x.unicode_misc or x.unicode_bad %}
+	<h2>Unicode Characters</h2>
+
+	<p>The list of unicode categories is avilable at <a href="http://www.unicode.org/reports/tr44/#General_Category_Values">http://www.unicode.org/reports/tr44/#General_Category_Values</a>
+	</p>
+  {% endif %}
+
+  {% if x.unicode_misc %}
+	<h3>Less common characters</h3>
+	<p>Some of these symbols may not display properly in some ePub readers.<br />
+	  Note, this never include letters, letter modifiers and numbers.</p>
+	<table class="unitab">
+	  <tr>
+		<th>Character</th>
+		<th>Unicode value</th>
+		<th>Unicode name</th>
+		<th>Unicode category</th>
+		<th># of occurences</th>
+	  </tr>
+	  {% for cat, ordl, l, name, num in x.unicode_misc %}
+		<tr>
+		  <td>{{ l | e }}</td>
+		  <td>{{ ordl | e }}</td>
+		  <td>{{ name | e }}</td>
+		  <td>{{ cat | e }}</td>
+		  <td>{{ num | e }}</td>
+		</tr>
+	  {% endfor %}
+	</table>
+  {% endif %}
+
+  {% if x.unicode_bad %}
+	<h3>Probably bad characters</h3>
+	<p>Control character are unlikely to be correct.</p>
+	<table class="unitab">
+	  <tr>
+		<th>Character</th>
+		<th>Unicode value</th>
+		<th>Unicode name</th>
+		<th>Unicode category</th>
+		<th># of occurences</th>
+	  </tr>
+	  {% for cat, ordl, l, name, num in x.unicode_bad %}
+		<tr>
+		  <td>{{ l | e }}</td>
+		  <td>{{ ordl | e }}</td>
+		  <td>{{ name | e }}</td>
+		  <td>{{ cat | e }}</td>
+		  <td>{{ num | e }}</td>
+		</tr>
+	  {% endfor %}
+	</table>
   {% endif %}
 
   {# Misc regexes #}

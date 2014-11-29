@@ -79,6 +79,7 @@ class Kppvh(object):
             x.check_title(myfile)
             x.epub_toc(myfile)
             x.check_anchors(myfile)
+            x.check_unicode(myfile)
 
             css = kxhtml.KXhtml()
             css.check_css(myfile)

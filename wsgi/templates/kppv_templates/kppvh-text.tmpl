@@ -267,6 +267,61 @@
   {% endif %}
 {% endif %}
 
+{# Unicode characters #}
+{% if misc.unicode_bad or misc.unicode_misc%}
+  <h2>Unicode Characters</h2>
+
+  <p>The list of unicode categories is avilable at <a href="http://www.unicode.org/reports/tr44/#General_Category_Values">http://www.unicode.org/reports/tr44/#General_Category_Values</a>
+  </p>
+{% endif %}
+
+{% if misc.unicode_misc %}
+  <h3>Less common characters</h3>
+  <p>Note, this never include letters, letter modifiers and numbers.
+  </p>
+  <table class="unitab">
+	<tr>
+	  <th>Character</th>
+	  <th>Unicode value</th>
+	  <th>Unicode name</th>
+	  <th>Unicode category</th>
+	  <th># of occurences</th>
+	</tr>
+	{% for cat, ordl, l, name, num in misc.unicode_misc %}
+	  <tr>
+		<td>{{ l | e }}</td>
+		<td>{{ ordl | e }}</td>
+		<td>{{ name | e }}</td>
+		<td>{{ cat | e }}</td>
+		<td>{{ num | e }}</td>
+	  </tr>
+	{% endfor %}
+  </table>
+{% endif %}
+
+{% if misc.unicode_bad %}
+  <h3>Probably bad characters</h3>
+  <p>Control character are unlikely to be correct.</p>
+  <table class="unitab">
+	<tr>
+	  <th>Character</th>
+	  <th>Unicode value</th>
+	  <th>Unicode name</th>
+	  <th>Unicode category</th>
+	  <th># of occurences</th>
+	</tr>
+	{% for cat, ordl, l, name, num in misc.unicode_bad %}
+	  <tr>
+		<td>{{ l | e }}</td>
+		<td>{{ ordl | e }}</td>
+		<td>{{ name | e }}</td>
+		<td>{{ cat | e }}</td>
+		<td>{{ num | e }}</td>
+	  </tr>
+	{% endfor %}
+  </table>
+{% endif %}
+
 {# Misc regexes #}
 {% if misc.misc_regex_result %}
   <h2>Regexes</h2>

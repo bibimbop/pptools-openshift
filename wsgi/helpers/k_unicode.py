@@ -60,6 +60,6 @@ def analyze_file(text):
         except ValueError:
             name = ""
 
-        res.append((cat, "\\u{:04x}".format(ord(l)), l, name, num))
+        res.append((cat, "{:04x}".format(ord(l)), l, name, num))
 
     return res

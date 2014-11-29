@@ -579,7 +579,7 @@
 	  {% for cat, ordl, l, name, num in x.unicode_misc %}
 		<tr>
 		  <td>{{ l | e }}</td>
-		  <td>{{ ordl | e }}</td>
+		  <td><a href="http://www.fileformat.info/info/unicode/char/{{ ordl }}">\u{{ ordl | e }}</a></td>
 		  <td>{{ name | e }}</td>
 		  <td>{{ cat | e }}</td>
 		  <td>{{ num | e }}</td>
@@ -604,7 +604,7 @@
 	  {% for cat, ordl, l, name, num in x.unicode_bad %}
 		<tr>
 		  <td>{{ l | e }}</td>
-		  <td>{{ ordl | e }}</td>
+		  <td><a href="http://www.fileformat.info/info/unicode/char/{{ ordl }}">\u{{ ordl | e }}</a></td>
 		  <td>{{ name | e }}</td>
 		  <td>{{ cat | e }}</td>
 		  <td>{{ num | e }}</td>

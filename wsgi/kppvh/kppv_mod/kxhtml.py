@@ -280,7 +280,7 @@ class KXhtml(object):
                 languages.add(lang)
                 xmllang_set.add(element)
 
-        self.languages = list(languages)
+        self.languages = sorted(list(languages))
 
         # Find elements with lang but not xml:lang
         self.missing_xmllang = [(element.sourceline, element.tag)

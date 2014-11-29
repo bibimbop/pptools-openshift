@@ -97,11 +97,26 @@
 
 {% else %}
 
-  <p>No footnotes found</p>
+  <p>No footnote found</p>
 
 {% endif %}
 
 {# Anchors found #}
+{% if fn.anchor_global_ranges %}
+  <h3>Range(s) of all footnotes, arranged in numerical order</h3>
+  <div class='box'>
+	<ul>
+      {% for a in fn.anchor_global_ranges %}
+		{% if a[0] == a[1] %}
+		  <li><b>{{ a[0] }}</b></li>
+		{% else %}
+		  <li><b>{{ a[0] }}</b> to <b>{{ a[1] }}</b></li>
+		{% endif %}
+	  {% endfor %}
+	</ul>
+  </div>
+{% endif %}
+
 <h3>Range(s) of footnote anchors found, in document order</h3>
 {% if fn.anchor_ranges %}
   <div class='box'>

@@ -81,11 +81,26 @@ class FootNotes(object):
                 for m in re.finditer("\[(\d+)\]", line):
                     anchors.append(int(m.group(1)))
 
-        # anchors. Remove consecutive duplicates and create ranges
-        # Python magic to go from [1, 2, 2, 2, 5, 6, 7] to [[1,2], [5, 7]]
+        # Remove consecutive duplicates, but keep the order.
+        # Go from  [1, 2, 2, 2, 5, 6, 7] to [1, 2, 5, 6, 7]
         anchors = [x[0] for x in groupby(anchors)]
+
+        # Create individual ranges
+        # Python magic to go from [1, 2, 5, 6, 7, 2] to [[1, 2], [5, 7], [2, 2]]
         G = (list(x) for _, x in groupby(anchors, lambda x, c=count(): next(c)-x))
         self.anchor_ranges = [[g[0], g[-1]] for g in G]
+
+        # Create global range.
+        # Python magic to go from [1, 2, 5, 6, 7, 2] to [[1,2], [5, 7]]
+        anchors.sort()
+        anchors = [x[0] for x in groupby(anchors)]
+        G = (list(x) for _, x in groupby(anchors, lambda x, c=count(): next(c)-x))
+        self.anchor_global_ranges = [[g[0], g[-1]] for g in G]
+
+        # If both anchor_ranges and anchor_global_ranges, ignore the
+        # latter. We just don't want to repeat information
+        if self.anchor_ranges == self.anchor_global_ranges:
+            self.anchor_global_ranges = None
 
         # For each non numerical footnote, try to find an anchor.
         for regex in note_regexes:

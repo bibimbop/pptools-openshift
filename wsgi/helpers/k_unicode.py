@@ -37,7 +37,7 @@ def analyze_file(text):
     for l, num in all_letters.items():
 
         # End of line, common characters
-        if l in '\u000a +-=/*<>°_|~£$':
+        if l in '\u000a\u000d +-=/*<>°_|~£$':
             continue
 
         # Skip some categories: letter, numbers, some spaces

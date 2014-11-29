@@ -179,9 +179,13 @@ class KXhtml(object):
 
         # Find the title and sanitize it.
         title = myfile.tree.find('head').find('title')
-        title_str = ' '.join(title.text.splitlines())
-        title_str = re.sub(r"\s+", " ", title_str).strip()
-        title_str = title_str.replace('—', '&mdash;')
+        if title is None or title.text is None:
+            # Title can be empty -- See book #43014
+            title_str = ""
+        else:
+            title_str = ' '.join(title.text.splitlines())
+            title_str = re.sub(r"\s+", " ", title_str).strip()
+            title_str = title_str.replace('—', '&mdash;')
 
         # Try the recommended format
         for regex in [ r'The Project Gutenberg eBook of (.*), by (.*)$',

@@ -204,7 +204,11 @@
   {# Title #}
   <h2>Title of the book</h2>
 
-  {% if not x.good_format %}
+  {% if x.title == "" %}
+    <p>
+	  <span class='warning'>The title tag is empty or non-existent</span>
+	</p>
+  {% elif not x.good_format %}
     <p>
 	  <span class='warning'>
 		The {{ "<title>" | e }} format is different than what PGDP or Project Gutenberg suggest.

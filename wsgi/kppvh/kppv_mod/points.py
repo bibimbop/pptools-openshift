@@ -105,12 +105,10 @@ def test_kpoints():
     import argparse
     import os
     import sys
-
-    sys.path.append("../../helpers")
     import sourcefile
 
     myfile = sourcefile.SourceFile()
-    myfile.load_xhtml("../../../data/testfiles/kpoints.html")
+    myfile.load_xhtml("data/testfiles/kpoints.html")
 
     assert(myfile.tree)
 

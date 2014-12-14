@@ -1,0 +1,5 @@
+A sample file
+with
+several lines
+in ascii
+that will be loaded as utf8 encoding

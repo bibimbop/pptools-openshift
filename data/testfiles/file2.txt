@@ -1,0 +1,7 @@
+A sample file
+with
+several lines
+in ascii
+that will be loaded as latin1 encoding
+because of these: аио
+are encoded differently in utf8 and latin1

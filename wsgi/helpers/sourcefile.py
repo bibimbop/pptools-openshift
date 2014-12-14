@@ -178,6 +178,7 @@ class SourceFile(object):
         """
         self.parser_errlog = None
         self.tree = None
+        self.text = None
 
         raw, text, encoding = self.load_file(name, encoding)
         if raw is None:
@@ -257,3 +258,74 @@ class SourceFile(object):
         self.encoding = encoding
 
         self.strip_pg_boilerplate()
+
+
+def test_load_file1():
+    myfile = SourceFile()
+    raw, text, encoding = myfile.load_file("data/testfiles/file1.txt")
+    assert(myfile.basename == 'file1.txt')
+    
+    assert(raw != None)
+    assert(text != None)
+    assert(encoding == 'utf-8')
+
+def test_load_file2():
+    myfile = SourceFile()
+    raw, text, encoding = myfile.load_file("data/testfiles/file2.txt")
+    assert(myfile.basename == 'file2.txt')
+    
+    assert(raw != None)
+    assert(text != None)
+    assert(encoding == 'latin1')
+
+def test_load_text1():
+    myfile = SourceFile()
+    myfile.load_text("data/testfiles/file2.txt")
+    assert(myfile.encoding == 'latin1')
+    assert(myfile.basename == 'file2.txt')
+    assert(myfile.text)
+    assert(len(myfile.text) == 7)
+    assert(myfile.start == 0)
+
+def test_load_text2():
+    myfile = SourceFile()
+    myfile.load_text("data/testfiles/pg34332.txt")
+    assert(myfile.encoding == 'latin1')
+    assert(myfile.basename == 'pg34332.txt')
+    assert(myfile.text)
+    assert(len(myfile.text) == 76)
+    assert(myfile.start == 21)
+
+def test_load_html_text1():
+    myfile = SourceFile()
+    myfile.load_xhtml("data/testfiles/34332-h.htm")
+    assert(myfile.encoding == 'latin1')
+    assert(myfile.basename == '34332-h.htm')
+    assert(myfile.text)
+    assert(len(myfile.text) == 489)
+    assert(myfile.tree)
+    assert(myfile.xhtml == 0)               # html 4
+    assert(len(myfile.parser_errlog) == 0)
+
+def test_load_xhtml_text1():
+    myfile = SourceFile()
+    myfile.load_xhtml("data/testfiles/41307-h.htm")
+    assert(myfile.encoding == 'utf-8')
+    assert(myfile.basename == '41307-h.htm')
+    assert(myfile.text)
+    assert(len(myfile.text) == 442)
+    assert(myfile.tree)
+    assert(myfile.xhtml == 10)            # xhtml 1.0
+    assert(myfile.parser_errlog == [])
+
+def test_load_xhtml_text1():
+    myfile = SourceFile()
+    myfile.load_xhtml("data/testfiles/badxhtml.html")
+    assert(myfile.encoding == 'utf-8')
+    assert(myfile.basename == 'badxhtml.html')
+    assert(myfile.tree == None)
+    assert(myfile.text == None)
+    assert(len(myfile.parser_errlog) == 3)
+    
+    
+    

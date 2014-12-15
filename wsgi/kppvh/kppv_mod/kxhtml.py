@@ -591,4 +591,59 @@ def test_html2():
     assert(x.text_after_sup == [37, 38])
 
 
+def test_html3():
     """Test document with no error."""
+    from sourcefile import SourceFile
+    myfile = SourceFile()
+    assert(myfile)
+    myfile.load_xhtml("data/testfiles/noerror.html")
+    assert(myfile.tree)
+    x = KXhtml()
+    x.check_css(myfile)
+    x.check_title(myfile)
+    x.check_document(myfile)
+    x.epub_toc(myfile)
+    x.check_anchors(myfile)
+    x.check_unicode(myfile)
+
+    # CSS
+    assert(x.cssutils_errors == [])
+    assert(x.sel_unchecked == [])
+    assert(len(x.sel_unused) == 0)
+    assert(len(x.classes_undefined) == 0)
+
+    # Title
+    assert(x.good_format == True)
+    assert(x.title == 'Voyage à Cayenne, Vol. 1')
+    assert(x.author == 'L. A. Pitou')
+
+    # Encoding
+    assert(myfile.encoding == 'utf-8')
+    assert(x.meta_encoding == myfile.encoding)
+
+    # TOC
+    assert(len(x.toc) == 10)
+    assert(x.toc[0][0] == 0)
+    assert(x.toc[0][1] == 'one header')
+    assert(x.toc[3][0] == 3)
+    assert(x.toc[3][1] == 'lvl 4-1')
+    assert(x.toc[8][0] == 2)
+    assert(x.toc[8][1] == 'other')
+    assert(x.toc[9][0] == 3)
+    assert(x.toc[9][1] == 'lvl 4-3 on 2 lines')
+
+    # Languages
+    assert(x.document_lang == "fr")
+    assert(x.document_xmllang == "fr")
+
+    # h1
+    assert(x.num_h1 == 1)
+
+    # sup stars
+    assert(len(x.stars_in_sup) == 0)
+
+    # Inline style
+    assert(len(x.inline_style) == 0)
+
+    # Something after <sup> tag
+    assert(len(x.text_after_sup) == 0)

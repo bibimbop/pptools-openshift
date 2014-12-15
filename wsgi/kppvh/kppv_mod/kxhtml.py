@@ -187,7 +187,6 @@ class KXhtml(object):
         else:
             title_str = ' '.join(title.text.splitlines())
             title_str = re.sub(r"\s+", " ", title_str).strip()
-            title_str = title_str.replace('—', '&mdash;')
 
         # Try the recommended format
         for regex in [ r'The Project Gutenberg eBook of (.*), by (.*)$',
@@ -318,7 +317,7 @@ class KXhtml(object):
         elements = myfile.tree.findall('//h1')
         self.num_h1 = len(elements)
 
-        # Ensure not * inside <sup>, because * is already superscript
+        # Ensure no * inside <sup>, because * is already superscript
         self.stars_in_sup = []
         elements = myfile.tree.findall('//sup')
         for element in elements:
@@ -513,6 +512,8 @@ class KXhtml(object):
                 self.unicode_misc.append((cat, ordl, l, name, num))
 
 
+
+
 def test_html1():
     from sourcefile import SourceFile
     myfile = SourceFile()
@@ -532,3 +533,62 @@ def test_html2():
     x.check_document(myfile)
     assert(x.meta_encoding == None)
     assert(myfile.encoding == 'utf-8')
+
+def test_html2():
+    """Test all document errors, as long as the document is valid."""
+    from sourcefile import SourceFile
+    myfile = SourceFile()
+    assert(myfile)
+    myfile.load_xhtml("data/testfiles/miscerrors.html")
+    assert(myfile.tree)
+    x = KXhtml()
+    x.check_css(myfile)
+    x.check_title(myfile)
+    x.check_document(myfile)
+    x.epub_toc(myfile)
+    x.check_anchors(myfile)
+    x.check_unicode(myfile)
+
+    # CSS
+    assert(x.cssutils_errors == [])
+    assert(x.sel_unchecked == [])
+    assert(len(x.sel_unused) == 2)
+    assert('.large' in x.sel_unused)
+    assert('.pagenum' in x.sel_unused)
+    assert(x.classes_undefined == [[17, 'asdfgh']])
+
+    # Title
+    assert(x.good_format == False)
+    assert(x.title == 'no title — no author')
+    assert(x.author == None)
+
+    # Encoding
+    assert(myfile.encoding == 'utf-8')
+    assert(x.meta_encoding == myfile.encoding)
+
+    # TOC - not tested here
+    assert(len(x.toc) == 2)
+
+    # Languages
+    assert(x.document_lang == "fr")
+    assert(x.document_xmllang == "en")
+
+    # h1
+    assert(x.num_h1 == 2)
+
+    # sup stars
+    assert(len(x.stars_in_sup) == 2)
+
+    # Inline style
+    assert(len(x.inline_style) == 2)
+    assert(x.inline_style[0][1] == 'div')
+    assert(x.inline_style[0][2] == 'text-indent:2em')
+    assert(x.inline_style[1][1] == 'span')
+    assert(x.inline_style[1][2] == 'margin-left: 1em;')
+
+    # Something after <sup> tag
+    assert(len(x.text_after_sup) == 2)
+    assert(x.text_after_sup == [37, 38])
+
+
+    """Test document with no error."""

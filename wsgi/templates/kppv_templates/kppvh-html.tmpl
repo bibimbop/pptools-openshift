@@ -52,7 +52,7 @@
 
   {# Version of xhtml #}
 
-  {% set xhtml_versions = { 0:"HTML", 10: "XHTML v 1.0", 11: "XHTML v1.1" } %}
+  {% set xhtml_versions = { 0:"HTML", 10: "XHTML 1.0", 11: "XHTML 1.1" } %}
   <p>This file is being analyzed as an {{ xhtml_versions[myfile.xhtml] }} document.<br />
 
 	{% if myfile.xhtml == 0 %}
@@ -61,6 +61,17 @@
 	{% endif %}
 
   </p>
+
+  {# Encoding #}
+  {% if not x.meta_encoding %}
+    <p>
+	  <span class='warning'>No html meta tag charset found (or format unsupported)</span>
+	</p>
+  {% elif x.meta_encoding != myfile.encoding %}
+    <p>
+	  <span class='warning'>Encodings differ:</span>The html meta tag charset is <b>{{ x.meta_encoding | e }}</b> but the file itself is encoded as <b>{{ myfile.encoding | e }}</b>
+	</p>
+  {% endif %}
 
   {# Various global document checks #}
 

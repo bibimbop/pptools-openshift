@@ -302,6 +302,18 @@ class KXhtml(object):
 
         # Misc errors
 
+        # Encoding
+        elements = myfile.tree.findall('/head/meta')
+        self.meta_encoding = None
+        for element in elements:
+            if element.attrib.get('http-equiv', None) == 'Content-Type':
+                content = element.attrib.get('content', None)
+                if content:
+                    # property-value, but use a regex instead.
+                    m = re.match(r"\s*text/html;\s*charset=(.*)", content)
+                    if m is not None:
+                        self.meta_encoding = m.group(1).lower().strip()
+
         # Ensure there is only one h1.
         elements = myfile.tree.findall('//h1')
         self.num_h1 = len(elements)
@@ -499,3 +511,24 @@ class KXhtml(object):
                 self.unicode_bad.append((cat, ordl, l, name, num))
             else:
                 self.unicode_misc.append((cat, ordl, l, name, num))
+
+
+def test_html1():
+    from sourcefile import SourceFile
+    myfile = SourceFile()
+    myfile.load_xhtml("data/testfiles/badcharset.html")
+    assert(myfile.tree)
+    x = KXhtml()
+    x.check_document(myfile)
+    assert(x.meta_encoding == 'iso-8859-1')
+    assert(myfile.encoding == 'utf-8')
+
+def test_html2():
+    from sourcefile import SourceFile
+    myfile = SourceFile()
+    myfile.load_xhtml("data/testfiles/nocharset.html")
+    assert(myfile.tree)
+    x = KXhtml()
+    x.check_document(myfile)
+    assert(x.meta_encoding == None)
+    assert(myfile.encoding == 'utf-8')

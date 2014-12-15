@@ -496,6 +496,7 @@ class KXhtml(object):
         #  self.unused_anchors = name_id_set - hrefs
         self.unused_anchors = []
 
+
     def check_unicode(self, myfile):
         res = k_unicode.analyze_file(etree.XPath("string(/)")(myfile.tree))
 
@@ -523,6 +524,7 @@ def test_html1():
     x.check_document(myfile)
     assert(x.meta_encoding == 'iso-8859-1')
     assert(myfile.encoding == 'utf-8')
+    assert(myfile.ending_empty_lines == 1)
 
 def test_html2():
     from sourcefile import SourceFile
@@ -590,6 +592,8 @@ def test_html2():
     assert(len(x.text_after_sup) == 2)
     assert(x.text_after_sup == [37, 38])
 
+    # Empty lines at the end
+    assert(myfile.ending_empty_lines == 5)
 
 def test_html3():
     """Test document with no error."""
@@ -647,3 +651,5 @@ def test_html3():
 
     # Something after <sup> tag
     assert(len(x.text_after_sup) == 0)
+
+    assert(myfile.ending_empty_lines == 1)

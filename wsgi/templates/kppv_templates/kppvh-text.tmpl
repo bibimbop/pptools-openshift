@@ -33,6 +33,12 @@
 
 <p><a href="/project/{{ project_id }}">Back to project page</a></p>
 
+  {% if myfile.ending_empty_lines == 0 %}
+    <h2>Empty lines at the end of document</h2>
+    <p><span class='warning'>There is no empty line at
+       the end of the document.</span> At least 1 is expected.</p>
+  {% endif %}
+
 {# Duplicate lines #}
 {% if dup.ranges %}
 

@@ -81,6 +81,17 @@ class SourceFile(object):
         # Encoding couldn't be found
         return None, None, None
 
+    def count_ending_empty_lines(self, text):
+        """Count the number of ending empty lines."""
+        self.ending_empty_lines = 0
+        for mychar in text[::-1]:
+            if mychar == "\n":
+                self.ending_empty_lines += 1
+            elif mychar == "\r":
+                continue
+            else:
+                break
+
     def strip_pg_boilerplate(self):
         """Remove the PG header and footer from a text version if present.
         """
@@ -190,6 +201,7 @@ class SourceFile(object):
 
         self.parser_errlog = parser.error_log
         self.encoding = encoding
+        self.count_ending_empty_lines(text)
 
         if len(self.parser_errlog):
             # Cleanup some errors
@@ -254,6 +266,8 @@ class SourceFile(object):
         if raw is None:
             return
 
+        self.count_ending_empty_lines(text)
+
         self.text = text.splitlines()
         self.encoding = encoding
 
@@ -264,7 +278,7 @@ def test_load_file1():
     myfile = SourceFile()
     raw, text, encoding = myfile.load_file("data/testfiles/file1.txt")
     assert(myfile.basename == 'file1.txt')
-    
+
     assert(raw != None)
     assert(text != None)
     assert(encoding == 'utf-8')
@@ -273,7 +287,7 @@ def test_load_file2():
     myfile = SourceFile()
     raw, text, encoding = myfile.load_file("data/testfiles/file2.txt")
     assert(myfile.basename == 'file2.txt')
-    
+
     assert(raw != None)
     assert(text != None)
     assert(encoding == 'latin1')
@@ -286,6 +300,7 @@ def test_load_text1():
     assert(myfile.text)
     assert(len(myfile.text) == 7)
     assert(myfile.start == 0)
+    assert(myfile.ending_empty_lines == 1)
 
 def test_load_text2():
     myfile = SourceFile()
@@ -295,6 +310,7 @@ def test_load_text2():
     assert(myfile.text)
     assert(len(myfile.text) == 76)
     assert(myfile.start == 21)
+    assert(myfile.ending_empty_lines == 1)
 
 def test_load_html_text1():
     myfile = SourceFile()
@@ -306,6 +322,7 @@ def test_load_html_text1():
     assert(myfile.tree)
     assert(myfile.xhtml == 0)               # html 4
     assert(len(myfile.parser_errlog) == 0)
+    assert(myfile.ending_empty_lines == 4)
 
 def test_load_xhtml_text1():
     myfile = SourceFile()
@@ -326,6 +343,3 @@ def test_load_xhtml_text1():
     assert(myfile.tree == None)
     assert(myfile.text == None)
     assert(len(myfile.parser_errlog) == 3)
-    
-    
-    

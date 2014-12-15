@@ -211,6 +211,11 @@
 	</div>
   {% endif %}
 
+  {% if myfile.ending_empty_lines == 0 %}
+    <h3>Empty lines at the end of document</h3>
+    <p><span class='warning'>There is no empty line at
+       the end of the document.</span> At least 1 is expected.</p>
+  {% endif %}
 
   {# Title #}
   <h2>Title of the book</h2>

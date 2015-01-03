@@ -102,9 +102,9 @@ class KPages(object):
             page_l, page_h = myrange
 
             if page_h == last:
-                myrange.append("Block is duplicated")
+                myrange.append("Page (or set of pages) is duplicated")
             elif page_h < last:
-                myrange.append("Block is out of sequence")
+                myrange.append("Page (or set of pages) is out of sequence")
             else:
                 myrange.append(None)
 
@@ -123,9 +123,9 @@ class KPages(object):
             page_l, page_h = myrange
 
             if roman.fromRoman(page_h.upper()) == last:
-                myrange.append("Block is duplicated")
+                myrange.append("Page (or set of pages) is duplicated")
             elif roman.fromRoman(page_h.upper()) < last:
-                myrange.append("Block is out of sequence")
+                myrange.append("Page (or set of pages) is out of sequence")
             else:
                 myrange.append(None)
 

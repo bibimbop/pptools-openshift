@@ -64,7 +64,7 @@ class SourceFile(object):
 
         # Try various encodings. Much faster than using chardet
         if encoding is None:
-            encodings = [ 'utf-8', 'latin1' ]
+            encodings = [ 'utf-8', 'iso-8859-1' ]
         else:
             encodings = [ encoding ]
 
@@ -290,12 +290,12 @@ def test_load_file2():
 
     assert(raw != None)
     assert(text != None)
-    assert(encoding == 'latin1')
+    assert(encoding == 'iso-8859-1')
 
 def test_load_text1():
     myfile = SourceFile()
     myfile.load_text("data/testfiles/file2.txt")
-    assert(myfile.encoding == 'latin1')
+    assert(myfile.encoding == 'iso-8859-1')
     assert(myfile.basename == 'file2.txt')
     assert(myfile.text)
     assert(len(myfile.text) == 7)
@@ -305,7 +305,7 @@ def test_load_text1():
 def test_load_text2():
     myfile = SourceFile()
     myfile.load_text("data/testfiles/pg34332.txt")
-    assert(myfile.encoding == 'latin1')
+    assert(myfile.encoding == 'iso-8859-1')
     assert(myfile.basename == 'pg34332.txt')
     assert(myfile.text)
     assert(len(myfile.text) == 76)
@@ -315,7 +315,7 @@ def test_load_text2():
 def test_load_html_text1():
     myfile = SourceFile()
     myfile.load_xhtml("data/testfiles/34332-h.htm")
-    assert(myfile.encoding == 'latin1')
+    assert(myfile.encoding == 'iso-8859-1')
     assert(myfile.basename == '34332-h.htm')
     assert(myfile.text)
     assert(len(myfile.text) == 489)

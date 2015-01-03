@@ -993,9 +993,9 @@ class CompPP(object):
         # If the original encoding of them is latin1, we must convert a
         # few UTF8 characters. We assume the default is utf-8. No
         # provision for any other format.
-        if files[0].myfile.encoding == "latin1" or files[1].myfile.encoding == "latin1":
+        if files[0].myfile.encoding == "iso-8859-1" or files[1].myfile.encoding == "iso-8859-1":
             for f in files:
-                if f.myfile.encoding != "latin1":
+                if f.myfile.encoding != "iso-8859-1":
                     f.convert_to_latin1 = True
 
         err_message = ""

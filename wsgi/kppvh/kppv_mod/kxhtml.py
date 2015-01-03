@@ -506,6 +506,11 @@ class KXhtml(object):
         # Separate various categories
         for cat, ordl, l, name, num in res:
 
+            # Tabs are ok in html. And no break space (nbsp) are
+            # common too.
+            if l in '\t\u00a0':
+                continue
+
             # Control characters should not appear
             if cat[0] == 'C':
                 self.unicode_bad.append((cat, ordl, l, name, num))

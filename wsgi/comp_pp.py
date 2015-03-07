@@ -213,10 +213,6 @@ class pgdp_file_text(pgdp_file):
         # Replace -- with real mdash
         self.text = self.text.replace("--", "—")
 
-        transtab = str.maketrans("ª₁²₂₃₄₅₆₇",
-                                 "a12234567")
-        self.text = self.text.translate(transtab)
-
 
     def extract_footnotes_pgdp(self):
         # Extract the footnotes from an F round
@@ -964,9 +960,11 @@ class CompPP(object):
         self.check_oelig(files)
 
         # How to process punctuation
+        # Add more as needed
         self.check_char(files, "’", "'") # curly quote to straight
         self.check_char(files, "‘", "'") # curly quote to straight
-        self.check_char(files, "º", "o") # ordinal to letter o
+        self.check_char(files, "º", "o") # ordinal o to letter o
+        self.check_char(files, "ª", "a") # ordinal a to letter a
         self.check_char(files, "–", "-") # ndash to regular dash
         self.check_char(files, "½", "-1/2")
         self.check_char(files, "¼", "-1/4")
@@ -977,6 +975,16 @@ class CompPP(object):
         self.check_char(files, "′", "'") # prime
         self.check_char(files, "″", "''") # double prime
         self.check_char(files, "‴", "'''") # triple prime
+        self.check_char(files, "₁", "1") # subscript 1
+        self.check_char(files, "₂", "2") # subscript 2
+        self.check_char(files, "₃", "3") # subscript 3
+        self.check_char(files, "₄", "4") # subscript 4
+        self.check_char(files, "₅", "5") # subscript 5
+        self.check_char(files, "₆", "6") # subscript 6
+        self.check_char(files, "₇", "7") # subscript 7
+        self.check_char(files, "¹", "1") # superscript 1
+        self.check_char(files, "²", "2") # superscript 2
+        self.check_char(files, "³", "3") # superscript 3
 
         # Remove non-breakable spaces between numbers. For instance, a
         # text file could have 250000, and the html could have 250 000.

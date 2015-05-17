@@ -20,10 +20,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 """
- kppvh - unicode analysis
+Unicode analysis. Part of kppvh.
 """
 
-from lxml import etree
 from collections import Counter
 import unicodedata
 

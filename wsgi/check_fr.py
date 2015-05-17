@@ -61,8 +61,8 @@ def split_doc(text):
     """Split the text into a list of words from the text."""
 
     # Put spaces between 2 or more dashes.
-    text = re.sub("(--+)", ' \1 ', text);
-    text = re.sub("(_+)", ' _ ', text);
+    text = re.sub("(--+)", ' \1 ', text)
+    text = re.sub("(_+)", ' _ ', text)
 
     # Split into list of words
     text = re.findall(r'([\w-]+|\W)', text)
@@ -80,7 +80,7 @@ def split_doc(text):
 def check_fr(filename):
 
     myfile = helpers.sourcefile.SourceFile()
-    raw, text, enc = myfile.load_file(filename)
+    raw, text, _ = myfile.load_file(filename)
 
     if not raw:
         return None, None, None, None, None, None, None, None
@@ -89,7 +89,7 @@ def check_fr(filename):
     words = split_doc(text)
 
     # Convertit en minuscules
-    words = [ word.lower() for word in words]
+    words = [word.lower() for word in words]
 
     # Supprime les doublons
     words = list(set(words))
@@ -112,14 +112,14 @@ def check_fr(filename):
                 nouvelle_orthographe.append((word, spelling))
 
     # Mots finissant en "ens" et "ents"
-    mots_ens = [ word for word in words if word.endswith("ens") and not word.endswith("iens") ]
-    mots_ents = [ word for word in words if word.endswith("ents") and not word.endswith("ients") ]
-    mots_ens_ents = [ mot + " / " + mot[:-1] + "ts" for mot in mots_ens if mot[:-1] + "ts" in mots_ents ]
+    mots_ens = [word for word in words if word.endswith("ens") and not word.endswith("iens")]
+    mots_ents = [word for word in words if word.endswith("ents") and not word.endswith("ients")]
+    mots_ens_ents = [mot + " / " + mot[:-1] + "ts" for mot in mots_ens if mot[:-1] + "ts" in mots_ents]
 
     # Mots finissant en "ans" et "ants"
-    mots_ans = [ word for word in words if word.endswith("ans") ]
-    mots_ants = [ word for word in words if word.endswith("ants") ]
-    mots_ans_ants = [ mot + " / " + mot[:-1] + "ts" for mot in mots_ans if mot[:-1] + "ts" in mots_ants ]
+    mots_ans = [word for word in words if word.endswith("ans")]
+    mots_ants = [word for word in words if word.endswith("ants")]
+    mots_ans_ants = [mot + " / " + mot[:-1] + "ts" for mot in mots_ans if mot[:-1] + "ts" in mots_ants]
 
     return ancienne_orthographe, nouvelle_orthographe, mots_ens, mots_ents, mots_ens_ents, mots_ans, mots_ants, mots_ans_ants
 

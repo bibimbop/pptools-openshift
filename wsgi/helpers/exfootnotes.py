@@ -18,19 +18,25 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301, USA.
+
+"""
+Footnote extraction. Part of comp_pp.
+"""
 
 import re
 
 def get_block(pp_text):
     """Generator to get a block of text, followed by the number of empty
     lines.
+
     """
 
     empty_lines = 0
     block = []
 
-    for lineno, line in enumerate(pp_text):
+    for line in pp_text:
 
         if len(line):
             # One or more empty lines will stop a block
@@ -39,7 +45,7 @@ def get_block(pp_text):
                 block = []
                 empty_lines = 0
 
-            block += [ line ]
+            block += [line]
 
         else:
             empty_lines += 1
@@ -59,10 +65,9 @@ def extract_footnotes_pp(pp_text, fn_regexes):
     # If the caller didn't give a list of regex to identify the
     # footnotes, build one, taking only the most common.
     if fn_regexes is None:
-        all_regexes = [ (r"(\s*)\[([\w-]+)\](.*)", 1),
-                        (r"(\s*)\[Note (\d+):( .*|$)", 2),
-                        (r"(      )Note (\d+):( .*|$)", 1),
-        ]
+        all_regexes = [(r"(\s*)\[([\w-]+)\](.*)", 1),
+                       (r"(\s*)\[Note (\d+):( .*|$)", 2),
+                       (r"(      )Note (\d+):( .*|$)", 1)]
         regex_count = [0] * len(all_regexes) # i.e. [0, 0, 0]
 
         for block, empty_lines in get_block(pp_text):
@@ -70,16 +75,16 @@ def extract_footnotes_pp(pp_text, fn_regexes):
                 continue
 
             for i, (regex, fn_type) in enumerate(all_regexes):
-                m = re.match(regex, block[0])
-                if m:
+                matches = re.match(regex, block[0])
+                if matches:
                     regex_count[i] += 1
                     break
 
         # Pick the regex with the most matches
-        fn_regexes = [ all_regexes[regex_count.index(max(regex_count))] ]
+        fn_regexes = [all_regexes[regex_count.index(max(regex_count))]]
 
     # Different types of footnote. 0 means not in footnote.
-    cur_fn_type, cur_fn_indent, cur_fn_num = 0, 0, 0
+    cur_fn_type, cur_fn_indent = 0, 0
     footnotes = []
     text = []
     prev_block = None
@@ -90,48 +95,46 @@ def extract_footnotes_pp(pp_text, fn_regexes):
         next_fn_type = 0
         if len(block):
             for (regex, fn_type) in fn_regexes:
-                m = re.match(regex, block[0])
-                if m:
-                    if m and m.group(2).startswith(("Illustration",
+                matches = re.match(regex, block[0])
+                if matches:
+                    if matches.group(2).startswith(("Illustration",
                                                     "Décoration",
                                                     "Décoration", "Bandeau",
                                                     "Logo", "Ornement")):
                         # An illustration, possibly inside a footnote. Treat
                         # as part of text or footnote.
-                        m = None
                         continue
 
                     next_fn_type = fn_type
-                    next_fn_indent = m.group(1)
-                    next_fn_num = m.group(2)
+                    next_fn_indent = matches.group(1)
 
                     # Update first line of block, because we want the
                     # number outside.
-                    block[0] = m.group(3)
+                    block[0] = matches.group(3)
                     break
 
         # Try to close previous footnote
         if cur_fn_type:
             if next_fn_type:
                 # New block is footnote, so it ends the previous footnote
-                footnotes += prev_block + [ "" ]
+                footnotes += prev_block + [""]
                 text += [""] * (len(prev_block) + 1)
                 prev_block = None
-                cur_fn_type, cur_fn_indent, cur_fn_num = next_fn_type, next_fn_indent, next_fn_num
+                cur_fn_type, cur_fn_indent = next_fn_type, next_fn_indent
             elif block[0].startswith(cur_fn_indent):
                 # Same indent or more. This is a continuation. Merge with
                 # one empty line.
-                block = prev_block + [ "" ] + block
+                block = prev_block + [""] + block
             else:
                 # End of footnote - current block is not a footnote
-                footnotes += prev_block + [ "" ]
+                footnotes += prev_block + [""]
                 text += [""] * (len(prev_block) + 1)
                 prev_block = None
                 cur_fn_type = 0
 
         if not cur_fn_type and next_fn_type:
             # Account for new footnote
-            cur_fn_type, cur_fn_indent, cur_fn_num = next_fn_type, next_fn_indent, next_fn_num
+            cur_fn_type, cur_fn_indent = next_fn_type, next_fn_indent
 
         if cur_fn_type and (empty_lines >= 2 or
                             (cur_fn_type == 2 and block[-1].endswith("]"))):
@@ -163,8 +166,8 @@ if __name__ == '__main__':
     import sys
     import sourcefile
 
-    f = sourcefile.SourceFile()
-    f.load_text(sys.argv[1])
+    myfile = sourcefile.SourceFile()
+    myfile.load_text(sys.argv[1])
 
 #    mytext, myfootnotes = extract_footnotes_pp(f.text, None)
 

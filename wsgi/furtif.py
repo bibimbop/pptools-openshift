@@ -103,5 +103,3 @@ if __name__ == '__main__':
 
     for lineno, line in furtif.matching:
         print(lineno, line)
-
-

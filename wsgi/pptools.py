@@ -20,8 +20,7 @@ import time
 from flask import Flask, abort, request, redirect, url_for, render_template, send_from_directory
 from werkzeug.utils import secure_filename
 from itertools import combinations
-import subprocess
-from wtforms import Form, BooleanField, TextField, validators, StringField, TextAreaField, SelectField
+from wtforms import Form, BooleanField, TextAreaField, SelectField
 from itertools import zip_longest
 from furtif import Furtif
 import zipfile
@@ -50,7 +49,8 @@ def create_new_project():
     project_id = "".join("{:02x}".format(i) for i in os.urandom(8))
 
     # Make the directory structure
-    os.makedirs(os.path.join(os.environ.get('OPENSHIFT_DATA_DIR', ''), "projects", project_id, "files"))
+    os.makedirs(os.path.join(os.environ.get('OPENSHIFT_DATA_DIR', ''),
+                             "projects", project_id, "files"))
 
     return project_id
 
@@ -63,7 +63,8 @@ def check_project_id(project_id):
     if len(set(project_id)-hexnumbers):
         return None
 
-    project_dir = os.path.join(os.environ.get('OPENSHIFT_DATA_DIR', ''), "projects", project_id)
+    project_dir = os.path.join(os.environ.get('OPENSHIFT_DATA_DIR', ''),
+                               "projects", project_id)
     if not os.path.isdir(project_dir):
         return None
 
@@ -83,8 +84,9 @@ def extract_zip(project_dir, zipname):
                     with myzip.open(zipf) as source, open(os.path.join(project_dir, "files", filename), "wb") as target:
                         shutil.copyfileobj(source, target)
 
-    except Exception as e:
+    except Exception:
         pass
+
 
 @app.route('/comp_pp/diff-default-css.txt')
 def send_diff_default_css():
@@ -108,7 +110,8 @@ def del_file(project_id):
     files_dir = os.path.join(project_dir, "files")
 
     # We don't really need to check, but ...
-    myfile = os.path.join(files_dir, secure_filename(request.args.get('file', '')))
+    myfile = os.path.join(files_dir,
+                          secure_filename(request.args.get('file', '')))
     if not os.path.isfile(myfile):
         abort(404)
 
@@ -146,7 +149,7 @@ def project(project_id):
         files.sort(key=lambda x: os.path.splitext(x[0])[1], reverse=True)
 
         # Create all the possible diffs combinations
-        filenames = [ x[0] for x in files ]
+        filenames = [x[0] for x in files]
         combos = combinations(filenames, 2)
 
         # Sort them again by alphabetical order
@@ -155,8 +158,8 @@ def project(project_id):
         return render_template('project.tmpl',
                                project_id=project_id,
                                files=files,
-                               files_html=[ x for x in files if x[0].lower().endswith((".htm", ".html")) ],
-                               files_txt=[ x for x in files if x[0].lower().endswith((".txt")) ],
+                               files_html=[x for x in files if x[0].lower().endswith((".htm", ".html"))],
+                               files_txt=[x for x in files if x[0].lower().endswith((".txt"))],
                                allowed_ext=", ".join(ALLOWED_UPLOAD_EXTENSIONS),
                                combos=combos)
 
@@ -201,8 +204,7 @@ class DiffForm(Form):
      .fnanchor:after { content: "]"; } */
 
 /* .tb {display: none;} */
-"""
-)
+""")
     css_smcap = SelectField('Transform small caps',
                             choices=[('n', "(no change)"),
                                      ('U', "uppercase"),
@@ -242,14 +244,14 @@ def diffs(project_id):
         abort(404)
 
     form = DiffForm(request.form)
-    if request.method=='POST':
+    if request.method == 'POST':
         if not form.validate():
             abort(404)
 
     # Create empty object to store our arguments
     # TODO: find an easier way than recopy all of them.
-    args = lambda:0
-    args.filename = [ f1, f2 ]
+    args = lambda: 0
+    args.filename = [f1, f2]
     args.extract_footnotes = form.extract_footnotes.data
     args.css_smcap = form.css_smcap.data
     args.css = form.css.data
@@ -272,13 +274,13 @@ def diffs(project_id):
     # Default value - not in form yet
     args.css_bold = None
 
-    f1=os.path.basename(f1)
-    f2=os.path.basename(f2)
+    f1 = os.path.basename(f1)
+    f2 = os.path.basename(f2)
 
     # Do diff
     x = CompPP(args)
     try:
-        err_message, html_content, fn1, fn2 = x.do_process()
+        err_message, html_content, _, _ = x.do_process()
     except Exception as e:
         err_message = "<div class='error-border bbox'><p>Error(s) in one of the document:</p><p>{0}</p></div>".format(e)
         html_content = ""
@@ -312,7 +314,7 @@ def langs(project_id):
         abort(404)
 
     form = LangForm(request.form)
-    if request.method=='POST':
+    if request.method == 'POST':
         if not form.validate():
             abort(404)
 
@@ -320,7 +322,7 @@ def langs(project_id):
         form.with_lang_only.data = request.form.get('with_lang_only', False)
 
     # Do diff
-    args = lambda:0
+    args = lambda: 0
     args.with_lang_only = form.with_lang_only.data
     args.filename = f1
 
@@ -331,7 +333,6 @@ def langs(project_id):
         pass
 
     x.find_tags(args)
-
 
     return render_template('find_langs/find_langs.tmpl',
                            project_id=project_id,

@@ -1,6 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# kppvh - performs some checking on text files to submit to Project Gutenberg
+# Copyright 2012-2014 bibimbop at pgdp, all rights reserved
+
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 """
  kppvh - performs some checking on PGDP or Project Gutenberg files.
 """
@@ -25,30 +42,29 @@ class FootNotes(object):
         # closing bracket; having something else is probably an error,
         # or it's an anchor. Don't expect an anchor inside a footnote,
         # at least on the first line.
-        regexes = [ r"^\[(\w+)\]( |$)",
-                    r"^ \[(\w+)\]( |$)",
-                    r"^  \[(\w+)\]( |$)",
-                    r"^   \[(\w+)\]( |$)",
-                    r"^    \[(\w+)\]( |$)",
-                    r"^     \[(\w+)\]( |$)",
-                    r"^      \[(\w+)\]( |$)",
-                    r"^\[Note ([\w\-]+):( |$)",
-                    r"^  \[Note ([\w\-]+):( |$)",
-                    r"^     \[Note ([\w\-]+):( |$)",
-                    r"^          \[Note ([\w\-]+):( |$)",
-                    r"^\[Footnote ([\w\-]+):( |$)",
-                    r"^  \[Footnote ([\w\-]+)\]:( |$)",
-                    r"^     \[Footnote ([\w\-]+):( |$)",
-                    r"^          \[Footnote ([\w\-]+):( |$)",
-                    r"^\     Note ([\w\-]+):( |$)",
-                    r"^\      Note ([\w\-]+):( |$)",
-                    ]
+        regexes = [r"^\[(\w+)\]( |$)",
+                   r"^ \[(\w+)\]( |$)",
+                   r"^  \[(\w+)\]( |$)",
+                   r"^   \[(\w+)\]( |$)",
+                   r"^    \[(\w+)\]( |$)",
+                   r"^     \[(\w+)\]( |$)",
+                   r"^      \[(\w+)\]( |$)",
+                   r"^\[Note ([\w\-]+):( |$)",
+                   r"^  \[Note ([\w\-]+):( |$)",
+                   r"^     \[Note ([\w\-]+):( |$)",
+                   r"^          \[Note ([\w\-]+):( |$)",
+                   r"^\[Footnote ([\w\-]+):( |$)",
+                   r"^  \[Footnote ([\w\-]+)\]:( |$)",
+                   r"^     \[Footnote ([\w\-]+):( |$)",
+                   r"^          \[Footnote ([\w\-]+):( |$)",
+                   r"^\     Note ([\w\-]+):( |$)",
+                   r"^\      Note ([\w\-]+):( |$)"]
 
         # note_regexes[1] will contain matching numerical matches,
         # while note_regexes[2] will contain the other (non numerical)
-        note_regexes = [ (re.compile(x), [], []) for x in regexes ]
+        note_regexes = [(re.compile(x), [], []) for x in regexes]
 
-        for block, empty_lines in get_block(myfile.text):
+        for block, _ in get_block(myfile.text):
             if not len(block):
                 continue
 
@@ -64,9 +80,9 @@ class FootNotes(object):
                     else:
                         # Remove known words, that are certainly not a
                         # footnote
-                        if m.group(1) in [ "Illustration", "Decoration",
-                                           "Décoration", "Bandeau", "Logo",
-                                           "Ornement" ]:
+                        if m.group(1) in ["Illustration", "Decoration",
+                                          "Décoration", "Bandeau", "Logo",
+                                          "Ornement"]:
                             m = None
                             continue
 
@@ -78,7 +94,7 @@ class FootNotes(object):
 
             # Look for the anchors anywhere in the block.
             for line in block:
-                for m in re.finditer("\[(\d+)\]", line):
+                for m in re.finditer(r"\[(\d+)\]", line):
                     anchors.append(int(m.group(1)))
 
         # Remove consecutive duplicates, but keep the order.
@@ -148,7 +164,6 @@ def main():
 
     sys.path.append("../../helpers")
     import sourcefile
-    import exfootnotes
 
     parser = argparse.ArgumentParser(description='Footnotes checker PGDP PP.')
     parser.add_argument('filename', metavar='FILENAME', type=str,

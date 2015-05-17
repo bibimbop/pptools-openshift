@@ -29,7 +29,6 @@ import helpers.sourcefile as sourcefile
 import kppvh.kppv_mod.duplicates as duplicates
 import kppvh.kppv_mod.footnotes as footnotes
 import kppvh.kppv_mod.kxhtml as kxhtml
-import kppvh.kppv_mod.furtif as furtif
 import kppvh.kppv_mod.images as images
 import kppvh.kppv_mod.pages as pages
 import kppvh.kppv_mod.pptxt as pptxt

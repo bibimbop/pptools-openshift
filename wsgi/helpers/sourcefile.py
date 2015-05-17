@@ -17,7 +17,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301, USA.
 
 """
  kppvh - file loading
@@ -55,7 +56,7 @@ class SourceFile(object):
         try:
             with open(fname, "rb") as f:
                 raw = f.read()
-        except Exception as e:
+        except Exception:
             raise IOError("Cannot load file: " + os.path.basename(fname))
 
         if len(raw) < 10:
@@ -67,9 +68,9 @@ class SourceFile(object):
 
         # Try various encodings. Much faster than using chardet
         if encoding is None:
-            encodings = [ 'utf-8', 'iso-8859-1' ]
+            encodings = ['utf-8', 'iso-8859-1']
         else:
-            encodings = [ encoding ]
+            encodings = [encoding]
 
         for enc in encodings:
             try:
@@ -81,7 +82,8 @@ class SourceFile(object):
             else:
                 return raw, text, enc
 
-        raise SyntaxError("Encoding cannot be found for: " + os.path.basename(fname))
+        raise SyntaxError("Encoding cannot be found for: " +
+                          os.path.basename(fname))
 
 
     def count_ending_empty_lines(self, text):
@@ -215,11 +217,12 @@ class SourceFile(object):
             if type(parser) == etree.HTMLParser:
                 # HTML parser rejects tags with both id and name
                 #   (513 == DTD_ID_REDEFINED)
-                self.parser_errlog = [
-                    x for x in parser.error_log if parser.error_log[0].type != 513 ]
+                self.parser_errlog = [x for x in parser.error_log
+                                      if parser.error_log[0].type != 513]
 
         if len(self.parser_errlog):
-            raise SyntaxError("Parsing errors in document: " + os.path.basename(name))
+            raise SyntaxError("Parsing errors in document: " +
+                              os.path.basename(name))
 
         self.tree = tree.getroottree()
         self.text = text.splitlines()
@@ -241,11 +244,11 @@ class SourceFile(object):
         # unknown. So far, no need to differentiate 1.0 strict and
         # transitional.
         if "DTD/xhtml1-strict.dtd" in self.tree.docinfo.doctype or "DTD/xhtml1-transitional.dtd" in self.tree.docinfo.doctype:
-            self.xhtml=10
+            self.xhtml = 10
         elif "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" in self.tree.docinfo.doctype:
-            self.xhtml=11
+            self.xhtml = 11
         else:
-            self.xhtml=0
+            self.xhtml = 0
 
         # Remove PG boilerplate. These are kept in a <pre> tag.
         find = etree.XPath("//pre")
@@ -255,7 +258,8 @@ class SourceFile(object):
 
             text = element.text.strip()
 
-            if re.match(".*?\*\*\* START OF THIS PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)", text, flags=re.MULTILINE | re.DOTALL):
+            if re.match(r".*?\*\*\* START OF THIS PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)",
+                        text, flags=re.MULTILINE | re.DOTALL):
                 clear_element(element)
 
             elif text.startswith("End of the Project Gutenberg") or text.startswith("End of Project Gutenberg"):
@@ -280,65 +284,65 @@ class SourceFile(object):
 def test_load_file1():
     myfile = SourceFile()
     raw, text, encoding = myfile.load_file("data/testfiles/file1.txt")
-    assert(myfile.basename == 'file1.txt')
+    assert myfile.basename == 'file1.txt'
 
-    assert(raw != None)
-    assert(text != None)
-    assert(encoding == 'utf-8')
+    assert raw != None
+    assert text != None
+    assert encoding == 'utf-8'
 
 def test_load_file2():
     myfile = SourceFile()
     raw, text, encoding = myfile.load_file("data/testfiles/file2.txt")
-    assert(myfile.basename == 'file2.txt')
+    assert myfile.basename == 'file2.txt'
 
-    assert(raw != None)
-    assert(text != None)
-    assert(encoding == 'iso-8859-1')
+    assert raw != None
+    assert text != None
+    assert encoding == 'iso-8859-1'
 
 def test_load_text1():
     myfile = SourceFile()
     myfile.load_text("data/testfiles/file2.txt")
-    assert(myfile.encoding == 'iso-8859-1')
-    assert(myfile.basename == 'file2.txt')
-    assert(myfile.text)
-    assert(len(myfile.text) == 7)
-    assert(myfile.start == 0)
-    assert(myfile.ending_empty_lines == 1)
+    assert myfile.encoding == 'iso-8859-1'
+    assert myfile.basename == 'file2.txt'
+    assert myfile.text
+    assert len(myfile.text) == 7
+    assert myfile.start == 0
+    assert myfile.ending_empty_lines == 1
 
 def test_load_text2():
     myfile = SourceFile()
     myfile.load_text("data/testfiles/pg34332.txt")
-    assert(myfile.encoding == 'iso-8859-1')
-    assert(myfile.basename == 'pg34332.txt')
-    assert(myfile.text)
-    assert(len(myfile.text) == 76)
-    assert(myfile.start == 21)
-    assert(myfile.ending_empty_lines == 1)
+    assert myfile.encoding == 'iso-8859-1'
+    assert myfile.basename == 'pg34332.txt'
+    assert myfile.text
+    assert len(myfile.text) == 76
+    assert myfile.start == 21
+    assert myfile.ending_empty_lines == 1
 
 def test_load_html_text1():
     myfile = SourceFile()
     myfile.load_xhtml("data/testfiles/34332-h.htm")
-    assert(myfile.encoding == 'iso-8859-1')
-    assert(myfile.basename == '34332-h.htm')
-    assert(myfile.text)
-    assert(len(myfile.text) == 489)
-    assert(myfile.tree)
-    assert(myfile.xhtml == 0)               # html 4
-    assert(len(myfile.parser_errlog) == 0)
-    assert(myfile.ending_empty_lines == 4)
+    assert myfile.encoding == 'iso-8859-1'
+    assert myfile.basename == '34332-h.htm'
+    assert myfile.text
+    assert len(myfile.text) == 489
+    assert myfile.tree
+    assert myfile.xhtml == 0                # html 4
+    assert len(myfile.parser_errlog) == 0
+    assert myfile.ending_empty_lines == 4
 
 def test_load_xhtml_text1():
     myfile = SourceFile()
     myfile.load_xhtml("data/testfiles/41307-h.htm")
-    assert(myfile.encoding == 'utf-8')
-    assert(myfile.basename == '41307-h.htm')
-    assert(myfile.text)
-    assert(len(myfile.text) == 442)
-    assert(myfile.tree)
-    assert(myfile.xhtml == 10)            # xhtml 1.0
-    assert(myfile.parser_errlog == [])
+    assert myfile.encoding == 'utf-8'
+    assert myfile.basename == '41307-h.htm'
+    assert myfile.text
+    assert len(myfile.text) == 442
+    assert myfile.tree
+    assert myfile.xhtml == 10             # xhtml 1.0
+    assert len(myfile.parser_errlog) == 0
 
-def test_load_xhtml_text1():
+def test_load_xhtml_text2():
     myfile = SourceFile()
     try:
         myfile.load_xhtml("data/testfiles/badxhtml.html")
@@ -347,8 +351,8 @@ def test_load_xhtml_text1():
     else:
         # Error. We should have gotten a SyntaxError exception.
         raise
-    assert(myfile.encoding == 'utf-8')
-    assert(myfile.basename == 'badxhtml.html')
-    assert(myfile.tree == None)
-    assert(myfile.text == None)
-    assert(len(myfile.parser_errlog) == 3)
+    assert myfile.encoding == 'utf-8'
+    assert myfile.basename == 'badxhtml.html'
+    assert myfile.tree == None
+    assert myfile.text == None
+    assert len(myfile.parser_errlog) == 3

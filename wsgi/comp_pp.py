@@ -22,7 +22,6 @@
 
 import re
 import os
-import sys
 import argparse
 import tempfile
 import subprocess
@@ -34,7 +33,7 @@ import cssselect
 from helpers.exfootnotes import extract_footnotes_pp
 from helpers import sourcefile
 
-DEFAULT_TRANSFORM_CSS =  '''
+DEFAULT_TRANSFORM_CSS = '''
                 i:before, cite:before, em:before, abbr:before, dfn:before,
                 i:after, cite:after, em:after, abbr:after, dfn:after      { content: "_"; }
 
@@ -179,7 +178,7 @@ class pgdp_file_text(pgdp_file):
 
             self.text = re.sub("<.*?>", '', self.text)
             self.text = re.sub("</.*?>", '', self.text)
-            self.text = re.sub("\[Blank Page\]", '', self.text)
+            self.text = re.sub(r"\[Blank Page\]", '', self.text)
 
             if self.args.suppress_proofers_notes:
                 self.text = re.sub(r"\[\*\*[^]]*?\]", '', self.text)
@@ -226,7 +225,7 @@ class pgdp_file_text(pgdp_file):
         text = []               # new text without footnotes
         footnotes = []
 
-        for lineno, line in enumerate(self.text.splitlines()):
+        for line in self.text.splitlines():
 
             # New footnote
             if "[Footnote" in line:
@@ -326,7 +325,7 @@ class pgdp_file_html(pgdp_file):
             self.mycss += '*[lang=grc] { content: "+" attr(title) "+"; }'
 
         if self.args.css_add_illustration:
-            for figclass in [ 'figcenter', 'figleft', 'figright' ]:
+            for figclass in ['figcenter', 'figleft', 'figright']:
                 self.mycss += '.' + figclass + ':before { content: "[Illustration: "; }'
                 self.mycss += '.' + figclass + ':after { content: "]"; }'
 
@@ -367,7 +366,7 @@ class pgdp_file_html(pgdp_file):
             text = element.text.strip()
 
             # Header - Remove everything until start of book.
-            m = re.match(".*?\*\*\* START OF THIS PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)", text, flags=re.MULTILINE | re.DOTALL)
+            m = re.match(r".*?\*\*\* START OF THIS PROJECT GUTENBERG EBOOK.*?\*\*\*(.*)", text, flags=re.MULTILINE | re.DOTALL)
             if m:
                 # Found the header. Keep only the text after the
                 # start tag (usually the credits)
@@ -423,7 +422,7 @@ class pgdp_file_html(pgdp_file):
 
             return newstr
 
-        def new_content(element, declaration):
+        def new_content(element):
             """Process the "content:" property
             """
             retstr = ""
@@ -451,7 +450,7 @@ class pgdp_file_html(pgdp_file):
             # Extract values we care about
             f_transform = None
             f_replace_with_attr = None
-            f_replace_regex = None
+            #f_replace_regex = None
             f_text_replace = None
             f_element_func = None
             f_move = None
@@ -464,7 +463,7 @@ class pgdp_file_html(pgdp_file):
 
                 elif val.name == "text-transform":
                     if len(val.value) != 1:
-                        property_errors += [ (val.line, val.column, val.name + " takes 1 argument") ]
+                        property_errors += [(val.line, val.column, val.name + " takes 1 argument")]
                     else:
                         v = val.value[0].value
                         if v == "uppercase":
@@ -474,16 +473,16 @@ class pgdp_file_html(pgdp_file):
                         elif v == "capitalize":
                             f_transform = lambda x: x.title()
                         else:
-                            property_errors += [ (val.line, val.column, val.name + " accepts only 'uppercase', 'lowercase' or 'capitalize'") ]
+                            property_errors += [(val.line, val.column, val.name + " accepts only 'uppercase', 'lowercase' or 'capitalize'")]
 
                 elif val.name == "_replace_with_attr":
                     f_replace_with_attr = lambda el: el.attrib[val.value[0].value]
 
                 elif val.name == "text-replace":
                     # Skip S (spaces) tokens.
-                    values = [ v for v in val.value if v.type != "S"]
+                    values = [v for v in val.value if v.type != "S"]
                     if len(values) != 2:
-                        property_errors += [ (val.line, val.column, val.name + " takes 2 string arguments") ]
+                        property_errors += [(val.line, val.column, val.name + " takes 2 string arguments")]
                     else:
                         v1 = values[0].value
                         v2 = values[1].value
@@ -494,9 +493,9 @@ class pgdp_file_html(pgdp_file):
                     f_element_func = clear_element
 
                 elif val.name == "_graft":
-                    values = [ v for v in val.value if v.type != "S"]
+                    values = [v for v in val.value if v.type != "S"]
                     if len(values) < 1:
-                        property_errors += [ (val.line, val.column, val.name + " takes at least one argument") ]
+                        property_errors += [(val.line, val.column, val.name + " takes at least one argument")]
                         continue
                     f_move = []
                     for v in values:
@@ -508,7 +507,7 @@ class pgdp_file_html(pgdp_file):
                         elif v.value == 'next-sib':
                             f_move.append(lambda el: el.getnext())
                         else:
-                            property_errors += [ (val.line, val.column, val.name + " invalid value " + v.value) ]
+                            property_errors += [(val.line, val.column, val.name + " invalid value " + v.value)]
                             f_move = None
                             break
 
@@ -520,7 +519,7 @@ class pgdp_file_html(pgdp_file):
 #                    f_replace_regex = partial(re.sub, val.value[0].value, val.value[1].value)
 
                 else:
-                    property_errors += [ (val.line, val.column, "Unsupported property " + val.name) ]
+                    property_errors += [(val.line, val.column, "Unsupported property " + val.name)]
                     continue
 
                 # Iterate through each selectors in the rule
@@ -539,14 +538,14 @@ class pgdp_file_html(pgdp_file):
                             element.text = f_replace_with_attr(element)
 
                         if val.name == 'content':
-                            v_content = new_content(element, val)
+                            v_content = new_content(element)
                             if pseudo_element == "before":
                                 element.text = v_content + (element.text or '') # opening tag
                             elif pseudo_element == "after":
                                 element.tail = v_content + (element.tail or '') # closing tag
                             else:
                                 # Replace all content
-                                element.text = new_content(element, val)
+                                element.text = new_content(element)
 
                         if f_transform:
                             self.text_apply(element, f_transform)
@@ -605,11 +604,10 @@ class pgdp_file_html(pgdp_file):
             "Note 123: lorem ipsum" becomes "123 lorem ipsum" or just
             "lorem ipsum".
             """
-            for regex in [ r"\s*\[([\w-]+)\](.*)",
-                           r"\s*([\d]+)\s+(.*)",
-                           r"\s*([\d]+):(.*)",
-                           r"\s*Note ([\d]+):\s+(.*)",
-                           ]:
+            for regex in [r"\s*\[([\w-]+)\](.*)",
+                          r"\s*([\d]+)\s+(.*)",
+                          r"\s*([\d]+):(.*)",
+                          r"\s*Note ([\d]+):\s+(.*)"]:
                 m = re.match(regex, string, re.DOTALL)
                 if m:
                     break
@@ -635,25 +633,24 @@ class pgdp_file_html(pgdp_file):
 
                 # Clean footnote number
                 for el in element:
-                    footnotes += [ strip_note_tag(el.xpath("string()")) ]
+                    footnotes += [strip_note_tag(el.xpath("string()"))]
 
                 # Remove the footnote from the main document
                 element.getparent().remove(element)
             else:
-                for find in [ "//div[@id[starts-with(.,'FN_')]]",
-                            #  "//div[p/a[@id[starts-with(.,'Footnote_')]]]",
-                              "//p[a[@id[starts-with(.,'Footnote_')]]]",
-                              "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
-                              "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
-                              #"//p[a[@id[not(starts-with(.,'footnotetag')) and starts-with(.,'footnote')]]]",
-                              #"//p[a[@id[starts-with(.,'footnote')]]]",
-                              "//p[@class='footnote']",
-                              "//div[@class='footnote']",
-                              ]:
+                for find in ["//div[@id[starts-with(.,'FN_')]]",
+                             #  "//div[p/a[@id[starts-with(.,'Footnote_')]]]",
+                             "//p[a[@id[starts-with(.,'Footnote_')]]]",
+                             "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
+                             "//div/p[span/a[@id[starts-with(.,'Footnote_')]]]",
+                             #"//p[a[@id[not(starts-with(.,'footnotetag')) and starts-with(.,'footnote')]]]",
+                             #"//p[a[@id[starts-with(.,'footnote')]]]",
+                             "//p[@class='footnote']",
+                             "//div[@class='footnote']"]:
                     for element in etree.XPath(find)(self.myfile.tree):
 
                         # Grab the text and remove the footnote number
-                        footnotes += [ strip_note_tag(element.xpath("string()")) ]
+                        footnotes += [strip_note_tag(element.xpath("string()"))]
 
                         # Remove the footnote from the main document
                         element.getparent().remove(element)
@@ -780,9 +777,9 @@ class CompPP(object):
                    "-z ]COMPPP_STOP_INS["]
 
             if self.args.ignore_case:
-                cmd += [ "--ignore-case" ]
+                cmd += ["--ignore-case"]
 
-            cmd += [ t1.name, t2.name ]
+            cmd += [t1.name, t2.name]
 
             # That shouldn't be needed if openshift was utf8 by default.
             env = os.environ.copy()
@@ -933,7 +930,7 @@ class CompPP(object):
 
     def do_process(self):
 
-        files = [ None, None ]
+        files = [None, None]
 
         # Load files
         for i, fname in enumerate(self.args.filename):
@@ -1058,10 +1055,8 @@ class CompPP(object):
         func = lambda text: re.sub(r"\u00AD", r"", text)
         f.transform_func.append(func)
 
-        err_message = ""
-
         # Apply the various convertions
-        err_message += f.convert() or ""
+        f.convert()
 
         # Extract footnotes
         if self.args.extract_footnotes:
@@ -1226,7 +1221,7 @@ def main():
     if args.simple_html:
         x.simple_html()
     else:
-        err_msg, html_content, fn1, fn2 = x.do_process()
+        _, html_content, fn1, fn2 = x.do_process()
 
         output_html(args, html_content, fn1, fn2)
 

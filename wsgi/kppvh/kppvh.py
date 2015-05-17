@@ -123,7 +123,10 @@ class Kppvh(object):
             myfile.load_text(fname)
             return self.process_text(myfile, project_id)
         elif basename.lower().endswith((".htm", ".html")):
-            myfile.load_xhtml(fname)
+            try:
+                myfile.load_xhtml(fname)
+            except Exception:
+                pass
             return self.process_html(myfile, project_id)
         else:
             abort(404)

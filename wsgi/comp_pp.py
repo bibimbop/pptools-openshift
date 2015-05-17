@@ -947,11 +947,6 @@ class CompPP(object):
             f = files[i]
 
             f.load(fname)
-
-            if f.myfile is None:
-                print("Couldn't load file:", fname)
-                return
-
             f.process_args(self.args)
             f.analyze()
 

@@ -272,12 +272,16 @@ def diffs(project_id):
     # Default value - not in form yet
     args.css_bold = None
 
-    # Do diff
-    x = CompPP(args)
-    err_message, html_content, fn1, fn2 = x.do_process()
-
     f1=os.path.basename(f1)
     f2=os.path.basename(f2)
+
+    # Do diff
+    x = CompPP(args)
+    try:
+        err_message, html_content, fn1, fn2 = x.do_process()
+    except Exception as e:
+        err_message = "<div class='error-border bbox'><p>Error(s) in one of the document:</p><p>{0}</p></div>".format(e)
+        html_content = ""
 
     return render_template('diffs.tmpl',
                            project_id=project_id,
@@ -321,8 +325,13 @@ def langs(project_id):
     args.filename = f1
 
     x = find_langs.Languages()
-    x.load_file(args)
+    try:
+        x.load_file(args)
+    except Exception:
+        pass
+
     x.find_tags(args)
+
 
     return render_template('find_langs/find_langs.tmpl',
                            project_id=project_id,

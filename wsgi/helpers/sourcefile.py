@@ -52,11 +52,14 @@ class SourceFile(object):
         self.basename = os.path.basename(fname)
         self.dirname = os.path.dirname(fname)
 
-        with open(fname, "rb") as f:
-            raw = f.read()
+        try:
+            with open(fname, "rb") as f:
+                raw = f.read()
+        except Exception as e:
+            raise IOError("Cannot load file: " + os.path.basename(fname))
 
-        if raw is None or len(raw) < 10:
-            return None, None, None
+        if len(raw) < 10:
+            raise SyntaxError("File is too short: " + os.path.basename(fname))
 
         # Remove BOM if present
         if raw[0] == 0xef and raw[1] == 0xbb and raw[2] == 0xbf:
@@ -78,8 +81,8 @@ class SourceFile(object):
             else:
                 return raw, text, enc
 
-        # Encoding couldn't be found
-        return None, None, None
+        raise SyntaxError("Encoding cannot be found for: " + os.path.basename(fname))
+
 
     def count_ending_empty_lines(self, text):
         """Count the number of ending empty lines."""
@@ -117,7 +120,7 @@ class SourceFile(object):
         self.text = new_text
 
 
-    def parse_html_xhtml(self, raw, text, relax=False):
+    def parse_html_xhtml(self, name, raw, text, relax=False):
         """Parse a byte array. Find the correct parser. Returns both the
         parser, which contains the error log, and the resulting tree,
         if the parsing was successful.
@@ -138,7 +141,8 @@ class SourceFile(object):
             parser = etree.HTMLParser()
 
         if parser is None:
-            return None, None
+            raise SyntaxError("No parser found for that type of document: " +
+                              os.path.basename(name))
 
         # Try the decoded file first.
         try:
@@ -175,7 +179,8 @@ class SourceFile(object):
             else:
                 return parser, tree
 
-        return None, None
+        raise SyntaxError("File cannot be parsed: " +
+                          os.path.basename(name))
 
 
     def load_xhtml(self, name, encoding=None, relax=False):
@@ -193,11 +198,9 @@ class SourceFile(object):
 
         raw, text, encoding = self.load_file(name, encoding)
         if raw is None:
-            return
+            raise IOError("File loading failed for: " + os.path.basename(name))
 
-        parser, tree = self.parse_html_xhtml(raw, text, relax)
-        if parser == None:
-            return
+        parser, tree = self.parse_html_xhtml(name, raw, text, relax)
 
         self.parser_errlog = parser.error_log
         self.encoding = encoding
@@ -216,7 +219,7 @@ class SourceFile(object):
                     x for x in parser.error_log if parser.error_log[0].type != 513 ]
 
         if len(self.parser_errlog):
-            return
+            raise SyntaxError("Parsing errors in document: " + os.path.basename(name))
 
         self.tree = tree.getroottree()
         self.text = text.splitlines()
@@ -337,7 +340,13 @@ def test_load_xhtml_text1():
 
 def test_load_xhtml_text1():
     myfile = SourceFile()
-    myfile.load_xhtml("data/testfiles/badxhtml.html")
+    try:
+        myfile.load_xhtml("data/testfiles/badxhtml.html")
+    except SyntaxError:
+        pass
+    else:
+        # Error. We should have gotten a SyntaxError exception.
+        raise
     assert(myfile.encoding == 'utf-8')
     assert(myfile.basename == 'badxhtml.html')
     assert(myfile.tree == None)

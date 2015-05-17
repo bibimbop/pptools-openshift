@@ -20,13 +20,22 @@ be installed with the following command line:
 
 >  sudo apt-get install python3-flask python3-lxml python3-roman w3c-sgml-lib dwdiff
 
-Additionally, some packages must be install through pip:
+The cssselect package is now available in Ubunto 15.04:
 
->  sudo pip3 install flask-wtf cssselect
+>  sudo apt-get install python3-cssselect
+
+otherwise install it with pip:
+
+>  sudo pip3 install cssselect
+
+Additionally, the following packages are not available and must be
+installed with pip:
+
+>  sudo pip3 install flask-wtf tinycss
 
 To run the application, cd into wsgi, and run:
 
-> ./pptools.py
+>  ./pptools.py
 
 
 ### Installation on OpenShift

@@ -368,7 +368,6 @@ class KXhtml(object):
                     ("space then punctuation", " ,"),
                     ("space then punctuation", " ;"),
                     ("space then punctuation", " ]"),
-                    ("space then punctuation", " »"),
                     ("space then punctuation", " ?"),
                     ("space then punctuation", " !"),
                     ("space then punctuation", " :"),
@@ -376,6 +375,13 @@ class KXhtml(object):
                     #("space then punctuation", " ’"),
                     ("dp marker?", "-*"),
                     ]
+
+        if self.document_lang and (
+                self.document_lang == 'de' or self.document_lang.startswith('de_')):
+            strings.append(["space then punctuation", " «"])
+        else:
+            strings.append(["space then punctuation", " »"])
+
         for element in myfile.tree.find('body').iter():
             for desc, string in strings:
                 if element.text and string in element.text:

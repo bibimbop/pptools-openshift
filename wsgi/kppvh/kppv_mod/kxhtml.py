@@ -14,7 +14,7 @@ import os
 from helpers import k_unicode
 
 # The xml: prefix is equivalent to the following
-XMLNS="{http://www.w3.org/XML/1998/namespace}"
+XMLNS = "{http://www.w3.org/XML/1998/namespace}"
 
 # List of language, indexed on the language tag, from
 #   http://www.iana.org/assignments/language-subtag-registry
@@ -56,7 +56,7 @@ def load_languages():
                     current[key] = desc + ', ' + value
                 else:
                     current[key] = value
-            elif key in [ 'Type', 'Subtag' ]:
+            elif key in ['Type', 'Subtag']:
                 current[key] = value
 
         # Last record.
@@ -96,7 +96,7 @@ class KXhtml(object):
         stylesheet = tinycss.make_parser().parse_stylesheet(css_text)
 
         # retrieve the errors
-        self.cssutils_errors = [ "{0},{1}: {2}".format(err.line+css.sourceline-1, err.column, err.reason) for err in stylesheet.errors]
+        self.cssutils_errors = ["{0},{1}: {2}".format(err.line+css.sourceline-1, err.column, err.reason) for err in stylesheet.errors]
 
         css_selectors = []
         for rule in stylesheet.rules:
@@ -189,8 +189,8 @@ class KXhtml(object):
             title_str = re.sub(r"\s+", " ", title_str).strip()
 
         # Try the recommended format
-        for regex in [ r'The Project Gutenberg eBook of (.*), by (.*)$',
-                       r'(.*), by (.*)\s?&mdash;\s?A Project Gutenberg eBook\.?$' ]:
+        for regex in [r'The Project Gutenberg eBook of (.*), by (.*)$',
+                      r'(.*), by (.*)\s?&mdash;\s?A Project Gutenberg eBook\.?$']:
 
             m = re.match(regex, title_str)
             if m:
@@ -200,11 +200,10 @@ class KXhtml(object):
                 return
 
         # Try variations
-        for regex in [ r"The Project Gutenberg's eBook of (.*), by (.*)$",
-                       r"The Project Gutenberg eBook of (.*), by (.*)$",
-                       r"The Project Gutenberg eBook of (.*), par (.*)$",
-                       r"The Project Gutenberg eBook of (.*), edited by (.*)$",
-                       ]:
+        for regex in [r"The Project Gutenberg's eBook of (.*), by (.*)$",
+                      r"The Project Gutenberg eBook of (.*), by (.*)$",
+                      r"The Project Gutenberg eBook of (.*), par (.*)$",
+                      r"The Project Gutenberg eBook of (.*), edited by (.*)$"]:
 
             m = re.match(regex, title_str, flags=re.I)
             if m:
@@ -356,25 +355,22 @@ class KXhtml(object):
         self.misc_regex_result = []
 
         # Try to find various strings in the text
-        strings = [ ("unusual punctuation", "[,:;][!?]"),
-                    ("[oE]->[oe], [OE] or œ", "[oE]"),
-                    ("[Oe]->[oe], [OE] or Œ", "[Oe]"),
-                    ("[ae]->æ", "[ae]"),
-                    ("[AE]->Æ", "[AE]"),
-                    ("[Blank Page]", "[Blank Page]"),
-                    ("degré sign ?", "°"),
-                    ("ordinal sign ?", "º"),
-                    ("space then punctuation", " ."),
-                    ("space then punctuation", " ,"),
-                    ("space then punctuation", " ;"),
-                    ("space then punctuation", " ]"),
-                    ("space then punctuation", " ?"),
-                    ("space then punctuation", " !"),
-                    ("space then punctuation", " :"),
-                    #("space then punctuation", " '"),
-                    #("space then punctuation", " ’"),
-                    ("dp marker?", "-*"),
-                    ]
+        strings = [("unusual punctuation", "[,:;][!?]"),
+                   ("[oE]->[oe], [OE] or œ", "[oE]"),
+                   ("[Oe]->[oe], [OE] or Œ", "[Oe]"),
+                   ("[ae]->æ", "[ae]"),
+                   ("[AE]->Æ", "[AE]"),
+                   ("[Blank Page]", "[Blank Page]"),
+                   ("degré sign ?", "°"),
+                   ("ordinal sign ?", "º"),
+                   ("space then punctuation", " ."),
+                   ("space then punctuation", " ,"),
+                   ("space then punctuation", " ;"),
+                   ("space then punctuation", " ]"),
+                   ("space then punctuation", " ?"),
+                   ("space then punctuation", " !"),
+                   ("space then punctuation", " :"),
+                   ("dp marker?", "-*")]
 
         if self.document_lang and (
                 self.document_lang == 'de' or self.document_lang.startswith('de_')):
@@ -391,20 +387,20 @@ class KXhtml(object):
 
         # Try various regexes on the text
         text = etree.XPath("string(//body)")(myfile.tree)
-        regexes = [ ("mdash->ndash(?)", r"\d+--\d+"),
-                    ("mdash->ndash(?)", r"[rv]\.--\d+"), # recto/verso
+        regexes = [("mdash->ndash(?)", r"\d+--\d+"),
+                   ("mdash->ndash(?)", r"[rv]\.--\d+"), # recto/verso
 
-                    ("dash->ndash(?)", r"\d+-\d+"),
-                    ("mdash->ndash(?)", r"\b[rv]\.—\d+"), # recto/verso
+                   ("dash->ndash(?)", r"\d+-\d+"),
+                   ("mdash->ndash(?)", r"\b[rv]\.—\d+"), # recto/verso
 
-                    ("mdash->ndash(?)", r"\d+—\d+"),
-                    ("mdash->ndash(?)", r"\b[rv]\.—\d+"), # recto/verso
+                   ("mdash->ndash(?)", r"\d+—\d+"),
+                   ("mdash->ndash(?)", r"\b[rv]\.—\d+"), # recto/verso
 
-                    (",letter", r",[^\W\d_]+"),
-                    ("bad guiguts find/replace?", r"\$\d[^\d][^ ]*\s"),
+                   (",letter", r",[^\W\d_]+"),
+                   ("bad guiguts find/replace?", r"\$\d[^\d][^ ]*\s"),
 
-                    ("PP tag?", r"\n(/[CFQRPTUX\*#]|[CFQRPTUX\*#]/).*(?=\n)"),
-                    ]
+                   ("PP tag?", r"\n(/[CFQRPTUX\*#]|[CFQRPTUX\*#]/).*(?=\n)")]
+
         # Find all matches, and add them
         for desc, regex in regexes:
             m = re.findall(regex, text)
@@ -530,30 +526,30 @@ def test_html1():
     from sourcefile import SourceFile
     myfile = SourceFile()
     myfile.load_xhtml("data/testfiles/badcharset.html")
-    assert(myfile.tree)
+    assert myfile.tree
     x = KXhtml()
     x.check_document(myfile)
-    assert(x.meta_encoding == 'iso-8859-1')
-    assert(myfile.encoding == 'utf-8')
-    assert(myfile.ending_empty_lines == 1)
+    assert x.meta_encoding == 'iso-8859-1'
+    assert myfile.encoding == 'utf-8'
+    assert myfile.ending_empty_lines == 1
 
 def test_html2():
     from sourcefile import SourceFile
     myfile = SourceFile()
     myfile.load_xhtml("data/testfiles/nocharset.html")
-    assert(myfile.tree)
+    assert myfile.tree
     x = KXhtml()
     x.check_document(myfile)
-    assert(x.meta_encoding == None)
-    assert(myfile.encoding == 'utf-8')
+    assert x.meta_encoding == None
+    assert myfile.encoding == 'utf-8'
 
 def test_html2():
     """Test all document errors, as long as the document is valid."""
     from sourcefile import SourceFile
     myfile = SourceFile()
-    assert(myfile)
+    assert myfile
     myfile.load_xhtml("data/testfiles/miscerrors.html")
-    assert(myfile.tree)
+    assert myfile.tree
     x = KXhtml()
     x.check_css(myfile)
     x.check_title(myfile)
@@ -563,56 +559,56 @@ def test_html2():
     x.check_unicode(myfile)
 
     # CSS
-    assert(x.cssutils_errors == [])
-    assert(x.sel_unchecked == [])
-    assert(len(x.sel_unused) == 2)
-    assert('.large' in x.sel_unused)
-    assert('.pagenum' in x.sel_unused)
-    assert(x.classes_undefined == [[17, 'asdfgh']])
+    assert x.cssutils_errors == []
+    assert x.sel_unchecked == []
+    assert len(x.sel_unused) == 2
+    assert '.large' in x.sel_unused
+    assert '.pagenum' in x.sel_unused
+    assert x.classes_undefined == [[17, 'asdfgh']]
 
     # Title
-    assert(x.good_format == False)
-    assert(x.title == 'no title — no author')
-    assert(x.author == None)
+    assert x.good_format == False
+    assert x.title == 'no title — no author'
+    assert x.author == None
 
     # Encoding
-    assert(myfile.encoding == 'utf-8')
-    assert(x.meta_encoding == myfile.encoding)
+    assert myfile.encoding == 'utf-8'
+    assert x.meta_encoding == myfile.encoding
 
     # TOC - not tested here
-    assert(len(x.toc) == 2)
+    assert len(x.toc) == 2
 
     # Languages
-    assert(x.document_lang == "fr")
-    assert(x.document_xmllang == "en")
+    assert x.document_lang == "fr"
+    assert x.document_xmllang == "en"
 
     # h1
-    assert(x.num_h1 == 2)
+    assert x.num_h1 == 2
 
     # sup stars
-    assert(len(x.stars_in_sup) == 2)
+    assert len(x.stars_in_sup) == 2
 
     # Inline style
-    assert(len(x.inline_style) == 2)
-    assert(x.inline_style[0][1] == 'div')
-    assert(x.inline_style[0][2] == 'text-indent:2em')
-    assert(x.inline_style[1][1] == 'span')
-    assert(x.inline_style[1][2] == 'margin-left: 1em;')
+    assert len(x.inline_style) == 2
+    assert x.inline_style[0][1] == 'div'
+    assert x.inline_style[0][2] == 'text-indent:2em'
+    assert x.inline_style[1][1] == 'span'
+    assert x.inline_style[1][2] == 'margin-left: 1em;'
 
     # Something after <sup> tag
-    assert(len(x.text_after_sup) == 2)
-    assert(x.text_after_sup == [37, 38])
+    assert len(x.text_after_sup) == 2
+    assert x.text_after_sup == [37, 38]
 
     # Empty lines at the end
-    assert(myfile.ending_empty_lines == 5)
+    assert myfile.ending_empty_lines == 5
 
 def test_html3():
     """Test document with no error."""
     from sourcefile import SourceFile
     myfile = SourceFile()
-    assert(myfile)
+    assert myfile
     myfile.load_xhtml("data/testfiles/noerror.html")
-    assert(myfile.tree)
+    assert myfile.tree
     x = KXhtml()
     x.check_css(myfile)
     x.check_title(myfile)
@@ -622,45 +618,45 @@ def test_html3():
     x.check_unicode(myfile)
 
     # CSS
-    assert(x.cssutils_errors == [])
-    assert(x.sel_unchecked == [])
-    assert(len(x.sel_unused) == 0)
-    assert(len(x.classes_undefined) == 0)
+    assert x.cssutils_errors == []
+    assert x.sel_unchecked == []
+    assert len(x.sel_unused) == 0
+    assert len(x.classes_undefined) == 0
 
     # Title
-    assert(x.good_format == True)
-    assert(x.title == 'Voyage à Cayenne, Vol. 1')
-    assert(x.author == 'L. A. Pitou')
+    assert x.good_format == True
+    assert x.title == 'Voyage à Cayenne, Vol. 1'
+    assert x.author == 'L. A. Pitou'
 
     # Encoding
-    assert(myfile.encoding == 'utf-8')
-    assert(x.meta_encoding == myfile.encoding)
+    assert myfile.encoding == 'utf-8'
+    assert x.meta_encoding == myfile.encoding
 
     # TOC
-    assert(len(x.toc) == 10)
-    assert(x.toc[0][0] == 0)
-    assert(x.toc[0][1] == 'one header')
-    assert(x.toc[3][0] == 3)
-    assert(x.toc[3][1] == 'lvl 4-1')
-    assert(x.toc[8][0] == 2)
-    assert(x.toc[8][1] == 'other')
-    assert(x.toc[9][0] == 3)
-    assert(x.toc[9][1] == 'lvl 4-3 on 2 lines')
+    assert len(x.toc) == 10
+    assert x.toc[0][0] == 0
+    assert x.toc[0][1] == 'one header'
+    assert x.toc[3][0] == 3
+    assert x.toc[3][1] == 'lvl 4-1'
+    assert x.toc[8][0] == 2
+    assert x.toc[8][1] == 'other'
+    assert x.toc[9][0] == 3
+    assert x.toc[9][1] == 'lvl 4-3 on 2 lines'
 
     # Languages
-    assert(x.document_lang == "fr")
-    assert(x.document_xmllang == "fr")
+    assert x.document_lang == "fr"
+    assert x.document_xmllang == "fr"
 
     # h1
-    assert(x.num_h1 == 1)
+    assert x.num_h1 == 1
 
     # sup stars
-    assert(len(x.stars_in_sup) == 0)
+    assert len(x.stars_in_sup) == 0
 
     # Inline style
-    assert(len(x.inline_style) == 0)
+    assert len(x.inline_style) == 0
 
     # Something after <sup> tag
-    assert(len(x.text_after_sup) == 0)
+    assert len(x.text_after_sup) == 0
 
-    assert(myfile.ending_empty_lines == 1)
+    assert myfile.ending_empty_lines == 1

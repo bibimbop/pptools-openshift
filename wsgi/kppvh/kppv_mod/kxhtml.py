@@ -373,7 +373,7 @@ class KXhtml(object):
                    ("dp marker?", "-*")]
 
         if self.document_lang and (
-                self.document_lang == 'de' or self.document_lang.startswith('de_')):
+                self.document_lang == 'de' or self.document_lang.startswith(('de_', 'de-'))):
             strings.append(["space then punctuation", " «"])
         else:
             strings.append(["space then punctuation", " »"])

@@ -62,20 +62,21 @@
 
   </p>
 
-  {# Encoding #}
-  {% if not x.meta_encoding %}
-    <p>
-	  <span class='warning'>No html meta tag charset found (or format unsupported)</span>
-	</p>
-  {% elif x.meta_encoding != myfile.encoding %}
-    <p>
-	  <span class='warning'>Encodings differ:</span>The html meta tag charset is <b>{{ x.meta_encoding | e }}</b> but the file itself is encoded as <b>{{ myfile.encoding | e }}</b>
-	</p>
-  {% endif %}
-
   {# Various global document checks #}
 
   <h2>Overall document</h2>
+
+  {# Encoding #}
+  {% if x.encoding_errors %}
+	<p class='highlight'>The document has encoding errors.</p>
+	<div class='box'>
+	  <ul>
+		{% for err in x.encoding_errors %}
+		  <li>{{ err | e }}</li>
+		{% endfor %}
+	  </ul>
+	</div>
+  {% endif %}
 
   {# Language #}
   {% if x.document_lang or x.document_xmllang %}

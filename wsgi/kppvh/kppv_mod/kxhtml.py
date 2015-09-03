@@ -21,7 +21,8 @@ XMLNS = "{http://www.w3.org/XML/1998/namespace}"
 # Its format is record-jar -- (TODO) May be one day use a converted
 #   version by https://github.com/mattcg/language-subtag-registry
 def load_languages():
-    with open(os.path.dirname(__file__) + "/../kppv_misc/language-subtag-registry", "r", encoding='utf-8',) as f:
+    with open(os.path.dirname(__file__) + "/../kppv_misc/language-subtag-registry",
+              "r", encoding='utf-8') as f:
 
         languages = {}
         current = {}
@@ -301,6 +302,7 @@ class KXhtml(object):
         # Misc errors
 
         # Encoding
+        self.encoding_errors = []
         elements = myfile.tree.findall('/head/meta')
         self.meta_encoding = None
         for element in elements:
@@ -311,6 +313,33 @@ class KXhtml(object):
                     m = re.match(r"\s*text/html;\s*charset=(.*)", content)
                     if m is not None:
                         self.meta_encoding = m.group(1).lower().strip()
+                        break
+
+        if self.meta_encoding is None:
+            self.encoding_errors.append("Document has no encoding set in the http-equiv tag")
+        else:
+            if self.meta_encoding not in ['us-ascii', 'utf-8', 'iso-8859-1']:
+                # Full list at https://www.iana.org/assignments/character-sets/character-sets.xhtml
+                self.encoding_errors.append("Document encoding '{}' is unknown to this tool or invalid. See https://www.iana.org/assignments/character-sets/character-sets.xhtml".format(self.meta_encoding))
+
+            if self.meta_encoding != myfile.encoding:
+                badenc = True
+
+                # Make an exception if the text in encoded is ascii,
+                # because we'll always read the file as
+                # utf-8. us-ascii is a subset of utf-8. We just need
+                # to make sure that the file is really ascii.
+                if self.meta_encoding == 'us-ascii' and myfile.encoding == 'utf-8':
+                    text= " ".join(myfile.text)
+                    try:
+                        bytes(text, 'utf-8').decode('us-ascii')
+                        badenc = False
+                    except Exception as e:
+                        # not ascii
+                        pass
+
+                if badenc:
+                    self.encoding_errors.append("Document encoded with {} but declared encoding is {}".format(myfile.encoding, self.meta_encoding))
 
         # Ensure there is only one h1.
         elements = myfile.tree.findall('//h1')
@@ -531,6 +560,7 @@ def test_html1():
     x.check_document(myfile)
     assert x.meta_encoding == 'iso-8859-1'
     assert myfile.encoding == 'utf-8'
+    assert len(x.encoding_errors) == 1
     assert myfile.ending_empty_lines == 1
 
 def test_html2():
@@ -542,6 +572,7 @@ def test_html2():
     x.check_document(myfile)
     assert x.meta_encoding == None
     assert myfile.encoding == 'utf-8'
+    assert len(x.encoding_errors) == 0
 
 def test_html2():
     """Test all document errors, as long as the document is valid."""
@@ -574,6 +605,7 @@ def test_html2():
     # Encoding
     assert myfile.encoding == 'utf-8'
     assert x.meta_encoding == myfile.encoding
+    assert len(x.encoding_errors) == 0
 
     # TOC - not tested here
     assert len(x.toc) == 2
@@ -631,6 +663,7 @@ def test_html3():
     # Encoding
     assert myfile.encoding == 'utf-8'
     assert x.meta_encoding == myfile.encoding
+    assert len(x.encoding_errors) == 0
 
     # TOC
     assert len(x.toc) == 10
@@ -660,3 +693,62 @@ def test_html3():
     assert len(x.text_after_sup) == 0
 
     assert myfile.ending_empty_lines == 1
+
+def test_encoding1():
+    """No encoding."""
+    from sourcefile import SourceFile
+    myfile = SourceFile()
+    assert myfile
+    myfile.load_xhtml("data/testfiles/noencoding.html")
+    assert myfile.tree
+    x = KXhtml()
+    x.check_document(myfile)
+
+    # Encoding
+    assert myfile.encoding == 'utf-8'
+    assert x.meta_encoding == None
+
+def test_encoding2():
+    """validly declared us-ascii encoding, read as utf-8."""
+    from sourcefile import SourceFile
+    myfile = SourceFile()
+    assert myfile
+    myfile.load_xhtml("data/testfiles/asciiencoding.html")
+    assert myfile.tree
+    x = KXhtml()
+    x.check_document(myfile)
+
+    # Encoding
+    assert myfile.encoding == 'utf-8'
+    assert x.meta_encoding == 'us-ascii'
+    assert len(x.encoding_errors) == 0
+
+def test_encoding3():
+    """declared ascii but contains unicode."""
+    from sourcefile import SourceFile
+    myfile = SourceFile()
+    assert myfile
+    myfile.load_xhtml("data/testfiles/notasciiencoding.html")
+    assert myfile.tree
+    x = KXhtml()
+    x.check_document(myfile)
+
+    # Encoding
+    assert myfile.encoding == 'utf-8'
+    assert x.meta_encoding == 'us-ascii'
+    assert len(x.encoding_errors) == 1
+
+def test_encoding4():
+    """invalid encoding."""
+    from sourcefile import SourceFile
+    myfile = SourceFile()
+    assert myfile
+    myfile.load_xhtml("data/testfiles/inv-encoding.html")
+    assert myfile.tree
+    x = KXhtml()
+    x.check_document(myfile)
+
+    # Encoding
+    assert myfile.encoding == 'utf-8'
+    assert x.meta_encoding == 'ascii'
+    assert len(x.encoding_errors) == 2 # invalid + different encodings

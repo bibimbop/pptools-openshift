@@ -24,24 +24,21 @@ The cssselect package is now available in Ubunto 15.04:
 
 >  sudo apt-get install python3-cssselect
 
-The flask-wtf and tinycss are available in Ubuntu 17.04:
-   sudo apt-get install python3-flaskext.wtf
-
-If not available, install them with pip:
+otherwise install it with pip:
 
 >  sudo pip3 install cssselect
->  sudo pip3 install tinycss
->  sudo pip3 install flask-wtf
->  sudo pip3 install tinycss
 
-To run the application locally, cd into wsgi/, and run:
+Additionally, the following packages are not available and must be
+installed with pip:
+
+>  sudo pip3 install flask-wtf tinycss
+
+To run the application, cd into wsgi, and run:
 
 >  ./pptools.py
 
 
-### Installation on OpenShift 2
-
-(Note: OpenShift 2 will be shutdown on September 2017.)
+### Installation on OpenShift
 
 OpenShift can host pptools. The setup is a bit more complex.
 
@@ -61,11 +58,3 @@ in ./app-root/data/ (so you have files like
 Once that is done, the application should be running. Compare with the
 existing demo at
 [http://pptools-pptools.rhcloud.com](http://pptools-pptools.rhcloud.com)
-
-
-### Installation on OpenShift 3
-
-Sort of broken. app.sh has to install pip 9.3, to be able to install
-lxml. Normally lxml should be in the requirements file, but the VM
-just stops when trying to install them. Also the VM is using an
-ancient version of pip (7.1).

@@ -191,7 +191,9 @@ class KXhtml(object):
 
         # Try the recommended format
         for regex in [r'The Project Gutenberg eBook of (.*), by (.*)$',
-                      r'(.*), by (.*)\s?&mdash;\s?A Project Gutenberg eBook\.?$']:
+                      r'(.*), by (.*)\s?&mdash;\s?A Project Gutenberg eBook\.?$',
+                      r'(.*), by (.*)\s?—\s?A Project Gutenberg eBook\.?$',
+                      r'(.*), by (.*)\s?--\s?A Project Gutenberg eBook\.?$']:
 
             m = re.match(regex, title_str)
             if m:

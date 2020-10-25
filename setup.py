@@ -5,6 +5,6 @@ setup(name='pptools',
       description='OpenShift App',
       author='me',
       author_email='example@example.comq',
-      url='http://pptools-pptools.rhcloud.com/',
+      url='https://pptools.tangledhelix.com/',
       install_requires=['Flask', 'WTForms', 'lxml', 'tinycss', 'cssselect', 'cssutils', 'roman' ],
      )

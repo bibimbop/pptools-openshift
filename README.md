@@ -5,10 +5,10 @@ This is a collection of tools to help to check the ebooks produced by
 [Project Gutenberg](gutenberg.org).
 
 The frontend for the tools is a web service that can be run locally on
-a Linux system, or on RedHat's Openshift.
+a Linux system, or online.
 
 It is currently available for everyone to use at
-[http://pptools-pptools.rhcloud.com](http://pptools-pptools.rhcloud.com)
+[https://pptools.tangledhelix.com](https://pptools.tangledhelix.com)
 
 
 ## Local installation
@@ -39,6 +39,9 @@ To run the application, cd into wsgi, and run:
 
 
 ### Installation on OpenShift
+
+Note: The following used to work for OpenShift 2, which is not
+available anymore.
 
 OpenShift can host pptools. The setup is a bit more complex.
 

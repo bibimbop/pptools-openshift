@@ -4,7 +4,7 @@
 
 # comp_pp - compare 2 files
 
-# Copyright (C) 2012-2013 bibimbop at pgdp
+# Copyright (C) 2012-2013, 2021 bibimbop at pgdp
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -953,16 +953,20 @@ class CompPP(object):
 
         # How to process punctuation
         # Add more as needed
-        self.check_char(files, "’", "'") # curly quote to straight
-        self.check_char(files, "‘", "'") # curly quote to straight
+
+        # Downgrade smart quote to regular quotes if needed
+        if self.args.downgrade_smart_quotes:
+            self.check_char(files, "’", "'") # curly quote to straight
+            self.check_char(files, "‘", "'") # curly quote to straight
+            self.check_char(files, '”', '"')
+            self.check_char(files, '“', '"')
+
         self.check_char(files, "º", "o") # ordinal o to letter o
         self.check_char(files, "ª", "a") # ordinal a to letter a
         self.check_char(files, "–", "-") # ndash to regular dash
         self.check_char(files, "½", "-1/2")
         self.check_char(files, "¼", "-1/4")
         self.check_char(files, "¾", "-3/4")
-        self.check_char(files, '”', '"')
-        self.check_char(files, '“', '"')
         self.check_char(files, '⁄', '/') # fraction
         self.check_char(files, "′", "'") # prime
         self.check_char(files, "″", "''") # double prime

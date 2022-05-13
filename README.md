@@ -1,3 +1,6 @@
+# This project has been archived, and has a new home.
+# See https://github.com/tangledhelix/pptools/
+
 # pptools
 
 This is a collection of tools to help to check the ebooks produced by
